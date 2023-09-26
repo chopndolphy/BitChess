@@ -1,5 +1,9 @@
 #include "Queen.h"
-Queen::Queen(std::vector<int> square, bool isWhiteBool) {
+Queen::Queen(std::vector<int> square, Color pieceColor, ChessBoard* board) {
     location = square;
-    isWhite = isWhiteBool;
+    color = pieceColor;
+    pieceBoard = board;
+}
+bool Queen::isLegalMove(std::vector<int> square) {
+    
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <array>
 #include "ChessPiece.h"
 #include "Bishop.h"
 #include "King.h"
@@ -7,16 +8,17 @@
 #include "Pawn.h"
 #include "Queen.h"
 #include "Rook.h"
-#include "Outcome.h"
+#include "Enums.h"
 
 class ChessBoard {
     public:
         ChessBoard();
-        ChessPiece getPieceAt(std::vector<int> square);
-        void setPieceAt(std::vector<int> square, ChessPiece piece);
+        ~ChessBoard();
+        ChessPiece* getPieceAt(std::vector<int> square) {
+            return boardSpaces.at(square.at(1)).at(square.at(0));
+        }
+        void setPieceAt(std::vector<int> endSquare, ChessPiece* piece);
     private:
         void checkGameOver();
-        std::vector<ChessPiece> whitePieces;
-        std::vector<ChessPiece> blackPieces;
-        std::vector<std::vector<ChessPiece*>> boardSpaces; 
+        std::array<std::array<ChessPiece*, 8>, 8> boardSpaces = {}; 
 };

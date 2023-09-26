@@ -1,5 +1,9 @@
 #include "Knight.h"
-Knight::Knight(std::vector<int> square, bool isWhiteBool) {
+Knight::Knight(std::vector<int> square, Color pieceColor, ChessBoard* board) {
     location = square;
-    isWhite = isWhiteBool;
+    color = pieceColor;
+    pieceBoard = board;
+}
+bool Knight::isLegalMove(std::vector<int> square) {
+    
 }

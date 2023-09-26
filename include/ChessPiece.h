@@ -1,9 +1,24 @@
 #pragma once
 #include <vector>
+#include <cstdlib>
+#include "Enums.h"
+#include "ChessBoard.h"
 
 class ChessPiece {
     public:
-        virtual void move(std::vector<int> square);
-    private:
-        virtual bool checkMove(std::vector<int> square);
+        void move(std::vector<int> square) {
+            pieceBoard->setPieceAt(square, this);
+            location = square;
+        }
+        virtual bool isLegalMove(std::vector<int> square) = 0;
+        const Color getColor() const {
+            return color;
+        }
+        const std::vector<int> getLocation() const {
+            return location;
+        }
+    protected:
+        std::vector<int> location;
+        Color color;
+        ChessBoard* pieceBoard;
 };

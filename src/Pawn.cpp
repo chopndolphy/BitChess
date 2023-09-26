@@ -1,5 +1,9 @@
 #include "Pawn.h"
-Pawn::Pawn(std::vector<int> square, bool isWhiteBool) {
+Pawn::Pawn(std::vector<int> square, Color pieceColor, ChessBoard* board) {
     location = square;
-    isWhite = isWhiteBool;
+    color = pieceColor;
+    pieceBoard = board;
+}
+bool Pawn::isLegalMove(std::vector<int> square) {
+    
 }

@@ -3,8 +3,7 @@
 
 class Queen : public ChessPiece {
     public:
-        Queen(std::vector<int> square, bool isWhiteBool);
+        Queen(std::vector<int> square, Color pieceColor, ChessBoard* board);
+        bool isLegalMove(std::vector<int> square);
     private:
-        std::vector<int> location;
-        bool isWhite;
 };

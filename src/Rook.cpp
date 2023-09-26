@@ -1,5 +1,9 @@
 #include "Rook.h"
-Rook::Rook(std::vector<int> square, bool isWhiteBool) {
+Rook::Rook(std::vector<int> square, Color pieceColor, ChessBoard* board) {
     location = square;
-    isWhite = isWhiteBool;
+    color = pieceColor;
+    pieceBoard = board;
+}
+bool Rook::isLegalMove(std::vector<int> square) {
+    
 }

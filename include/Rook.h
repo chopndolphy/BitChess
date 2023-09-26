@@ -3,8 +3,7 @@
 
 class Rook : public ChessPiece {
     public:
-        Rook(std::vector<int> square, bool isWhiteBool);
+        Rook(std::vector<int> square, Color pieceColor, ChessBoard* board);
+        bool isLegalMove(std::vector<int> square);
     private:
-        std::vector<int> location;
-        bool isWhite;
 };

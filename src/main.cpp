@@ -1,5 +1,20 @@
 #include "GamePlay.h"
+#include "PlayerConsole.h"
+#include "UserInterfaceConsole.h"
+#include "ChessBoard.h"
+#include "Enums.h"
 
 int main() {
+    ViewType viewType = Console;
+    if (viewType == Console) {
+        ChessBoard cB;
+        UserInterfaceConsole uI;
+        PlayerConsole w(White, &cB, &uI);
+        PlayerConsole b(Black, &cB, &uI);
+        GamePlay game(&w, &b, &cB, &uI);
+        while (!game.isGameOver()) {
+            game.takeTurn();
+        }
+    }
     return 0;
 }
