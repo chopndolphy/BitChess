@@ -1,0 +1,7 @@
+*.o
+*.out
+.vscode/
+build/
+bin/*
+lib/*
+notes.txt
