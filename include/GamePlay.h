@@ -1,5 +1,4 @@
 #pragma once
-#include "Outcome.h"
 #include "ChessBoard.h"
 #include "Player.h"
 #include "Enums.h"
