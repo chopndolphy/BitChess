@@ -14,11 +14,12 @@ class ChessBoard {
     public:
         ChessBoard();
         ~ChessBoard();
+        bool isLegalMove(ChessPiece* piece, std::vector<int> square);
         ChessPiece* getPieceAt(std::vector<int> square) {
             return boardSpaces.at(square.at(1)).at(square.at(0));
         }
         void setPieceAt(std::vector<int> endSquare, ChessPiece* piece);
+        GameState checkGameState(Color colorTurn);
     private:
-        void checkGameOver();
         std::array<std::array<ChessPiece*, 8>, 8> boardSpaces = {}; 
 };

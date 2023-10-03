@@ -27,3 +27,18 @@ std::vector<int> UserInterfaceConsole::getMoveSquare(ChessBoard* board) {
 void UserInterfaceConsole::displayError(std::string message) {
     std::cout << message << std::endl;
 }
+void UserInterfaceConsole::displayGameOver(GameState gameState) {
+    switch (gameState) {
+        case WhiteWins:
+            std::cout << "GAME OVER: White wins!" << std::endl;
+            break;
+        case BlackWins:
+            std::cout << "GAME OVER: White wins!" << std::endl;
+            break;
+        case Stalemate:
+            std::cout << "GAME OVER: White wins!" << std::endl;
+            break;
+        default:
+            std::cout << "INTERFACE ERROR: Unable to determine game over message." << std::endl;
+    }
+}

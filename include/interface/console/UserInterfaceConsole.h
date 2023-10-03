@@ -6,4 +6,5 @@ class UserInterfaceConsole : public UserInterface {
         ChessPiece* getMoveChessPiece(const Player* player, ChessBoard* board);
         std::vector<int> getMoveSquare(ChessBoard* board);
         void displayError(std::string message);
+        void displayGameOver(GameState gameState);
 };

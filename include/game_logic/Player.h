@@ -8,11 +8,12 @@
 
 class Player {
     public:
-        virtual void makeMove() = 0;
+        Player(Color color, ChessBoard* board, UserInterface* interface);
+        void makeMove();
         const Color getColor() const {
             return playerColor;
         }
-    protected:
+    private:
         Color playerColor;
         ChessBoard* playerBoard;
         UserInterface* playerInterface;

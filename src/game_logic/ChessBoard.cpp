@@ -29,6 +29,9 @@ ChessBoard::~ChessBoard() {
         }
     }
 }
+bool ChessBoard::isLegalMove(ChessPiece* piece, std::vector<int> square) {
+
+}
 void ChessBoard::setPieceAt(std::vector<int> endSquare, ChessPiece* piece) {
     if (boardSpaces.at(endSquare.at(1)).at(endSquare.at(0)) != nullptr) {
         delete boardSpaces.at(endSquare.at(1)).at(endSquare.at(0));
@@ -36,6 +39,6 @@ void ChessBoard::setPieceAt(std::vector<int> endSquare, ChessPiece* piece) {
     boardSpaces.at(piece->getLocation().at(1)).at(piece->getLocation().at(0)) = nullptr;
     boardSpaces.at(endSquare.at(1)).at(endSquare.at(0)) = piece; 
 }
-void ChessBoard::checkGameOver() {
+GameState ChessBoard::checkGameState(Color colorTurn) {
     
 }

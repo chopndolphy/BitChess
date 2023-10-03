@@ -7,7 +7,6 @@
 class GamePlay {
     public:
         GamePlay(Player* white, Player* black, ChessBoard* board, UserInterface* interface);
-        void setGameOver(Outcome outcome);
         void takeTurn();
         const bool isGameOver() const {
             return isGameOver;
@@ -19,8 +18,9 @@ class GamePlay {
         Player* blackPlayer;
         UserInterface* userInterface;
 
-        Color colorTurn;
-        Outcome gameOutcome;
-        bool isGameOver;
+        Color colorTurn = White;
+        bool gameOver = false;
 
+        void updateGameState();
+        void updateView();
 };

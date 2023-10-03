@@ -9,6 +9,7 @@ class ChessPiece {
         void move(std::vector<int> square) {
             pieceBoard->setPieceAt(square, this);
             location = square;
+            movedYet = true;
         }
         virtual bool isLegalMove(std::vector<int> square) = 0;
         const Color getColor() const {
@@ -20,5 +21,6 @@ class ChessPiece {
     protected:
         std::vector<int> location;
         Color color;
+        bool movedYet;
         ChessBoard* pieceBoard;
 };

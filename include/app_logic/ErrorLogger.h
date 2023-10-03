@@ -4,5 +4,5 @@
 
 class ErrorLogger {
     public:
-        static void relayError(ErrorCode code, Player* player, UserInterface* interface);
+        static void relayError(ErrorCode code, UserInterface* interface);
 };

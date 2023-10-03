@@ -6,4 +6,5 @@ class Pawn : public ChessPiece {
         Pawn(std::vector<int> square, Color pieceColor, ChessBoard* board);
         bool isLegalMove(std::vector<int> square);
     private:
+        bool movedYet = false;
 };
