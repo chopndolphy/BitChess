@@ -29,15 +29,28 @@ ChessBoard::~ChessBoard() {
         }
     }
 }
-bool ChessBoard::isLegalMove(ChessPiece* piece, std::vector<int> square) {
-
-}
 void ChessBoard::setPieceAt(std::vector<int> endSquare, ChessPiece* piece) {
-    if (boardSpaces.at(endSquare.at(1)).at(endSquare.at(0)) != nullptr) {
-        delete boardSpaces.at(endSquare.at(1)).at(endSquare.at(0));
+    if (nextMoveCastle) {
+        nextMoveCastle = false;
+        // castle logic
+    } else if (nextMoveEnPassant) {
+        nextMoveEnPassant = false;
+        if (piece->getColor() == White) {
+            delete boardSpaces.at(endSquare.at(1) - 1).at(endSquare.at(0));
+            boardSpaces.at(endSquare.at(1) - 1).at(endSquare.at(0)) = nullptr;
+        } else if (piece->getColor() == Black) {
+            delete boardSpaces.at(endSquare.at(1) + 1).at(endSquare.at(0));
+            boardSpaces.at(endSquare.at(1) + 1).at(endSquare.at(0)) = nullptr;
+        }
+        boardSpaces.at(piece->getLocation().at(1)).at(piece->getLocation().at(0)) = nullptr;
+        boardSpaces.at(endSquare.at(1)).at(endSquare.at(0)) = piece;
+    } else {
+        if (boardSpaces.at(endSquare.at(1)).at(endSquare.at(0)) != nullptr) {
+            delete boardSpaces.at(endSquare.at(1)).at(endSquare.at(0));
+        }
+        boardSpaces.at(piece->getLocation().at(1)).at(piece->getLocation().at(0)) = nullptr;
+        boardSpaces.at(endSquare.at(1)).at(endSquare.at(0)) = piece; 
     }
-    boardSpaces.at(piece->getLocation().at(1)).at(piece->getLocation().at(0)) = nullptr;
-    boardSpaces.at(endSquare.at(1)).at(endSquare.at(0)) = piece; 
 }
 GameState ChessBoard::checkGameState(Color colorTurn) {
     

@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include "Enums.h"
 #include "ChessBoard.h"
+#include "ErrorLogger.h"
 
 class ChessPiece {
     public:
@@ -18,9 +19,13 @@ class ChessPiece {
         const std::vector<int> getLocation() const {
             return location;
         }
+        const bool hasDoubleMoved() const {
+            return doubleMoved;
+        }
     protected:
         std::vector<int> location;
         Color color;
         bool movedYet;
+        bool doubleMoved = false;  
         ChessBoard* pieceBoard;
 };
