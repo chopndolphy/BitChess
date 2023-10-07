@@ -10,6 +10,8 @@ bool King::isLegalMove(std::vector<int> square) {
     int pathLengthY = std::abs(square.at(1) - location.at(1));
     if (square == location) {
         return false; // Moving to same square
+    } else if (pieceBoard->canCastle(this, square)) {
+        return true; // Castling
     } else if (pathLengthX > 1 || pathLengthY > 1) {
         return false; // Not moving one square
     } else if (square.at(0) > 7 || square.at(0) < 0 || square.at(1) > 7 || square.at(1) < 0) {

@@ -18,11 +18,17 @@ bool Pawn::isLegalMove(std::vector<int> square) {
     } else if (location.at(0) > 7 || location.at(0) < 0 || location.at(1) > 7 || location.at(1) < 0) {
         return false; // Moving out of bounds
     } else if (pathLengthX == 0 && pathLengthY == 1) {
+        if ((color == White && square.at(1) == 7) || (color == Black && square.at(1) == 0)) {
+            pieceBoard->setNextMovePromoting(true);
+        }
         return true; // Moving forward one
     } else if (pathLengthX == 0 && pathLengthY == 2 && !movedYet) {
         doubleMoved = true;
         return true; // Moving forward two on first turn
     } else if (pathLengthX == 1 && pathLengthY == 1 && pieceBoard->getPieceAt(square)->getColor() != color) {
+        if ((color == White && square.at(1) == 7) || (color == Black && square.at(1) == 0)) {
+            pieceBoard->setNextMovePromoting(true);
+        }
         return true; // Capturing normally
     } else if (canEnPassant(square)) {
         return true; // Capturing en passant
@@ -47,5 +53,3 @@ bool Pawn::canEnPassant(std::vector<int> square) {
         return false;
     }
 }
-
-// need promotion logic

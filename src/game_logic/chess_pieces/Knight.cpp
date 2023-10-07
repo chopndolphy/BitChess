@@ -15,7 +15,7 @@ bool Knight::isLegalMove(std::vector<int> square) {
     } else if (location.at(0) > 7 || location.at(0) < 0 || location.at(1) > 7 || location.at(1) < 0) {
         return false; // Moving out of bounds
     } else if ((pathLengthX == 1 && pathLengthY == 2) || (pathLengthX == 2 && pathLengthY == 1)) {
-            return true; // Correctly moving in L shape
+        return true; // Correctly moving in L shape
     } else {
         return false;
     }

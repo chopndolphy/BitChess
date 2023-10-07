@@ -24,9 +24,14 @@ class ChessBoard {
         void setNextMoveCastle(bool isCastle) {
             nextMoveCastle = isCastle;
         }
+        void setNextMovePromoting(bool isPromoting) {
+            nextMovePromoting = isPromoting;
+        }
         GameState checkGameState(Color colorTurn);
+        bool canCastle(ChessPiece* piece, std::vector<int> sqaure);
     private:
         std::array<std::array<ChessPiece*, 8>, 8> boardSpaces = {};
         bool nextMoveEnPassant;
         bool nextMoveCastle;
+        bool nextMovePromoting;
 };

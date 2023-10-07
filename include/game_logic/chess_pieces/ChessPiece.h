@@ -26,6 +26,6 @@ class ChessPiece {
         std::vector<int> location;
         Color color;
         bool movedYet;
-        bool doubleMoved = false;  
+        bool doubleMoved = false;
         ChessBoard* pieceBoard;
 };

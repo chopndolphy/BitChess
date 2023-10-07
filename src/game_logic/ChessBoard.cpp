@@ -36,22 +36,34 @@ void ChessBoard::setPieceAt(std::vector<int> endSquare, ChessPiece* piece) {
     } else if (nextMoveEnPassant) {
         nextMoveEnPassant = false;
         if (piece->getColor() == White) {
-            delete boardSpaces.at(endSquare.at(1) - 1).at(endSquare.at(0));
+            // removes attacked piece
+            delete boardSpaces.at(endSquare.at(1) - 1).at(endSquare.at(0)); 
             boardSpaces.at(endSquare.at(1) - 1).at(endSquare.at(0)) = nullptr;
         } else if (piece->getColor() == Black) {
-            delete boardSpaces.at(endSquare.at(1) + 1).at(endSquare.at(0));
+            // removes attacked piece
+            delete boardSpaces.at(endSquare.at(1) + 1).at(endSquare.at(0)); 
             boardSpaces.at(endSquare.at(1) + 1).at(endSquare.at(0)) = nullptr;
         }
+        // moves piece
         boardSpaces.at(piece->getLocation().at(1)).at(piece->getLocation().at(0)) = nullptr;
         boardSpaces.at(endSquare.at(1)).at(endSquare.at(0)) = piece;
     } else {
         if (boardSpaces.at(endSquare.at(1)).at(endSquare.at(0)) != nullptr) {
+            // removes attack piece
             delete boardSpaces.at(endSquare.at(1)).at(endSquare.at(0));
         }
+        // moves piece
         boardSpaces.at(piece->getLocation().at(1)).at(piece->getLocation().at(0)) = nullptr;
-        boardSpaces.at(endSquare.at(1)).at(endSquare.at(0)) = piece; 
+        boardSpaces.at(endSquare.at(1)).at(endSquare.at(0)) = piece;
+        if (nextMovePromoting) {
+            nextMovePromoting = false;
+            // promotion logic
+        }
     }
 }
 GameState ChessBoard::checkGameState(Color colorTurn) {
     
+}
+bool ChessBoard::canCastle(ChessPiece* piece, std::vector<int> square) {
+
 }
