@@ -67,3 +67,6 @@ GameState ChessBoard::checkGameState(Color colorTurn) {
 bool ChessBoard::canCastle(ChessPiece* piece, std::vector<int> square) {
 
 }
+bool ChessBoard::kingIsProtected(ChessPiece* piece, std::vector<int> square) {
+
+}

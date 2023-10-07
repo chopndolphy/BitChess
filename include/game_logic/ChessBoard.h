@@ -29,6 +29,7 @@ class ChessBoard {
         }
         GameState checkGameState(Color colorTurn);
         bool canCastle(ChessPiece* piece, std::vector<int> sqaure);
+        bool kingIsProtected(ChessPiece* piece, std::vector<int> square);
     private:
         std::array<std::array<ChessPiece*, 8>, 8> boardSpaces = {};
         bool nextMoveEnPassant;
