@@ -10,7 +10,7 @@ void Player::makeMove() {
     while (true) {
         if (!currentMovePiece->isLegalMove(currentMoveSquare)) { //Determines if chosen piece can move to chosen sqaure
             ErrorLogger::relayError(MOVE01, playerInterface);
-        } else if (!playerBoard->isLegalMove(currentMovePiece, currentMoveSquare)) { //Determines if move will put the player's own king into check.
+        } else if (!playerBoard->kingIsProtected(currentMovePiece, currentMoveSquare)) { //Determines if move will put the player's own king into check.
             ErrorLogger::relayError(MOVE02, playerInterface);
         } else {
             break;
