@@ -8,14 +8,19 @@ Pawn::Pawn(std::vector<int> square, Color pieceColor, ChessBoard* board) {
     movedYet = false;
     doubleMoved = false;
 }
+
 bool Pawn::isLegalMove(std::vector<int> square) {
-    int pathLengthX = std::abs(square.at(0) - location.at(0));
-    int pathLengthY = std::abs(square.at(1) - location.at(1));
+    /* pawn logic still doesn't work and needs rework */
+
+    int xdelta = square.at(0) - location.at(0);
+    int ydelta = square.at(1) - location.at(1);
+    int pathLengthX = std::abs(xdelta);
+    int pathLengthY = std::abs(ydelta);
     if (square == location) { 
         return false; // Moveing to same square
-    } else if ((square.at(1) - location.at(1) < 1 && color == White) || (square.at(1) - location.at(1) > -1 && color == Black)) {
+    } else if ( (ydelta >= 0 && color == White) || (ydelta <= 0 && color == Black) ) {
         return false; // White is moving down or Black is moving up
-    } else if (pieceBoard->getPieceAt(square)->getColor() == color) {
+    } else if (pieceBoard->getPieceAt(square) && pieceBoard->getPieceAt(square)->getColor() == color) {
         return false; // Moving to own color piece
     } else if (location.at(0) > 7 || location.at(0) < 0 || location.at(1) > 7 || location.at(1) < 0) {
         return false; // Moving out of bounds
@@ -27,7 +32,7 @@ bool Pawn::isLegalMove(std::vector<int> square) {
     } else if (pathLengthX == 0 && pathLengthY == 2 && !movedYet) {
         doubleMoved = true;
         return true; // Moving forward two on first turn
-    } else if (pathLengthX == 1 && pathLengthY == 1 && pieceBoard->getPieceAt(square)->getColor() != color) {
+    } else if (pathLengthX == 1 && pathLengthY == 1 && pieceBoard->getPieceAt(square) && pieceBoard->getPieceAt(square)->getColor() != color) {
         if ((color == White && square.at(1) == 7) || (color == Black && square.at(1) == 0)) {
             pieceBoard->setNextMovePromoting(true);
         }
@@ -38,6 +43,7 @@ bool Pawn::isLegalMove(std::vector<int> square) {
         return false;
     }
 }
+
 bool Pawn::canEnPassant(std::vector<int> square) {
     ChessPiece* enemyPiece = pieceBoard->getPieceAt({square.at(0), square.at(1) - 1});
     if ((location.at(1) != 4 && square.at(1) != 5 && color == White) || (location.at(1) != 3 && square.at(1) != 2 && color == Black)) {
@@ -51,7 +57,7 @@ bool Pawn::canEnPassant(std::vector<int> square) {
     } else if (enemyPiece->hasDoubleMoved()) {
         pieceBoard->setNextMoveEnPassant(true);
         return true; // Can en passant
-    } else {
-        return false;
     }
+
+    return false;
 }

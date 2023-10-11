@@ -32,12 +32,12 @@ bool Bishop::isLegalMove(std::vector<int> square) {
                 return false; // Pieces in the way of path
             }
         }
-        if (pieceBoard->getPieceAt(square)->getColor() != color) {
+        if (pieceBoard->getPieceAt(square) && pieceBoard->getPieceAt(square)->getColor() != color) {
             return true;
         } else {
             return false; // Moving to same colored piece
         }
-    } else {
-        return false;
     }
+
+    return false;
 }

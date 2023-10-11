@@ -9,6 +9,8 @@
 
 class ChessPiece {
     public:
+        ChessPiece();
+
         void move(std::vector<int> square);
         virtual bool isLegalMove(std::vector<int> square) = 0;
 

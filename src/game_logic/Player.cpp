@@ -5,9 +5,18 @@ Player::Player(Color color, ChessBoard* board, UserInterface* interface) {
     playerInterface = interface;
 }
 void Player::makeMove() {
-    ChessPiece* currentMovePiece = playerInterface->getMoveChessPiece(this, playerBoard);
-    std::vector<int> currentMoveSquare = playerInterface->getMoveSquare(playerBoard);
-    while (true) {
+    ChessPiece* currentMovePiece {};
+    std::vector<int> currentMoveSquare {};
+
+    do {
+        currentMovePiece = playerInterface->getMoveChessPiece(this, playerBoard);
+        if(currentMovePiece == nullptr){
+            std::cout << "Invalid piece selected.\n";
+            continue; // try again
+        }
+
+        currentMoveSquare = playerInterface->getMoveSquare(playerBoard);
+
         if (!currentMovePiece->isLegalMove(currentMoveSquare)) { //Determines if chosen piece can move to chosen sqaure
             ErrorLogger::relayError(MOVE01, playerInterface);
         } else if (!playerBoard->kingIsProtected(currentMovePiece, currentMoveSquare)) { //Determines if move will put the player's own king into check.
@@ -15,8 +24,8 @@ void Player::makeMove() {
         } else {
             break;
         }
-        currentMovePiece = playerInterface->getMoveChessPiece(this, playerBoard);
-        currentMoveSquare = playerInterface->getMoveSquare(playerBoard);
-    }
-    currentMovePiece->move(currentMoveSquare);
+
+    } while(true);
+
+    playerBoard->setPieceAt(currentMoveSquare, currentMovePiece);
 }

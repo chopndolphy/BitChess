@@ -2,13 +2,8 @@
 #include <vector>
 #include <array>
 
-#include "ChessPiece.h"
-#include "Bishop.h"
-#include "King.h"
-#include "Knight.h"
-#include "Pawn.h"
-#include "Queen.h"
-#include "Rook.h"
+#include "forward.h"
+
 #include "Enums.h"
 
 class ChessBoard {
@@ -31,6 +26,7 @@ class ChessBoard {
         GameState checkGameState(Color colorTurn);
         bool canCastle(ChessPiece* piece, std::vector<int> sqaure);
         bool kingIsProtected(ChessPiece* piece, std::vector<int> square);
+        void printBoard() const;
     private:
         std::array<std::array<ChessPiece*, 8>, 8> boardSpaces = {};
         bool nextMoveEnPassant;

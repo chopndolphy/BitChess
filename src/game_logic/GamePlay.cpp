@@ -10,17 +10,23 @@ GamePlay::GamePlay(Player* white, Player* black, ChessBoard* board, UserInterfac
     colorTurn = White;
     gameOver = false;
 }
+
 void GamePlay::takeTurn() {
-    if (colorTurn = White) {
-        whitePlayer->makeMove();
-        colorTurn = Black;
-    } else {
-        blackPlayer->makeMove();
-        colorTurn = White;
+    switch(colorTurn){
+        case White:
+            whitePlayer->makeMove();
+            colorTurn = Black;
+        break;
+        case Black:
+            blackPlayer->makeMove();
+            colorTurn = White;
+        break;
     }
+
     updateView();
     updateGameState();
 }
+
 void GamePlay::updateGameState() {
     switch (chessBoard->checkGameState(colorTurn)) {
         case Continue:
@@ -41,6 +47,7 @@ void GamePlay::updateGameState() {
             ErrorLogger::relayError(GAME01, userInterface);
     }
 }
-void GamePlay::updateView() {
 
+void GamePlay::updateView() {
+    chessBoard->printBoard();
 }
