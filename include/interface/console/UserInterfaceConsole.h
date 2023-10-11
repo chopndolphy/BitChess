@@ -1,4 +1,6 @@
 #pragma once
+#include "forward.h"
+#include "Enums.h"
 #include "UserInterface.h"
 
 class UserInterfaceConsole : public UserInterface {

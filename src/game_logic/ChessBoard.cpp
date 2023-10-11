@@ -1,4 +1,6 @@
+#include "forward.h"
 #include "ChessBoard.h"
+
 ChessBoard::ChessBoard() {
     for (int i = 0; i < 8; i++) {
         boardSpaces.at(1).at(i) = new Pawn({i, 1}, White, this);

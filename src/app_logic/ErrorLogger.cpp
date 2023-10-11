@@ -1,4 +1,5 @@
 #include "ErrorLogger.h"
+
 void ErrorLogger::relayError(ErrorCode code, UserInterface* interface) {
     switch (code) {
     case MOVE01:

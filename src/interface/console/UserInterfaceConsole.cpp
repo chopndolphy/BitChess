@@ -1,4 +1,6 @@
 #include "UserInterfaceConsole.h"
+#include "Player.h"
+
 ChessPiece* UserInterfaceConsole::getMoveChessPiece(const Player* player, ChessBoard* board) {
     Color playerColor = player->getColor();
     int column;
@@ -14,6 +16,7 @@ ChessPiece* UserInterfaceConsole::getMoveChessPiece(const Player* player, ChessB
     startSquare.push_back(row);
     return board->getPieceAt(startSquare);
 }
+
 std::vector<int> UserInterfaceConsole::getMoveSquare(ChessBoard* board) {
     int column;
     int row;
@@ -24,9 +27,11 @@ std::vector<int> UserInterfaceConsole::getMoveSquare(ChessBoard* board) {
     endSquare.push_back(row);
     return endSquare;
 }
+
 void UserInterfaceConsole::displayError(std::string message) {
     std::cout << message << std::endl;
 }
+
 void UserInterfaceConsole::displayGameOver(GameState gameState) {
     switch (gameState) {
         case WhiteWins:

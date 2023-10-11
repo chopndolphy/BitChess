@@ -8,8 +8,8 @@ class GamePlay {
     public:
         GamePlay(Player* white, Player* black, ChessBoard* board, UserInterface* interface);
         void takeTurn();
-        const bool isGameOver() const {
-            return isGameOver;
+        bool isGameOver() const {
+            return gameOver;
         }
 
     private:

@@ -1,4 +1,6 @@
+#include "forward.h"
 #include "GamePlay.h"
+
 GamePlay::GamePlay(Player* white, Player* black, ChessBoard* board, UserInterface* interface) {
     whitePlayer = white;
     blackPlayer = black;

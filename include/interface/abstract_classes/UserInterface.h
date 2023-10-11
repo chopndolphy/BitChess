@@ -2,9 +2,9 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "ChessPiece.h"
-#include "Player.h"
-#include "ChessBoard.h"
+
+#include "forward.h"
+#include "Enums.h"
 
 class UserInterface {
     public:

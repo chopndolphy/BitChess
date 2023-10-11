@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+
 #include "Enums.h"
 #include "ChessPiece.h"
 #include "UserInterface.h"

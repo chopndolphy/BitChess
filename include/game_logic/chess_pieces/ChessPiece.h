@@ -1,18 +1,17 @@
 #pragma once
 #include <vector>
 #include <cstdlib>
+
+#include "forward.h"
+
 #include "Enums.h"
-#include "ChessBoard.h"
 #include "ErrorLogger.h"
 
 class ChessPiece {
     public:
-        void move(std::vector<int> square) {
-            pieceBoard->setPieceAt(square, this);
-            location = square;
-            movedYet = true;
-        }
+        void move(std::vector<int> square);
         virtual bool isLegalMove(std::vector<int> square) = 0;
+
         const Color getColor() const {
             return color;
         }
@@ -22,6 +21,7 @@ class ChessPiece {
         const bool hasDoubleMoved() const {
             return doubleMoved;
         }
+
     protected:
         std::vector<int> location;
         Color color;

@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <array>
+
 #include "ChessPiece.h"
 #include "Bishop.h"
 #include "King.h"

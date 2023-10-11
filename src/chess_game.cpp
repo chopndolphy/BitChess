@@ -1,3 +1,5 @@
+#include "forward.h"
+
 #include "GamePlay.h"
 #include "Player.h"
 #include "UserInterfaceConsole.h"
