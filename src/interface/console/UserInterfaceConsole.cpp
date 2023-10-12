@@ -5,8 +5,8 @@ ChessPiece* UserInterfaceConsole::getMoveChessPiece(const Player* player, ChessB
     Color playerColor = player->getColor();
     int column;
     int row;
-    std::vector<int> startSquare;
-    if (playerColor = White) {
+    Location startSquare;
+    if (playerColor == White) {
         std::cout << "White's turn. On which square is the piece you are moving? ";
     } else {
         std::cout << "Black's turn. On which square is the piece you are moving? ";
@@ -17,10 +17,10 @@ ChessPiece* UserInterfaceConsole::getMoveChessPiece(const Player* player, ChessB
     return board->getPieceAt(startSquare);
 }
 
-std::vector<int> UserInterfaceConsole::getMoveSquare(ChessBoard* board) {
+Location UserInterfaceConsole::getMoveSquare(ChessBoard* board) {
     int column;
     int row;
-    std::vector<int> endSquare;
+    Location endSquare;
     std::cout << "And where is it moving to? ";
     std::cin >> column >> row;
     endSquare.push_back(column);

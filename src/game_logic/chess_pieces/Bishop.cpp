@@ -1,14 +1,15 @@
 #include "Bishop.h"
 #include "ChessBoard.h"
 
-Bishop::Bishop(std::vector<int> square, Color pieceColor, ChessBoard* board) {
-    location = square;
+Bishop::Bishop(Location square, Color pieceColor, ChessBoard* board) {
     color = pieceColor;
     pieceBoard = board;
     movedYet = false;
 }
 
-bool Bishop::isLegalMove(std::vector<int> square) {
+bool Bishop::isLegalMove(Location square) {
+    Location location = getLocation();
+
     int pathLength = std::abs(square.at(0) - location.at(0));
     if (square == location) {
         return false; // Moving to same square

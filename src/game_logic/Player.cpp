@@ -6,7 +6,7 @@ Player::Player(Color color, ChessBoard* board, UserInterface* interface) {
 }
 void Player::makeMove() {
     ChessPiece* currentMovePiece {};
-    std::vector<int> currentMoveSquare {};
+    Location currentMoveSquare {};
 
     do {
         currentMovePiece = playerInterface->getMoveChessPiece(this, playerBoard);

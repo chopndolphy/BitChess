@@ -4,8 +4,11 @@
 
 ChessPiece::ChessPiece(): movedYet(false), doubleMoved(false) {}
 
-void ChessPiece::move(std::vector<int> square) {
+void ChessPiece::move(Location square) {
     pieceBoard->setPieceAt(square, this);
-    location = square;
     movedYet = true;
+}
+
+Location ChessPiece::getLocation() const {
+    return pieceBoard->getLocation(this);
 }

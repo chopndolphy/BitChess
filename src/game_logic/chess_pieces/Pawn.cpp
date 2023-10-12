@@ -1,16 +1,16 @@
 #include "Pawn.h"
 #include "ChessBoard.h"
 
-Pawn::Pawn(std::vector<int> square, Color pieceColor, ChessBoard* board) {
-    location = square;
+Pawn::Pawn(Location square, Color pieceColor, ChessBoard* board) {
     color = pieceColor;
     pieceBoard = board;
     movedYet = false;
     doubleMoved = false;
 }
 
-bool Pawn::isLegalMove(std::vector<int> square) {
+bool Pawn::isLegalMove(Location square) {
     /* pawn logic still doesn't work and needs rework */
+    Location location = getLocation();
 
     int xdelta = square.at(0) - location.at(0);
     int ydelta = square.at(1) - location.at(1);
@@ -44,7 +44,9 @@ bool Pawn::isLegalMove(std::vector<int> square) {
     }
 }
 
-bool Pawn::canEnPassant(std::vector<int> square) {
+bool Pawn::canEnPassant(Location square) {
+    Location location = getLocation();
+
     ChessPiece* enemyPiece = pieceBoard->getPieceAt({square.at(0), square.at(1) - 1});
     if ((location.at(1) != 4 && square.at(1) != 5 && color == White) || (location.at(1) != 3 && square.at(1) != 2 && color == Black)) {
         return false; // Not on proper ranks

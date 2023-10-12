@@ -3,6 +3,7 @@
 #include <array>
 
 #include "forward.h"
+#include "alias.h"
 
 #include "Enums.h"
 
@@ -10,10 +11,10 @@ class ChessBoard {
     public:
         ChessBoard();
         ~ChessBoard();
-        ChessPiece* getPieceAt(std::vector<int> square) {
+        ChessPiece* getPieceAt(Location square) {
             return boardSpaces.at(square.at(1)).at(square.at(0));
         }
-        void setPieceAt(std::vector<int> endSquare, ChessPiece* piece);
+        void setPieceAt(Location endSquare, ChessPiece* piece);
         void setNextMoveEnPassant(bool isEnPassant) {
             nextMoveEnPassant = isEnPassant;
         }
@@ -24,9 +25,10 @@ class ChessBoard {
             nextMovePromoting = isPromoting;
         }
         GameState checkGameState(Color colorTurn);
-        bool canCastle(ChessPiece* piece, std::vector<int> sqaure);
-        bool kingIsProtected(ChessPiece* piece, std::vector<int> square);
+        bool canCastle(ChessPiece* piece, Location sqaure);
+        bool kingIsProtected(ChessPiece* piece, Location square);
         void printBoard() const;
+        Location getLocation(const ChessPiece* piece) const;
     private:
         std::array<std::array<ChessPiece*, 8>, 8> boardSpaces = {};
         bool nextMoveEnPassant;

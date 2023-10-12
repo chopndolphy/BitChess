@@ -50,7 +50,7 @@ ChessBoard::~ChessBoard() {
     }
 }
 
-void ChessBoard::setPieceAt(std::vector<int> endSquare, ChessPiece* piece) {
+void ChessBoard::setPieceAt(Location endSquare, ChessPiece* piece) {
     /*
         Needs Rework:
 
@@ -96,12 +96,26 @@ GameState ChessBoard::checkGameState(Color colorTurn) {
     return Continue; // temporary
 }
 
-bool ChessBoard::canCastle(ChessPiece* piece, std::vector<int> square) {
+bool ChessBoard::canCastle(ChessPiece* piece, Location square) {
     return true; // temporary
 }
 
-bool ChessBoard::kingIsProtected(ChessPiece* piece, std::vector<int> square) {
+bool ChessBoard::kingIsProtected(ChessPiece* piece, Location square) {
     return true; // temporary
+}
+
+Location ChessBoard::getLocation(const ChessPiece* piece) const {
+    for(int y = 0; y < boardSpaces.size(); ++y){
+        auto& row = boardSpaces.at(y);
+        for(int x = 0; x < row.size(); ++x){
+            auto& column = row.at(x);
+            if(column == piece){
+                return Location {x, y};
+            }
+        }
+    }
+
+    return Location {-1, -1};
 }
 
 void ChessBoard::printBoard() const {

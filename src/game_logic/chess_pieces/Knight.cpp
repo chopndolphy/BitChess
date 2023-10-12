@@ -1,14 +1,15 @@
 #include "Knight.h"
 #include "ChessBoard.h"
 
-Knight::Knight(std::vector<int> square, Color pieceColor, ChessBoard* board) {
-    location = square;
+Knight::Knight(Location square, Color pieceColor, ChessBoard* board) {
     color = pieceColor;
     pieceBoard = board;
     movedYet = false;
 }
 
-bool Knight::isLegalMove(std::vector<int> square) {
+bool Knight::isLegalMove(Location square) {
+    Location location = getLocation();
+
     int pathLengthX = std::abs(square.at(0) - location.at(0));
     int pathLengthY = std::abs(square.at(1) - location.at(1));
     if (square == location) {

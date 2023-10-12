@@ -1,14 +1,15 @@
 #include "Rook.h"
 #include "ChessBoard.h"
 
-Rook::Rook(std::vector<int> square, Color pieceColor, ChessBoard* board) {
-    location = square;
+Rook::Rook(Location square, Color pieceColor, ChessBoard* board) {
     color = pieceColor;
     pieceBoard = board;
     movedYet = false;
 }
 
-bool Rook::isLegalMove(std::vector<int> square) {
+bool Rook::isLegalMove(Location square) {
+    Location location = getLocation();
+
     std::cout << "this piece hasn't been implemented yet\n";
     return false; // temporary
 }
