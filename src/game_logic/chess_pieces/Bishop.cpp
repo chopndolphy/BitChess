@@ -10,24 +10,24 @@ Bishop::Bishop(Location square, Color pieceColor, ChessBoard* board) {
 bool Bishop::isLegalMove(Location square) {
     Location location = getLocation();
 
-    int pathLength = std::abs(square.at(0) - location.at(0));
+    int pathLength = std::abs(square.x - location.x);
     if (square == location) {
         return false; // Moving to same square
-    } else if (pathLength != std::abs(square.at(1) - location.at(1))) {
+    } else if (pathLength != std::abs(square.y - location.y)) {
         return false; // Not moving diagonally
-    } else if (square.at(0) < 8 || square.at(0) > -1 || square.at(1) < 8 || square.at(1) > -1) {
+    } else if (square.x < 8 || square.x > -1 || square.y < 8 || square.y > -1) {
         // Moving within bounds
         for (int i = 1; i < pathLength; i++) {
             int x, y;
-            if (square.at(0) - location.at(0) > 0) {
-                int x = location.at(0) + i;
+            if (square.x - location.x > 0) {
+                int x = location.x + i;
             } else {
-                int x = location.at(0) - i;
+                int x = location.x - i;
             }
-            if (square.at(1) - location.at(1) > 0) {
-                int y = location.at(1) + i;
+            if (square.y - location.y > 0) {
+                int y = location.y + i;
             } else {
-                int y = location.at(1) - i;
+                int y = location.y - i;
             }
             if (pieceBoard->getPieceAt({x, y}) != nullptr) {
                 return false; // Pieces in the way of path

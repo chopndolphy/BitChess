@@ -38,58 +38,55 @@ ChessBoard::ChessBoard(): nextMoveCastle(false), nextMoveEnPassant(false), nextM
             case 'K': piece = new King({x, y}, col, this); break; // King
         }
 
-        boardSpaces.at(y).at(x) = piece;
+        rawBoard.at(y * boardWidth + x) = piece;
     }
 }
 
 ChessBoard::~ChessBoard() {
-    for (auto row : boardSpaces) {
-        for (auto square : row) {
-            delete square;
-        }
+    for (auto piece : rawBoard) {
+        delete piece;
     }
 }
 
-void ChessBoard::setPieceAt(Location endSquare, ChessPiece* piece) {
-    /*
-        Needs Rework:
 
-        Having multiple stores of location data can cause serious bugs;
-            makes it really difficult to focus on the *real* position of the piece.
-        Try removing the location data from the pieces, and instead you can use a lookup if that position data is important.
-            (iterating an 8x8 grid is absolutely nothing to the CPU)
-    */
-    if (nextMoveCastle) {
-        nextMoveCastle = false;
-        // castle logic
-    } else if (nextMoveEnPassant) {
-        nextMoveEnPassant = false;
-        if (piece->getColor() == White) {
-            // removes attacked piece
-            ChessPiece*& piece = boardSpaces.at(endSquare.at(1) - 1).at(endSquare.at(0));
-            delete piece;
-            piece = nullptr;
-        } else if (piece->getColor() == Black) {
-            // removes attacked piece
-            delete boardSpaces.at(endSquare.at(1) + 1).at(endSquare.at(0)); 
-            boardSpaces.at(endSquare.at(1) + 1).at(endSquare.at(0)) = nullptr;
-        }
-        // moves piece
-        boardSpaces.at(piece->getLocation().at(1)).at(piece->getLocation().at(0)) = nullptr;
-        boardSpaces.at(endSquare.at(1)).at(endSquare.at(0)) = piece;
-    } else {
-        if (boardSpaces.at(endSquare.at(1)).at(endSquare.at(0)) != nullptr) {
-            // removes attack piece
-            delete boardSpaces.at(endSquare.at(1)).at(endSquare.at(0));
-        }
-        // moves piece
-        boardSpaces.at(piece->getLocation().at(1)).at(piece->getLocation().at(0)) = nullptr;
-        boardSpaces.at(endSquare.at(1)).at(endSquare.at(0)) = piece;
-        if (nextMovePromoting) {
-            nextMovePromoting = false;
-            // promotion logic
-        }
+ChessPiece* ChessBoard::getPieceAt(Location square) {
+    if( square.x < 0 || square.y < 0 ||
+        square.x >= boardWidth || square.y >= boardHeight) {
+            return nullptr;
     }
+
+    return rawBoard.at(boardWidth * square.y + square.x);
+}
+
+void ChessBoard::setPieceAt(Location to, ChessPiece* piece) {
+    if(piece == nullptr){
+        return;
+    }
+
+    if( to.x < 0 || to.y < 0 ||
+        to.x >= boardWidth || to.y >= boardHeight) {
+            return;
+    }
+
+    Location from = piece->getLocation();
+
+    auto& fromBlock = rawBoard.at(boardWidth * from.y + from.x);
+    auto& toBlock = rawBoard.at(boardWidth * to.y + to.x);
+
+    // moves piece
+    toBlock = std::move(fromBlock);
+    fromBlock = nullptr;
+}
+
+void ChessBoard::removePieceAt(Location square) {
+    if( square.x < 0 || square.y < 0 ||
+        square.x >= boardWidth || square.y >= boardHeight) {
+            return;
+    }
+
+    auto& block = rawBoard.at(boardWidth * square.y + square.x);
+    delete block;
+    block = nullptr;
 }
 
 GameState ChessBoard::checkGameState(Color colorTurn) {
@@ -104,28 +101,73 @@ bool ChessBoard::kingIsProtected(ChessPiece* piece, Location square) {
     return true; // temporary
 }
 
-Location ChessBoard::getLocation(const ChessPiece* piece) const {
-    for(int y = 0; y < boardSpaces.size(); ++y){
-        auto& row = boardSpaces.at(y);
-        for(int x = 0; x < row.size(); ++x){
-            auto& column = row.at(x);
-            if(column == piece){
-                return Location {x, y};
-            }
+void ChessBoard::cleanState(Color color) {
+    for(ChessPiece* piece : rawBoard){
+        if(piece != nullptr && piece->getColor() == color) {
+            piece->cleanState();
         }
     }
+}
 
-    return Location {-1, -1};
+Location ChessBoard::getLocation(const ChessPiece* piece) const {    
+    int i=0;
+    for(const auto p : rawBoard){
+        if(p == piece){
+            return Location(i % boardWidth, i / boardWidth);
+        }
+        ++i;
+    }
+
+    return Location {-1, -1}; // piece not on board
+}
+
+ChessPiece* ChessBoard::collisionLine(Location start, Location end, bool endInclusive) {
+    ChessPiece *found = nullptr, *first = nullptr;
+
+    // check valid destination
+    if( start == end ||
+        end.x < 0 || end.y < 0 ||
+        end.x >= boardWidth || end.y >= boardHeight) {
+        return nullptr;
+    }
+
+    int xdelta = std::abs(start.x - end.x);
+    int ydelta = std::abs(start.y - end.y);
+
+    Location vec (
+        xdelta == 0 ? 0 : start.x < end.x ? 1 : -1, // 0, 1 or -1
+        ydelta == 0 ? 0 : start.y < end.y ? 1 : -1  // 0, 1 or -1
+    ); // search vector
+
+    if( xdelta > 0 && ydelta > 0 && xdelta != ydelta) {
+        return nullptr; // line must be either perfect diagonal or perfect orthogonal
+    }
+    first = getPieceAt(start);
+    for(Location pos = start; (pos != end || endInclusive) && !found; pos += vec ) {
+
+        if(pos != start){
+            found = getPieceAt(pos);
+        }
+
+        if(pos == end) break;
+    }
+
+    return found != nullptr ? found : first;
 }
 
 void ChessBoard::printBoard() const {
     std::cout << "Board:\n";
-    for(const auto& row : boardSpaces){
-        for(const auto& col : row){            
-            std::cout <<
-                    ( col == nullptr ? " " : (
-                      col->getColor() == Black ? "B" : "W"
-                    ));
+    for(int y = 0; y < boardHeight; ++y){
+        for(int x = 0; x < boardWidth; ++x){
+            const ChessPiece* piece = rawBoard.at(y * boardWidth + x);
+
+            if(piece == nullptr){
+                std::cout << " ";
+            } else {
+                char c = piece->getCharacter() /* to lower case for black -> */ + '\x20' * char(piece->getColor() == Black);
+
+                std::cout << c;
+            }
         }
         std::cout << "\n";
     }

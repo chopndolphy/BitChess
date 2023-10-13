@@ -8,9 +8,11 @@ void Player::makeMove() {
     ChessPiece* currentMovePiece {};
     Location currentMoveSquare {};
 
+    playerBoard->cleanState(playerColor);
+
     do {
         currentMovePiece = playerInterface->getMoveChessPiece(this, playerBoard);
-        if(currentMovePiece == nullptr){
+        if(currentMovePiece == nullptr || currentMovePiece->getColor() != playerColor){
             std::cout << "Invalid piece selected.\n";
             continue; // try again
         }

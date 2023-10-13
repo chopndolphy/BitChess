@@ -3,29 +3,25 @@
 
 ChessPiece* UserInterfaceConsole::getMoveChessPiece(const Player* player, ChessBoard* board) {
     Color playerColor = player->getColor();
-    int column;
-    int row;
-    Location startSquare;
+    int x, y;
     if (playerColor == White) {
         std::cout << "White's turn. On which square is the piece you are moving? ";
     } else {
         std::cout << "Black's turn. On which square is the piece you are moving? ";
     }
-    std::cin >> column >> row;
-    startSquare.push_back(column);
-    startSquare.push_back(row);
-    return board->getPieceAt(startSquare);
+
+    std::cin >> x >> y;
+
+    return board->getPieceAt(Location(x,y));
 }
 
 Location UserInterfaceConsole::getMoveSquare(ChessBoard* board) {
-    int column;
-    int row;
-    Location endSquare;
+    int x, y;
+
     std::cout << "And where is it moving to? ";
-    std::cin >> column >> row;
-    endSquare.push_back(column);
-    endSquare.push_back(row);
-    return endSquare;
+    std::cin >> x >> y;
+
+    return Location(x,y);
 }
 
 void UserInterfaceConsole::displayError(std::string message) {

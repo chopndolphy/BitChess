@@ -14,6 +14,7 @@ class ChessPiece {
 
         void move(Location square);
         virtual bool isLegalMove(Location square) = 0;
+        virtual char getCharacter() const = 0;
 
         Color getColor() const {
             return color;
@@ -24,9 +25,13 @@ class ChessPiece {
         }
 
         Location getLocation() const;
+
+        void cleanState();
+
     protected:
         Color color;
         bool movedYet;
+        bool lastMoved;
         bool doubleMoved = false;
         ChessBoard* pieceBoard;
 };

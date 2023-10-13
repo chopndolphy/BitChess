@@ -5,5 +5,6 @@ class Knight : public ChessPiece {
     public:
         Knight(Location square, Color pieceColor, ChessBoard* board);
         bool isLegalMove(Location square);
+        char getCharacter() const  { return 'N'; }
     private:
 };
