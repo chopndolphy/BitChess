@@ -1,7 +1,12 @@
-# list of sources in *this* directory
-CCSRC = a.cc b.cc etc 
-OBJS := $(addsuffix .o,  $(CCSRC))
-VPATH = $(OBJDIR)
- .SUFFIXES: .cc .o
- .cc.o:
-    $(CXX) $(CFLAGS) $< -o $(OBJDIR)/$@
+SRC_FILES = ErrorLogger.cpp
+DIR_NAME = app_logic
+
+BUILD := $(addprefix ../, $(BUILD))
+IDIR  := $(addprefix ../, $(IDIR))
+OBJ_FILES = $(SRC_FILES:%.cpp=$(BUILD)/%.o)
+override CXXFLAGS += $(IDIR:%=-I%)
+
+all: $(OBJ_FILES) 
+
+$(BUILD)/%.o: %.cpp $(IDIR)/$(DIR_NAME)/%.h | $(BUILD) 
+	$(CXX) $(CXXFLAGS) -c $< -o $@    

@@ -1,11 +1,38 @@
-include $(PROJ_HOME)/top.mk
+# compiler and flags
+export CXX=g++
+export CXXFLAGS = -std=c++17 -O2 -Wall -Wextra -pedantic
 
-# this allows sub-makes to find out if they have been invoked from this
-# top-level make, or from a local make (from emacs in a source file directory,
-# for example).
-CALLED_FROM_TOP = true
-export CALLED_FROM_TOP
-    
-all :
-        cd dir1/src;          $(MAKE)
-        cd dir2/rtv;          $(MAKE) debug=$(debug) etc
+BIN=bin
+BASEBUILD=build
+BASEIDIR=include
+export IDIR=../$(BASEIDIR)
+export BUILD=../$(BASEBUILD)
+export SRC=src
+
+# := is needed to avoid a recursive expansion
+#https://stackoverflow.com/questions/1605623/how-can-i-affect-path-in-a-makefile-variable-why-is-my-example-not-working
+libraries := app_logic game_logic interface
+libraries := $(addprefix src/, $(libraries))
+
+target = $(BIN)/chess_game
+
+all: $(target)
+
+$(target): $(libraries) | $(BASEBUILD)
+	@echo "Compiling $(target)"
+	$(CXX) $(CXXFLAGS) $(BASEIDIR:%=-I%) -o $(target) $(SRC)/chess_game.cpp $(BASEBUILD)/*.o 
+
+$(libraries): | $(BASEBUILD) 
+	$(MAKE) -C $@
+
+clean:
+	rm -rf $(BASEBUILD)
+
+test: $(target)
+	@echo "Running test"
+	@./$(target) 	
+
+.PHONY: all clean test $(libraries)
+
+$(BASEBUILD):
+	mkdir -p $(BASEBUILD)
