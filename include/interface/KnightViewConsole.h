@@ -1,5 +1,5 @@
 #pragma once
-#include "KnightView.h"
+#include "interface/KnightView.h"
 
 class KnightViewConsole : public KnightView {
 

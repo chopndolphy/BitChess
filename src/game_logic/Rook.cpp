@@ -1,4 +1,5 @@
-#include "Rook.h"
+#include "game_logic/Rook.h"
+
 Rook::Rook(std::vector<int> square, Color pieceColor, ChessBoard* board) {
     location = square;
     color = pieceColor;

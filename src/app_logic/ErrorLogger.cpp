@@ -1,4 +1,6 @@
-#include "ErrorLogger.h"
+#include "app_logic/ErrorLogger.h"
+#include "interface/UserInterface.h"
+
 void ErrorLogger::relayError(ErrorCode code, UserInterface* interface) {
     switch (code) {
     case MOVE01:

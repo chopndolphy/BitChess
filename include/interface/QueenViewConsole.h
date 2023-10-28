@@ -1,5 +1,5 @@
 #pragma once
-#include "QueenView.h"
+#include "interface/QueenView.h"
 
 class QueenViewConsole : public QueenView {
 

@@ -1,6 +1,5 @@
 #pragma once
-#include "ChessPiece.h"
-
+#include "game_logic/ChessPiece.h"
 class Bishop : public ChessPiece {
     public:
         Bishop(std::vector<int> square, Color pieceColor, ChessBoard* board);

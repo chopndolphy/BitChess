@@ -1,5 +1,5 @@
 #pragma once
-#include "KingView.h"
+#include "interface/KingView.h"
 
 class KingViewConsole : public KingView {
 

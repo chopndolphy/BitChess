@@ -1,5 +1,5 @@
 #pragma once
-#include "ChessPieceView.h"
+#include "interface/ChessPieceView.h"
 
 class QueenView : public ChessPieceView {
 

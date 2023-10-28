@@ -1,4 +1,5 @@
-#include "King.h"
+#include "game_logic/King.h"
+
 King::King(std::vector<int> square, Color pieceColor, ChessBoard* board) {
     location = square;
     color = pieceColor;

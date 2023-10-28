@@ -1,5 +1,5 @@
 #pragma once
-#include "ChessPiece.h"
+#include "game_logic/ChessPiece.h"
 
 class Knight : public ChessPiece {
     public:

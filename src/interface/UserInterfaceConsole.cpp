@@ -1,10 +1,14 @@
-#include "UserInterfaceConsole.h"
+#include "interface/UserInterfaceConsole.h"
+#include "game_logic/ChessPiece.h"
+#include "game_logic/Player.h"
+#include "game_logic/ChessBoard.h"
+
 ChessPiece* UserInterfaceConsole::getMoveChessPiece(const Player* player, ChessBoard* board) {
     Color playerColor = player->getColor();
     int column;
     int row;
     std::vector<int> startSquare;
-    if (playerColor = White) {
+    if (playerColor == White) {
         std::cout << "White's turn. On which square is the piece you are moving? ";
     } else {
         std::cout << "Black's turn. On which square is the piece you are moving? ";

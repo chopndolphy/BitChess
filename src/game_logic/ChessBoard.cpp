@@ -1,4 +1,12 @@
-#include "ChessBoard.h"
+#include "game_logic/ChessBoard.h"
+#include "game_logic/ChessPiece.h"
+#include "game_logic/Bishop.h"
+#include "game_logic/King.h"
+#include "game_logic/Knight.h"
+#include "game_logic/Pawn.h"
+#include "game_logic/Queen.h"
+#include "game_logic/Rook.h"
+
 ChessBoard::ChessBoard() {
     for (int i = 0; i < 8; i++) {
         boardSpaces.at(1).at(i) = new Pawn({i, 1}, White, this);

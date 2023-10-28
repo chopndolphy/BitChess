@@ -1,1 +1,1 @@
-#include "KnightViewConsole.h"
+#include "interface/KnightViewConsole.h"

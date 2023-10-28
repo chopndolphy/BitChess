@@ -1,5 +1,5 @@
 #pragma once
-#include "UserInterface.h"
+#include "interface/UserInterface.h"
 
 class UserInterfaceConsole : public UserInterface {
     public:

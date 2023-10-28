@@ -1,4 +1,5 @@
-#include "Queen.h"
+#include "game_logic/Queen.h"
+
 Queen::Queen(std::vector<int> square, Color pieceColor, ChessBoard* board) {
     location = square;
     color = pieceColor;

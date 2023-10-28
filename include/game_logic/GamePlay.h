@@ -1,15 +1,15 @@
 #pragma once
-#include "ChessBoard.h"
-#include "Player.h"
-#include "Enums.h"
-#include "UserInterface.h"
+#include "app_logic/Enums.h"
 
+class UserInterface;
+class Player;
+class ChessBoard;
 class GamePlay {
     public:
         GamePlay(Player* white, Player* black, ChessBoard* board, UserInterface* interface);
         void takeTurn();
-        const bool isGameOver() const {
-            return isGameOver;
+        bool isGameOver() const {
+            return gameOver;
         }
 
     private:

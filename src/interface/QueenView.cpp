@@ -1,1 +1,1 @@
-#include "QueenView.h"
+#include "interface/QueenView.h"

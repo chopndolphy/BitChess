@@ -1,4 +1,8 @@
-#include "GamePlay.h"
+#include "game_logic/GamePlay.h"
+#include "interface/UserInterface.h"
+#include "game_logic/ChessBoard.h"
+#include "game_logic/Player.h"
+
 GamePlay::GamePlay(Player* white, Player* black, ChessBoard* board, UserInterface* interface) {
     whitePlayer = white;
     blackPlayer = black;
@@ -9,7 +13,7 @@ GamePlay::GamePlay(Player* white, Player* black, ChessBoard* board, UserInterfac
     gameOver = false;
 }
 void GamePlay::takeTurn() {
-    if (colorTurn = White) {
+    if (colorTurn == White) {
         whitePlayer->makeMove();
         colorTurn = Black;
     } else {

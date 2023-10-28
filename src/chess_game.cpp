@@ -1,8 +1,8 @@
-#include "GamePlay.h"
-#include "Player.h"
-#include "UserInterfaceConsole.h"
-#include "ChessBoard.h"
-#include "Enums.h"
+#include "game_logic/GamePlay.h"
+#include "game_logic/Player.h"
+#include "interface/UserInterfaceConsole.h"
+#include "game_logic/ChessBoard.h"
+#include "app_logic/Enums.h"
 
 int main() {
     ViewType viewType = Console;

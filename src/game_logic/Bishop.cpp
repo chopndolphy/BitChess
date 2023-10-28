@@ -1,4 +1,6 @@
-#include "Bishop.h"
+#include "game_logic/Bishop.h"
+
+
 Bishop::Bishop(std::vector<int> square, Color pieceColor, ChessBoard* board) {
     location = square;
     color = pieceColor;

@@ -1,5 +1,5 @@
 #pragma once
-#include "BishopView.h"
+#include "interface/BishopView.h"
 
 class BishopViewConsole : public BishopView {
 

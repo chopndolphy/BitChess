@@ -1,4 +1,8 @@
-#include "Player.h"
+#include "game_logic/Player.h"
+#include "game_logic/ChessPiece.h"
+#include "interface/UserInterface.h"
+#include "game_logic/ChessBoard.h"
+
 Player::Player(Color color, ChessBoard* board, UserInterface* interface) {
     playerColor = color;
     playerBoard = board;

@@ -1,4 +1,5 @@
-#include "Knight.h"
+#include "game_logic/Knight.h"
+
 Knight::Knight(std::vector<int> square, Color pieceColor, ChessBoard* board) {
     location = square;
     color = pieceColor;

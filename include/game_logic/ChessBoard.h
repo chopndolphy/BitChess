@@ -1,15 +1,9 @@
 #pragma once
 #include <vector>
 #include <array>
-#include "ChessPiece.h"
-#include "Bishop.h"
-#include "King.h"
-#include "Knight.h"
-#include "Pawn.h"
-#include "Queen.h"
-#include "Rook.h"
-#include "Enums.h"
+#include "app_logic/Enums.h"
 
+class ChessPiece;
 class ChessBoard {
     public:
         ChessBoard();

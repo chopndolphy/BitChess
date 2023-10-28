@@ -1,1 +1,1 @@
-#include "BishopView.h"
+#include "interface/BishopView.h"

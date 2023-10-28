@@ -1,9 +1,9 @@
 #pragma once
 #include <vector>
 #include <cstdlib>
-#include "Enums.h"
-#include "ChessBoard.h"
-#include "ErrorLogger.h"
+#include "app_logic/Enums.h"
+#include "app_logic/ErrorLogger.h"
+#include "game_logic/ChessBoard.h"
 
 class ChessPiece {
     public:
@@ -13,13 +13,13 @@ class ChessPiece {
             movedYet = true;
         }
         virtual bool isLegalMove(std::vector<int> square) = 0;
-        const Color getColor() const {
+        Color getColor() const {
             return color;
         }
         const std::vector<int> getLocation() const {
             return location;
         }
-        const bool hasDoubleMoved() const {
+        bool hasDoubleMoved() const {
             return doubleMoved;
         }
     protected:

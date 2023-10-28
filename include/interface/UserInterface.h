@@ -2,9 +2,11 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "ChessPiece.h"
-#include "Player.h"
-#include "ChessBoard.h"
+#include "app_logic/Enums.h"
+
+class ChessBoard;
+class ChessPiece;
+class Player;
 
 class UserInterface {
     public:

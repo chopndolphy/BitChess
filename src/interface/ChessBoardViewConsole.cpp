@@ -1,1 +1,1 @@
-#include "ChessBoardViewConsole.h"
+#include "interface/ChessBoardViewConsole.h"
