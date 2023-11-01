@@ -44,5 +44,5 @@ void GamePlay::updateGameState() {
     }
 }
 void GamePlay::updateView() {
-
+    
 }

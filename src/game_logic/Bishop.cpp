@@ -6,6 +6,7 @@ Bishop::Bishop(std::vector<int> square, Color pieceColor, ChessBoard* board) {
     color = pieceColor;
     pieceBoard = board;
     movedYet = false;
+    createView(color, BishopType);
 }
 bool Bishop::isLegalMove(std::vector<int> square) {
     int pathLength = std::abs(square.at(0) - location.at(0));

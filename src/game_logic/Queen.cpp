@@ -5,6 +5,7 @@ Queen::Queen(std::vector<int> square, Color pieceColor, ChessBoard* board) {
     color = pieceColor;
     pieceBoard = board;
     movedYet = false;
+    createView(color, QueenType);
 }
 bool Queen::isLegalMove(std::vector<int> square) {
     

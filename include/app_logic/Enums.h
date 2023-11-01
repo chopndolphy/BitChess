@@ -20,3 +20,11 @@ enum ErrorCode {
     MOVE02,
     GAME01,
 };
+enum PieceType {
+    RookType,
+    KnightType,
+    BishopType,
+    QueenType,
+    KingType,
+    PawnType,
+};

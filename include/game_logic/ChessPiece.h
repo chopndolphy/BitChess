@@ -4,6 +4,7 @@
 #include "app_logic/Enums.h"
 #include "app_logic/ErrorLogger.h"
 #include "game_logic/ChessBoard.h"
+#include "interface/ChessPieceView.h" 
 
 class ChessPiece {
     public:
@@ -28,4 +29,6 @@ class ChessPiece {
         bool movedYet;
         bool doubleMoved = false;
         ChessBoard* pieceBoard;
+        ChessPieceView* view;
+        void createView(Color color, PieceType type);
 };

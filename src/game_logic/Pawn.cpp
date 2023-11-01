@@ -6,6 +6,7 @@ Pawn::Pawn(std::vector<int> square, Color pieceColor, ChessBoard* board) {
     pieceBoard = board;
     movedYet = false;
     doubleMoved = false;
+    createView(color, PawnType);
 }
 bool Pawn::isLegalMove(std::vector<int> square) {
     int pathLengthX = std::abs(square.at(0) - location.at(0));
