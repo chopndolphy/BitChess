@@ -1,6 +1,15 @@
 #pragma once
-#include "interface/RookView.h"
+#include "interface/ChessPieceView.h"
 
-class RookViewConsole : public RookView {
-
+class RookViewConsole : public ChessPieceView {
+    public:
+        public:
+        ~RookViewConsole() {};
+        RookViewConsole(Color color);
+        std::string getConsoleDisplay() {
+            return displayCharColor + displayCharPieceType;
+        }
+    protected:
+        std::string displayCharPieceType = "R";
+        std::string displayCharColor;
 };

@@ -1,4 +1,5 @@
 #include "game_logic/Pawn.h"
+#include <iostream>
 
 Pawn::Pawn(std::vector<int> square, Color pieceColor, ChessBoard* board) {
     location = square;

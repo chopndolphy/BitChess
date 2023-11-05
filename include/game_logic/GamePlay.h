@@ -1,5 +1,7 @@
 #pragma once
 #include "app_logic/Enums.h"
+#include <array>
+#include <string>
 
 class UserInterface;
 class Player;
@@ -22,5 +24,5 @@ class GamePlay {
         bool gameOver = false;
 
         void updateGameState();
-        void updateView();
+        void updateView(std::array<std::array<std::string, 8>, 8> boardView);
 };

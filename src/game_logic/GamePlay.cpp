@@ -2,6 +2,7 @@
 #include "interface/UserInterface.h"
 #include "game_logic/ChessBoard.h"
 #include "game_logic/Player.h"
+#include "game_logic/ChessPiece.h"
 
 GamePlay::GamePlay(Player* white, Player* black, ChessBoard* board, UserInterface* interface) {
     whitePlayer = white;
@@ -13,6 +14,7 @@ GamePlay::GamePlay(Player* white, Player* black, ChessBoard* board, UserInterfac
     gameOver = false;
 }
 void GamePlay::takeTurn() {
+    updateView(chessBoard->getBoardView());
     if (colorTurn == White) {
         whitePlayer->makeMove();
         colorTurn = Black;
@@ -20,7 +22,6 @@ void GamePlay::takeTurn() {
         blackPlayer->makeMove();
         colorTurn = White;
     }
-    updateView();
     updateGameState();
 }
 void GamePlay::updateGameState() {
@@ -30,19 +31,23 @@ void GamePlay::updateGameState() {
         case WhiteWins:
             userInterface->displayGameOver(WhiteWins);
             gameOver = true;
+            updateView(chessBoard->getBoardView());
             break;
         case BlackWins:
             userInterface->displayGameOver(BlackWins);
             gameOver = true;
+            updateView(chessBoard->getBoardView());
             break;
         case Stalemate:
             userInterface->displayGameOver(Stalemate);
             gameOver = true;
+            updateView(chessBoard->getBoardView());
             break;
         default:
             ErrorLogger::relayError(GAME01, userInterface);
     }
 }
-void GamePlay::updateView() {
+void GamePlay::updateView(std::array<std::array<std::string, 8>, 8> boardView) {
     
+    userInterface->displayBoard(boardView);
 }

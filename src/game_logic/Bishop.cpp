@@ -1,4 +1,5 @@
 #include "game_logic/Bishop.h"
+#include <iostream>
 
 
 Bishop::Bishop(std::vector<int> square, Color pieceColor, ChessBoard* board) {
@@ -19,14 +20,14 @@ bool Bishop::isLegalMove(std::vector<int> square) {
         for (int i = 1; i < pathLength; i++) {
             int x, y;
             if (square.at(0) - location.at(0) > 0) {
-                int x = location.at(0) + i;
+                x = location.at(0) + i;
             } else {
-                int x = location.at(0) - i;
+                x = location.at(0) - i;
             }
             if (square.at(1) - location.at(1) > 0) {
-                int y = location.at(1) + i;
+                y = location.at(1) + i;
             } else {
-                int y = location.at(1) - i;
+                y = location.at(1) - i;
             }
             if (pieceBoard->getPieceAt({x, y}) != nullptr) {
                 return false; // Pieces in the way of path

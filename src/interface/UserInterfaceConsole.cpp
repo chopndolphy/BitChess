@@ -18,7 +18,7 @@ ChessPiece* UserInterfaceConsole::getMoveChessPiece(const Player* player, ChessB
     startSquare.push_back(row);
     return board->getPieceAt(startSquare);
 }
-std::vector<int> UserInterfaceConsole::getMoveSquare(ChessBoard* board) {
+std::vector<int> UserInterfaceConsole::getMoveSquare() {
     int column;
     int row;
     std::vector<int> endSquare;
@@ -45,4 +45,15 @@ void UserInterfaceConsole::displayGameOver(GameState gameState) {
         default:
             std::cout << "INTERFACE ERROR: Unable to determine game over message." << std::endl;
     }
+}
+void UserInterfaceConsole::displayBoard(std::array<std::array<std::string, 8>, 8> boardView) {
+    std::cout << "-------------------------" << std::endl;
+    for (int i = 7; i > -1; i--) {
+        for (int j = 0; j < 8; j++) {
+            std::cout << "|" << boardView.at(i).at(j);
+        }
+        std::cout << "|" << std::endl;
+        std::cout << "-------------------------" << std::endl;
+    }
+    
 }

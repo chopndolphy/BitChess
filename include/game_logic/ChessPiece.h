@@ -8,6 +8,7 @@
 
 class ChessPiece {
     public:
+        virtual ~ChessPiece();
         void move(std::vector<int> square) {
             pieceBoard->setPieceAt(square, this);
             location = square;
@@ -22,6 +23,9 @@ class ChessPiece {
         }
         bool hasDoubleMoved() const {
             return doubleMoved;
+        }
+        std::string getConsoleView() {
+            return view->getConsoleDisplay();
         }
     protected:
         std::vector<int> location;

@@ -3,5 +3,4 @@
 
 class BishopView : public ChessPieceView {
     public:
-        BishopView(Color color);
 };

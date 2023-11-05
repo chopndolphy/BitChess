@@ -1,6 +1,14 @@
 #pragma once
-#include "interface/BishopView.h"
+#include "interface/ChessPieceView.h"
 
-class BishopViewConsole : public BishopView {
-
+class BishopViewConsole : public ChessPieceView {
+    public:
+        ~BishopViewConsole() {};
+        BishopViewConsole(Color color);
+        std::string getConsoleDisplay() {
+            return displayCharColor + displayCharPieceType;
+        }
+    protected:
+        std::string displayCharPieceType = "B";
+        std::string displayCharColor;
 };
