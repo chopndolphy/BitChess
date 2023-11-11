@@ -28,14 +28,14 @@ ChessBoard::ChessBoard() {
     boardState.at(0).at(3) = new Queen({3, 0}, White, this);
     boardState.at(0).at(4) = new King({4, 0}, White, this);
 
-    boardState.at(0).at(0) = new Rook({0, 7}, Black, this);
-    boardState.at(0).at(7) = new Rook({7, 7}, Black, this);
-    boardState.at(0).at(1) = new Knight({1, 7}, Black, this);
-    boardState.at(0).at(6) = new Knight({6, 7}, Black, this);
-    boardState.at(0).at(2) = new Bishop({2, 7}, Black, this);
-    boardState.at(0).at(5) = new Bishop({5, 7}, Black, this);
-    boardState.at(0).at(3) = new Queen({3, 7}, Black, this);
-    boardState.at(0).at(4) = new King({4, 7}, Black, this);
+    boardState.at(7).at(0) = new Rook({0, 7}, Black, this);
+    boardState.at(7).at(7) = new Rook({7, 7}, Black, this);
+    boardState.at(7).at(1) = new Knight({1, 7}, Black, this);
+    boardState.at(7).at(6) = new Knight({6, 7}, Black, this);
+    boardState.at(7).at(2) = new Bishop({2, 7}, Black, this);
+    boardState.at(7).at(5) = new Bishop({5, 7}, Black, this);
+    boardState.at(7).at(3) = new Queen({3, 7}, Black, this);
+    boardState.at(7).at(4) = new King({4, 7}, Black, this);
 }
 ChessBoard::~ChessBoard() {
     for (auto row : boardState) {
