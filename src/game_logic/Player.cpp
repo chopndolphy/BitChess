@@ -9,8 +9,8 @@ Player::Player(Color color, ChessBoard* board, UserInterface* interface) {
     playerInterface = interface;
 }
 void Player::makeMove() {
-    ChessPiece* currentMovePiece = playerInterface->getMoveChessPiece(this, playerBoard);
-    std::vector<int> currentMoveSquare = playerInterface->getMoveSquare(playerBoard);
+    std::string moveInput = playerInterface->getMove(playerColor);
+    // does gameplay handle input conversion? do we create a coord for both start and dest? or do we directly get the piece and skip start coord?
     while (true) {
         if (!currentMovePiece->isLegalMove(currentMoveSquare)) { //Determines if chosen piece can move to chosen sqaure
             ErrorLogger::relayError(MOVE01, playerInterface);
