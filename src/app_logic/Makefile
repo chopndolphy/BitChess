@@ -1,4 +1,4 @@
-SRC_FILES = ErrorLogger.cpp
+SRC_FILES = ErrorLogger.cpp Coord.cpp
 DIR_NAME = app_logic
 
 BUILD := $(addprefix ../, $(BUILD))

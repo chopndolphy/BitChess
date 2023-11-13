@@ -3,6 +3,15 @@
 #include "game_logic/Player.h"
 #include "game_logic/ChessBoard.h"
 
+std::string UserInterfaceConsole::getMove(Color color) {
+    std::string move;
+    if (color == White)
+        std::cout << "White's move: ";
+    else if (color == Black)
+        std::cout << "Black's move: ";
+    std::cin >> move;
+    return move;
+}
 ChessPiece* UserInterfaceConsole::getMoveChessPiece(const Player* player, ChessBoard* board) {
     Color playerColor = player->getColor();
     int column;

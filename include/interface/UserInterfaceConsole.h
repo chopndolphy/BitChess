@@ -3,6 +3,7 @@
 
 class UserInterfaceConsole : public UserInterface {
     public:
+        std::string getMove(Color color);
         ChessPiece* getMoveChessPiece(const Player* player, ChessBoard* board);
         std::vector<int> getMoveSquare();
         void displayError(std::string message);

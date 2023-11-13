@@ -28,3 +28,7 @@ enum PieceType {
     KingType,
     PawnType,
 };
+enum SquareAxis {
+    File,
+    Rank,
+};
