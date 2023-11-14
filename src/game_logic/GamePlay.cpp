@@ -10,41 +10,41 @@ GamePlay::GamePlay(Player* white, Player* black, ChessBoard* board, UserInterfac
     chessBoard = board;
     userInterface = interface;
 
-    colorTurn = White;
+    colorTurn = Color::White;
     gameOver = false;
 }
 void GamePlay::takeTurn() {
     updateView(chessBoard->getBoardView());
-    if (colorTurn == White) {
+    if (colorTurn == Color::White) {
         whitePlayer->makeMove();
-        colorTurn = Black;
+        colorTurn = Color::Black;
     } else {
         blackPlayer->makeMove();
-        colorTurn = White;
+        colorTurn = Color::White;
     }
     updateGameState();
 }
 void GamePlay::updateGameState() {
     switch (chessBoard->checkGameState(colorTurn)) {
-        case Continue:
+        case GameState::Continue:
             break;
-        case WhiteWins:
-            userInterface->displayGameOver(WhiteWins);
+        case GameState::WhiteWins:
+            userInterface->displayGameOver(GameState::WhiteWins);
             gameOver = true;
             updateView(chessBoard->getBoardView());
             break;
-        case BlackWins:
-            userInterface->displayGameOver(BlackWins);
+        case GameState::BlackWins:
+            userInterface->displayGameOver(GameState::BlackWins);
             gameOver = true;
             updateView(chessBoard->getBoardView());
             break;
-        case Stalemate:
-            userInterface->displayGameOver(Stalemate);
+        case GameState::Stalemate:
+            userInterface->displayGameOver(GameState::Stalemate);
             gameOver = true;
             updateView(chessBoard->getBoardView());
             break;
         default:
-            ErrorLogger::relayError(GAME01, userInterface);
+            ErrorLogger::relayError(ErrorCode::GAME01, userInterface);
     }
 }
 void GamePlay::updateView(std::array<std::array<std::string, 8>, 8> boardView) {

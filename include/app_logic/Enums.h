@@ -1,26 +1,26 @@
 #pragma once
 
-enum GameState {
+enum class GameState {
     Continue,
     WhiteWins,
     BlackWins,
     Stalemate,
 };
-enum Color {
+enum class Color {
     White,
     Black,
 };
-enum ViewType {
+enum class ViewType {
     Console,
     GUI2D,
     GUI3D,
 };
-enum ErrorCode {
+enum class ErrorCode {
     MOVE01,
     MOVE02,
     GAME01,
 };
-enum PieceType {
+enum class PieceType {
     RookType,
     KnightType,
     BishopType,
@@ -28,7 +28,11 @@ enum PieceType {
     KingType,
     PawnType,
 };
-enum SquareAxis {
+enum class SquareAxis {
     File,
     Rank,
+};
+enum class BoardLayouts {
+    Empty,
+    Normal,
 };

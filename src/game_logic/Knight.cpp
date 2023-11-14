@@ -5,7 +5,7 @@ Knight::Knight(std::vector<int> square, Color pieceColor, ChessBoard* board) {
     color = pieceColor;
     pieceBoard = board;
     movedYet = false;
-    createView(color, KnightType);
+    createView(color, PieceType::KnightType);
 }
 bool Knight::isLegalMove(std::vector<int> square) {
     int pathLengthX = std::abs(square.at(0) - location.at(0));

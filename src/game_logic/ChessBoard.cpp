@@ -10,32 +10,35 @@
 
 ChessBoard::ChessBoard() {
     for (int i = 0; i < 8; i++) {
-        boardState.at(2).at(i) = nullptr;
-        boardState.at(3).at(i) = nullptr;
-        boardState.at(4).at(i) = nullptr;
-        boardState.at(5).at(i) = nullptr;
+        for (int j = 2; j < 6; j++) {
+            Square* square = getSquare(Coord(i, j));
+            square = new Square(Coord(i, j));
+        }
     }
     for (int i = 0; i < 8; i++) {
-        boardState.at(1).at(i) = new Pawn({i, 1}, White, this);
-        boardState.at(6).at(i) = new Pawn({i, 6}, Black, this);
+        boardState.at(1).at(i) = new Pawn({i, 1}, Color::White, this);
+        boardState.at(6).at(i) = new Pawn({i, 6}, Color::Black, this);
     }
-    boardState.at(0).at(0) = new Rook({0, 0}, White, this);
-    boardState.at(0).at(7) = new Rook({7, 0}, White, this);
-    boardState.at(0).at(1) = new Knight({1, 0}, White, this);
-    boardState.at(0).at(6) = new Knight({6, 0}, White, this);
-    boardState.at(0).at(2) = new Bishop({2, 0}, White, this);
-    boardState.at(0).at(5) = new Bishop({5, 0}, White, this);
-    boardState.at(0).at(3) = new Queen({3, 0}, White, this);
-    boardState.at(0).at(4) = new King({4, 0}, White, this);
+    boardState.at(0).at(0) = new Rook({0, 0}, Color::White, this);
+    boardState.at(0).at(7) = new Rook({7, 0}, Color::White, this);
+    boardState.at(0).at(1) = new Knight({1, 0}, Color::White, this);
+    boardState.at(0).at(6) = new Knight({6, 0}, Color::White, this);
+    boardState.at(0).at(2) = new Bishop({2, 0}, Color::White, this);
+    boardState.at(0).at(5) = new Bishop({5, 0}, Color::White, this);
+    boardState.at(0).at(3) = new Queen({3, 0}, Color::White, this);
+    boardState.at(0).at(4) = new King({4, 0}, Color::White, this);
 
-    boardState.at(7).at(0) = new Rook({0, 7}, Black, this);
-    boardState.at(7).at(7) = new Rook({7, 7}, Black, this);
-    boardState.at(7).at(1) = new Knight({1, 7}, Black, this);
-    boardState.at(7).at(6) = new Knight({6, 7}, Black, this);
-    boardState.at(7).at(2) = new Bishop({2, 7}, Black, this);
-    boardState.at(7).at(5) = new Bishop({5, 7}, Black, this);
-    boardState.at(7).at(3) = new Queen({3, 7}, Black, this);
-    boardState.at(7).at(4) = new King({4, 7}, Black, this);
+    boardState.at(7).at(0) = new Rook({0, 7}, Color::Black, this);
+    boardState.at(7).at(7) = new Rook({7, 7}, Color::Black, this);
+    boardState.at(7).at(1) = new Knight({1, 7}, Color::Black, this);
+    boardState.at(7).at(6) = new Knight({6, 7}, Color::Black, this);
+    boardState.at(7).at(2) = new Bishop({2, 7}, Color::Black, this);
+    boardState.at(7).at(5) = new Bishop({5, 7}, Color::Black, this);
+    boardState.at(7).at(3) = new Queen({3, 7}, Color::Black, this);
+    boardState.at(7).at(4) = new King({4, 7}, Color::Black, this);
+}
+ChessBoard::ChessBoard(BoardLayouts boardLayout) {
+
 }
 ChessBoard::~ChessBoard() {
     for (auto row : boardState) {
@@ -44,17 +47,20 @@ ChessBoard::~ChessBoard() {
         }
     }
 }
+Square* ChessBoard::getSquare(Coord coord) {
+    return boardState.at(coord.y()).at(coord.x());
+}
 void ChessBoard::setPieceAt(std::vector<int> endSquare, ChessPiece* piece) {
     if (nextMoveCastle) {
         nextMoveCastle = false;
         // castle logic
     } else if (nextMoveEnPassant) {
         nextMoveEnPassant = false;
-        if (piece->getColor() == White) {
+        if (piece->getColor() == Color::White) {
             // removes attacked piece
             delete boardState.at(endSquare.at(1) - 1).at(endSquare.at(0)); 
             boardState.at(endSquare.at(1) - 1).at(endSquare.at(0)) = nullptr;
-        } else if (piece->getColor() == Black) {
+        } else if (piece->getColor() == Color::Black) {
             // removes attacked piece
             delete boardState.at(endSquare.at(1) + 1).at(endSquare.at(0)); 
             boardState.at(endSquare.at(1) + 1).at(endSquare.at(0)) = nullptr;
@@ -84,6 +90,9 @@ bool ChessBoard::canCastle(ChessPiece* piece, std::vector<int> square) {
 }
 bool ChessBoard::kingIsProtected(ChessPiece* piece, std::vector<int> square) {
 
+}
+void ChessBoard::processInput(const std::string &moveInput, ChessPiece* &targetPiece, Coord &targetCoord) {
+    
 }
 std::array<std::array<std::string, 8>, 8> ChessBoard::getBoardView() {
     std::array<std::array<std::string, 8>, 8> boardView;

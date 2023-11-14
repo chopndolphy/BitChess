@@ -1,10 +1,16 @@
 #include "app_logic/Coord.h"
 
+Coord::Coord() {
+    index.first = 0;
+    index.second = 0;
+    square.first = 'A';
+    square.second = '1';
+}
 Coord::Coord(int xIndex, int yIndex) {
     index.first = xIndex;
     index.second = yIndex;
-    square.first = indexToSqaure(xIndex, File);
-    square.second = indexToSqaure(yIndex, Rank);
+    square.first = indexToSqaure(xIndex, SquareAxis::File);
+    square.second = indexToSqaure(yIndex, SquareAxis::Rank);
     }
 Coord::Coord(char file, char rank) {
     square.first = std::toupper(file);
@@ -15,8 +21,8 @@ Coord::Coord(char file, char rank) {
 void Coord::setIndex(int xIndex, int yIndex) {
     index.first = xIndex;
     index.second = yIndex;
-    square.first = indexToSqaure(xIndex, File);
-    square.second = indexToSqaure(yIndex, Rank);
+    square.first = indexToSqaure(xIndex, SquareAxis::File);
+    square.second = indexToSqaure(yIndex, SquareAxis::Rank);
     }
 void Coord::setSquare(char file, char rank) {
     square.first = std::toupper(file);
@@ -26,11 +32,11 @@ void Coord::setSquare(char file, char rank) {
     }
 void Coord::setXIndex(int xIndex) {
     index.first = xIndex;
-    square.first = indexToSqaure(xIndex, File);
+    square.first = indexToSqaure(xIndex, SquareAxis::File);
     }
 void Coord::setYIndex(int yIndex) {
     index.second = yIndex;
-    square.second = indexToSqaure(yIndex, Rank);
+    square.second = indexToSqaure(yIndex, SquareAxis::Rank);
     }
 void Coord::setFile(char file) {
     square.first = std::toupper(file);
@@ -52,10 +58,10 @@ int Coord::squareToIndex(char fileOrRank) {
 char Coord::indexToSqaure(int xOrY, SquareAxis fileOrRank) {
     int number = xOrY;
     switch (fileOrRank) {
-        case File:
+        case SquareAxis::File:
             number += 65;
             break;
-        case Rank:
+        case SquareAxis::Rank:
             number += 49;
             break;
     }

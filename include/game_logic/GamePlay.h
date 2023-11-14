@@ -20,7 +20,7 @@ class GamePlay {
         Player* blackPlayer;
         UserInterface* userInterface;
 
-        Color colorTurn = White;
+        Color colorTurn = Color::White;
         bool gameOver = false;
 
         void updateGameState();

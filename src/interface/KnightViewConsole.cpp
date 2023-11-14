@@ -1,9 +1,9 @@
 #include "interface/KnightViewConsole.h"
 
 KnightViewConsole::KnightViewConsole(Color color) {
-    if (color == White) {
+    if (color == Color::White) {
         displayCharColor = "w";
-    } else if (color == Black) {
+    } else if (color == Color::Black) {
         displayCharColor = "b";
     }
 }

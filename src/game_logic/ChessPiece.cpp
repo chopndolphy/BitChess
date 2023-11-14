@@ -22,22 +22,22 @@ void ChessPiece::createView(Color color, PieceType type) {
     // factory pattern?
 
     switch (type) {
-    case RookType:
+    case PieceType::RookType:
         view = new RookViewConsole(color);
         break;
-    case BishopType:
+    case PieceType::BishopType:
         view = new BishopViewConsole(color);
         break;
-    case KnightType:
+    case PieceType::KnightType:
         view = new KnightViewConsole(color);
         break;
-    case QueenType:
+    case PieceType::QueenType:
         view = new QueenViewConsole(color);
         break;
-    case PawnType:
+    case PieceType::PawnType:
         view = new PawnViewConsole(color);
         break;
-    case KingType:
+    case PieceType::KingType:
         view = new KingViewConsole(color);
         break;
     default:

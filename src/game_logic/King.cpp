@@ -5,7 +5,7 @@ King::King(std::vector<int> square, Color pieceColor, ChessBoard* board) {
     color = pieceColor;
     pieceBoard = board;
     movedYet = false;
-    createView(color, KingType);
+    createView(color, PieceType::KingType);
 }
 bool King::isLegalMove(std::vector<int> square) {
     int pathLengthX = std::abs(square.at(0) - location.at(0));

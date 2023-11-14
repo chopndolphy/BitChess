@@ -7,6 +7,7 @@ class Coord {
 public:
     Coord(int xIndex, int yIndex);
     Coord(char file, char rank);
+    Coord();
     void setIndex(int xIndex, int yIndex);
     void setSquare(char file, char rank);
     void setXIndex(int xIndex);

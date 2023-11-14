@@ -3,13 +3,13 @@
 
 void ErrorLogger::relayError(ErrorCode code, UserInterface* interface) {
     switch (code) {
-    case MOVE01:
+    case ErrorCode::MOVE01:
         interface->displayError("ERROR MOVE01: Illegal move.");
         break;
-    case MOVE02:
+    case ErrorCode::MOVE02:
         interface->displayError("ERROR MOVE02: Move would put/leave player's king in check.");
         break;
-    case GAME01:
+    case ErrorCode::GAME01:
         interface->displayError("ERROR GAME01: Unable to determine gamestate.");
         break;
     default:

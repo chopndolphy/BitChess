@@ -5,50 +5,25 @@
 
 std::string UserInterfaceConsole::getMove(Color color) {
     std::string move;
-    if (color == White)
+    if (color == Color::White)
         std::cout << "White's move: ";
-    else if (color == Black)
+    else if (color == Color::Black)
         std::cout << "Black's move: ";
     std::cin >> move;
     return move;
-}
-ChessPiece* UserInterfaceConsole::getMoveChessPiece(const Player* player, ChessBoard* board) {
-    Color playerColor = player->getColor();
-    int column;
-    int row;
-    std::vector<int> startSquare;
-    if (playerColor == White) {
-        std::cout << "White's turn. On which square is the piece you are moving? ";
-    } else {
-        std::cout << "Black's turn. On which square is the piece you are moving? ";
-    }
-    std::cin >> column >> row;
-    startSquare.push_back(column);
-    startSquare.push_back(row);
-    return board->getPieceAt(startSquare);
-}
-std::vector<int> UserInterfaceConsole::getMoveSquare() {
-    int column;
-    int row;
-    std::vector<int> endSquare;
-    std::cout << "And where is it moving to? ";
-    std::cin >> column >> row;
-    endSquare.push_back(column);
-    endSquare.push_back(row);
-    return endSquare;
 }
 void UserInterfaceConsole::displayError(std::string message) {
     std::cout << message << std::endl;
 }
 void UserInterfaceConsole::displayGameOver(GameState gameState) {
     switch (gameState) {
-        case WhiteWins:
+        case GameState::WhiteWins:
             std::cout << "GAME OVER: White wins!" << std::endl;
             break;
-        case BlackWins:
+        case GameState::BlackWins:
             std::cout << "GAME OVER: White wins!" << std::endl;
             break;
-        case Stalemate:
+        case GameState::Stalemate:
             std::cout << "GAME OVER: White wins!" << std::endl;
             break;
         default:

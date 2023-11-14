@@ -6,12 +6,12 @@
 #include "app_logic/Coord.h"
 
 int main() {
-    ViewType viewType = Console;
-    if (viewType == Console) {
+    ViewType viewType = ViewType::Console;
+    if (viewType == ViewType::Console) {
         ChessBoard cB;
         UserInterfaceConsole uI;
-        Player w(White, &cB, &uI);
-        Player b(Black, &cB, &uI);
+        Player w(Color::White, &cB, &uI);
+        Player b(Color::Black, &cB, &uI);
         GamePlay game(&w, &b, &cB, &uI);
         while (!game.isGameOver()) {
             game.takeTurn();

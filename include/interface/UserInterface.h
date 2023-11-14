@@ -12,8 +12,6 @@ class Player;
 class UserInterface {
 public:
     virtual std::string getMove(Color color) = 0;
-    virtual ChessPiece* getMoveChessPiece(const Player* player, ChessBoard* board) = 0;
-    virtual std::vector<int> getMoveSquare() = 0;
     virtual void displayError(std::string message) = 0;
     virtual void displayGameOver(GameState gameState) = 0;
     virtual void displayBoard(std::array<std::array<std::string, 8>, 8> boardView) = 0;

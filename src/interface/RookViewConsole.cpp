@@ -1,9 +1,9 @@
 #include "interface/RookViewConsole.h"
 
 RookViewConsole::RookViewConsole(Color color) {
-    if (color == White) {
+    if (color == Color::White) {
         displayCharColor = "w";
-    } else if (color == Black) {
+    } else if (color == Color::Black) {
         displayCharColor = "b";
     }
 }
