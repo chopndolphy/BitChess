@@ -12,10 +12,10 @@ class Player {
         Player(Color color, ChessBoard* board, UserInterface* interface);
         void makeMove();
         Color getColor() const {
-            return playerColor;
+            return color;
         }
     private:
-        Color playerColor;
-        ChessBoard* playerBoard;
-        UserInterface* playerInterface;
+        Color color;
+        ChessBoard* board;
+        UserInterface* interface;
 };

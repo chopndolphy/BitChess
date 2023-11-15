@@ -3,7 +3,7 @@
 
 class Knight : public ChessPiece {
     public:
-        Knight(std::vector<int> square, Color pieceColor, ChessBoard* board);
-        bool isLegalMove(std::vector<int> square);
+        Knight(Color color, Coord location, ChessBoard* board);
+        bool isLegalMove(Coord destination);
     private:
 };

@@ -12,7 +12,7 @@ public:
     ~Square();
     void addChessPiece(ChessPiece* chessPiece);
     void removeChessPiece();
-    ChessPiece* piece() const {
+    ChessPiece* getPiece() const {
         return chessPiece;
     }
 private:

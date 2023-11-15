@@ -15,7 +15,7 @@ class GamePlay {
         }
 
     private:
-        ChessBoard* chessBoard;
+        ChessBoard* board;
         Player* whitePlayer;
         Player* blackPlayer;
         UserInterface* userInterface;

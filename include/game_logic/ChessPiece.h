@@ -9,16 +9,16 @@
 class ChessPiece {
     public:
         virtual ~ChessPiece();
-        void move(std::vector<int> square) {
-            pieceBoard->setPieceAt(square, this);
-            location = square;
+        void move(Coord destination) {
+            board->setPieceAt(destination, this);
+            location = destination;
             movedYet = true;
         }
-        virtual bool isLegalMove(std::vector<int> square) = 0;
+        virtual bool isLegalMove(Coord destination) = 0;
         Color getColor() const {
             return color;
         }
-        const std::vector<int> getLocation() const {
+        const Coord getLocation() const {
             return location;
         }
         bool hasDoubleMoved() const {
@@ -28,11 +28,11 @@ class ChessPiece {
             return view->getConsoleDisplay();
         }
     protected:
-        std::vector<int> location;
+        Coord location;
         Color color;
         bool movedYet;
         bool doubleMoved = false;
-        ChessBoard* pieceBoard;
+        ChessBoard* board;
         ChessPieceView* view;
         void createView(Color color, PieceType type);
 };

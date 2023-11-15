@@ -12,11 +12,11 @@ class ChessBoard {
         ChessBoard();
         ChessBoard(BoardLayouts boardLayout);
         ~ChessBoard();
-        ChessPiece* getPieceAt(std::vector<int> square) {
-            return boardState.at(square.at(1)).at(square.at(0));
+        ChessPiece* getPieceAt(Coord location) {
+            return getSquare(location)->getPiece();
         }
         std::array<std::array<std::string, 8>, 8> getBoardView();
-        void setPieceAt(std::vector<int> endSquare, ChessPiece* piece);
+        void setPieceAt(Coord destination, ChessPiece* piece);
         void setNextMoveEnPassant(bool isEnPassant) {
             nextMoveEnPassant = isEnPassant;
         }
@@ -27,13 +27,16 @@ class ChessBoard {
             nextMovePromoting = isPromoting;
         }
         GameState checkGameState(Color colorTurn);
-        bool canCastle(ChessPiece* piece, std::vector<int> sqaure);
-        bool kingIsProtected(ChessPiece* piece, std::vector<int> square);
-        void processInput(const std::string &moveInput, ChessPiece* &targetPiece, Coord &targetCoord);
+        bool canCastle(ChessPiece* piece, Coord destination);
+        bool kingIsProtected(ChessPiece* piece, Coord destination);
+        void processInput(const std::string &moveInput, ChessPiece* &targetPiece, Coord &targetLocation);
     private:
         std::array<std::array<Square*, 8>, 8> boardState = {};
         bool nextMoveEnPassant;
         bool nextMoveCastle;
         bool nextMovePromoting;
-        Square* getSquare(Coord coord);
+        Square*& getSquare(Coord coord);
+        void addChessPiece(PieceType pieceType, Color color, Coord location);
+        void loadLayout(BoardLayouts boardLayout);
+        void movePiece(Coord location, Coord destination);
 };

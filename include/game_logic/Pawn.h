@@ -3,8 +3,8 @@
 
 class Pawn : public ChessPiece {
     public:
-        Pawn(std::vector<int> square, Color pieceColor, ChessBoard* board);
-        bool isLegalMove(std::vector<int> square);
+        Pawn(Color color, Coord location, ChessBoard* board);
+        bool isLegalMove(Coord destination);
     private:  
-        bool canEnPassant(std::vector<int> square);
+        bool canEnPassant(Coord destination);
 };
