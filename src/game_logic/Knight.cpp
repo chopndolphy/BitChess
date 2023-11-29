@@ -1,20 +1,20 @@
 #include "game_logic/Knight.h"
 
-Knight::Knight(std::vector<int> square, Color pieceColor, ChessBoard* board) {
-    location = square;
-    color = pieceColor;
-    pieceBoard = board;
+Knight::Knight(Color color, Coord location, ChessBoard* board) {
+    this->location = location;
+    this->color = color;
+    this->board = board;
     movedYet = false;
     createView(color, PieceType::KnightType);
 }
-bool Knight::isLegalMove(std::vector<int> square) {
-    int pathLengthX = std::abs(square.at(0) - location.at(0));
-    int pathLengthY = std::abs(square.at(1) - location.at(1));
-    if (square == location) {
+bool Knight::isLegalMove(Coord destination) {
+    int pathLengthX = std::abs(destination.x() - location.x());
+    int pathLengthY = std::abs(destination.y() - location.y());
+    if (location.x() == destination.x() && location.y() == destination.y()) {
         return false; // Moving to same square
-    } else if (pieceBoard->getPieceAt(square)->getColor() == color) {
+    } else if (board->getPieceAt(destination)->getColor() == color) {
         return false; // Moving to same colored piece
-    } else if (location.at(0) > 7 || location.at(0) < 0 || location.at(1) > 7 || location.at(1) < 0) {
+    } else if (location.x() > 7 || location.x() < 0 || location.y() > 7 || location.y() < 0) {
         return false; // Moving out of bounds
     } else if ((pathLengthX == 1 && pathLengthY == 2) || (pathLengthX == 2 && pathLengthY == 1)) {
         return true; // Correctly moving in L shape

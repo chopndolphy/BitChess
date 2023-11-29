@@ -1,24 +1,24 @@
 #include "game_logic/King.h"
 
-King::King(std::vector<int> square, Color pieceColor, ChessBoard* board) {
-    location = square;
-    color = pieceColor;
-    pieceBoard = board;
+King::King(Color color, Coord location, ChessBoard* board) {
+    this->location = location;
+    this->color = color;
+    this->board = board;
     movedYet = false;
     createView(color, PieceType::KingType);
 }
-bool King::isLegalMove(std::vector<int> square) {
-    int pathLengthX = std::abs(square.at(0) - location.at(0));
-    int pathLengthY = std::abs(square.at(1) - location.at(1));
-    if (square == location) {
+bool King::isLegalMove(Coord destination) {
+    int pathLengthX = std::abs(destination.x() - location.x());
+    int pathLengthY = std::abs(destination.y() - location.y());
+    if (location.x() == destination.x() && location.y() == destination.y()) {
         return false; // Moving to same square
-    } else if (pieceBoard->canCastle(this, square)) {
+    } else if (board->canCastle(this, destination)) {
         return true; // Castling
     } else if (pathLengthX > 1 || pathLengthY > 1) {
         return false; // Not moving one square
-    } else if (square.at(0) > 7 || square.at(0) < 0 || square.at(1) > 7 || square.at(1) < 0) {
+    } else if (destination.x() > 7 || destination.x() < 0 || destination.y() > 7 || destination.y() < 0) {
         return false; // Moving out of bounds
-    } else if (pieceBoard->getPieceAt(square)->getColor() != color) {
+    } else if (board->getPieceAt(destination)->getColor() != color) {
             return true; // Not moving to same colored piece
     } else {
         return false;

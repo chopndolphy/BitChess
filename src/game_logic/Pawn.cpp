@@ -1,56 +1,56 @@
 #include "game_logic/Pawn.h"
 #include <iostream>
 
-Pawn::Pawn(std::vector<int> square, Color pieceColor, ChessBoard* board) {
-    location = square;
-    color = pieceColor;
-    pieceBoard = board;
+Pawn::Pawn(Color color, Coord location, ChessBoard* board) {
+    this->location = location;
+    this->color = color;
+    this->board = board;
     movedYet = false;
     doubleMoved = false;
     createView(color, PieceType::PawnType);
 }
-bool Pawn::isLegalMove(std::vector<int> square) {
-    int pathLengthX = std::abs(square.at(0) - location.at(0));
-    int pathLengthY = std::abs(square.at(1) - location.at(1));
-    if (square == location) { 
+bool Pawn::isLegalMove(Coord destination) {
+    int pathLengthX = std::abs(destination.x() - location.x());
+    int pathLengthY = std::abs(destination.y() - location.y());
+    if (destination.x() == location.x() && destination.y() == location.y()) { 
         return false; // Moveing to same square
-    } else if ((square.at(1) - location.at(1) < 1 && color == Color::White) || (square.at(1) - location.at(1) > -1 && color == Color::Black)) {
+    } else if ((destination.y() - location.y() < 1 && color == Color::White) || (destination.y() - location.y() > -1 && color == Color::Black)) {
         return false; // White is moving down or Black is moving up
-    } else if (pieceBoard->getPieceAt(square)->getColor() == color) {
+    } else if (board->getPieceAt(destination)->getColor() == color) {
         return false; // Moving to own color piece
-    } else if (location.at(0) > 7 || location.at(0) < 0 || location.at(1) > 7 || location.at(1) < 0) {
+    } else if (location.x() > 7 || location.x() < 0 || location.y() > 7 || location.y() < 0) {
         return false; // Moving out of bounds
     } else if (pathLengthX == 0 && pathLengthY == 1) {
-        if ((color == Color::White && square.at(1) == 7) || (color == Color::Black && square.at(1) == 0)) {
-            pieceBoard->setNextMovePromoting(true);
+        if ((color == Color::White && destination.y() == 7) || (color == Color::Black && destination.y() == 0)) {
+            board->setNextMovePromoting(true);
         }
         return true; // Moving forward one
     } else if (pathLengthX == 0 && pathLengthY == 2 && !movedYet) {
         doubleMoved = true;
         return true; // Moving forward two on first turn
-    } else if (pathLengthX == 1 && pathLengthY == 1 && pieceBoard->getPieceAt(square)->getColor() != color) {
-        if ((color == Color::White && square.at(1) == 7) || (color == Color::Black && square.at(1) == 0)) {
-            pieceBoard->setNextMovePromoting(true);
+    } else if (pathLengthX == 1 && pathLengthY == 1 && board->getPieceAt(destination)->getColor() != color) {
+        if ((color == Color::White && destination.y() == 7) || (color == Color::Black && destination.y() == 0)) {
+            board->setNextMovePromoting(true);
         }
         return true; // Capturing normally
-    } else if (canEnPassant(square)) {
+    } else if (canEnPassant(destination)) {
         return true; // Capturing en passant
     } else {
         return false;
     }
 }
-bool Pawn::canEnPassant(std::vector<int> square) {
-    ChessPiece* enemyPiece = pieceBoard->getPieceAt({square.at(0), square.at(1) - 1});
-    if ((location.at(1) != 4 && square.at(1) != 5 && color == Color::White) || (location.at(1) != 3 && square.at(1) != 2 && color == Color::Black)) {
+bool Pawn::canEnPassant(Coord destination) {
+    ChessPiece* enemyPiece = board->getPieceAt({destination.x(), destination.y() - 1});
+    if ((location.y() != 4 && destination.y() != 5 && color == Color::White) || (location.y() != 3 && destination.y() != 2 && color == Color::Black)) {
         return false; // Not on proper ranks
-    } else if (std::abs(square.at(0) - location.at(0)) != 1)
+    } else if (std::abs(destination.x() - location.x()) != 1)
         return false; // Not moving diagonally one square
-    else if (pieceBoard->getPieceAt(square) != nullptr) {
+    else if (board->getPieceAt(destination) != nullptr) {
         return false; // Target square is not empty
      } else if (enemyPiece->getColor() == color) {
         return false; // Enemy piece is same color
     } else if (enemyPiece->hasDoubleMoved()) {
-        pieceBoard->setNextMoveEnPassant(true);
+        board->setNextMoveEnPassant(true);
         return true; // Can en passant
     } else {
         return false;

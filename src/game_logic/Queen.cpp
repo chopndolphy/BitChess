@@ -1,12 +1,12 @@
 #include "game_logic/Queen.h"
 
-Queen::Queen(std::vector<int> square, Color pieceColor, ChessBoard* board) {
-    location = square;
-    color = pieceColor;
-    pieceBoard = board;
+Queen::Queen(Color color, Coord location, ChessBoard* board) {
+    this->location = location;
+    this->color = color;
+    this->board = board;
     movedYet = false;
     createView(color, PieceType::QueenType);
 }
-bool Queen::isLegalMove(std::vector<int> square) {
+bool Queen::isLegalMove(Coord destination) {
     
 }
