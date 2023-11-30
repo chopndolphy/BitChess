@@ -16,35 +16,29 @@ ChessBoard::ChessBoard(BoardLayouts boardLayout) {
 }
 ChessBoard::~ChessBoard() {
 }
-void ChessBoard::setPieceAt(Coord destination, ChessPiece* piece) {          // COPY CONSTRUCTORS TO MOVE PIECE?
+void ChessBoard::setPieceAt(Coord destination, ChessPiece* piece) {
     if (nextMoveCastle) {
         nextMoveCastle = false;
         // castle logic
     } else if (nextMoveEnPassant) {
         nextMoveEnPassant = false;
         if (piece->getColor() == Color::White) {
-            // removes attacked piece
+            // removes attacked piece (!!!TODO!!!! Piece not deleted from memory!)
             getSquare(Coord(destination.x(), destination.y()-1))->removeChessPiece(); 
         } else if (piece->getColor() == Color::Black) {
-            // removes attacked piece
+            // removes attacked piece (!!!TODO!!!! Piece not deleted from memory!)
             getSquare(Coord(destination.x(), destination.y()+1))->removeChessPiece(); 
         }
-        // moves piece
-        boardState.at(piece->getLocation().at(1)).at(piece->getLocation().at(0)) = nullptr;
-        boardState.at(endSquare.at(1)).at(endSquare.at(0)) = piece;
-    } else {
-        if (boardState.at(endSquare.at(1)).at(endSquare.at(0)) != nullptr) {
-            // removes attack piece
-            delete boardState.at(endSquare.at(1)).at(endSquare.at(0));
-        }
-        // moves piece
-        getSquare(piece->getLocation()) = nullptr;
-        boardState.at(endSquare.at(1)).at(endSquare.at(0)) = piece;
-        if (nextMovePromoting) {
-            nextMovePromoting = false;
-            // promotion logic
-        }
+    } else if (getSquare(destination)->getPiece() != nullptr) {
+            // removes attacked piece (!!!TODO!!!! Piece not deleted from memory!)
+            getSquare(destination)->removeChessPiece();
     }
+    if (nextMovePromoting) {
+        nextMovePromoting = false;
+        // promotion logic
+    }
+    // move piece
+    getSquare(destination)->moveToThisSquare(getSquare(piece->getLocation()));
 }
 GameState ChessBoard::checkGameState(Color colorTurn) {
     

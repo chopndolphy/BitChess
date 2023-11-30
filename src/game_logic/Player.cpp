@@ -4,25 +4,24 @@
 #include "game_logic/ChessBoard.h"
 
 Player::Player(Color color, ChessBoard* board, UserInterface* interface) {
-    playerColor = color;
-    playerBoard = board;
-    playerInterface = interface;
+    this->color = color;
+    this->board = board;
+    this->interface = interface;
 }
 void Player::makeMove() {
-    std::string moveInput = playerInterface->getMove(playerColor);
-    ChessPiece* targetPiece;
+    std::string moveInput = interface->getMove(color);
+    ChessPiece* chosenPiece;
     Coord targetCoord;
-    
     // does gameplay handle input conversion? do we create a coord for both start and dest? or do we directly get the piece and skip start coord?
     while (true) {
-        if (!currentMovePiece->isLegalMove(currentMoveSquare)) { //Determines if chosen piece can move to chosen sqaure
-            ErrorLogger::relayError(ErrorCode::MOVE01, playerInterface);
-        } else if (!playerBoard->kingIsProtected(currentMovePiece, currentMoveSquare)) { //Determines if move will put the player's own king into check.
-            ErrorLogger::relayError(ErorrCode::MOVE02, playerInterface);
+        if (!chosenPiece->isLegalMove(targetCoord)) { //Determines if chosen piece can move to chosen sqaure
+            ErrorLogger::relayError(ErrorCode::MOVE01, interface);
+        } else if (!board->kingIsProtected(chosenPiece, targetCoord)) { //Determines if move will put the player's own king into check.
+            ErrorLogger::relayError(ErrorCode::MOVE02, interface);
         } else {
             break;
         }
-        moveInput = playerInterface->getMove(playerColor);
+        moveInput = interface->getMove(color);
     }
-    currentMovePiece->move(currentMoveSquare);
+    chosenPiece->move(targetCoord);
 }

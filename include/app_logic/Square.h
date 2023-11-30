@@ -15,6 +15,7 @@ public:
     ChessPiece* getPiece() const {
         return chessPiece;
     }
+    void moveToThisSquare(Square* previousLocation);
 private:
     ChessPiece* chessPiece;
     Coord coord;

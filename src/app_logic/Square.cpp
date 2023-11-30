@@ -3,6 +3,7 @@
 
 Square::Square(Coord coord) {
     this->coord = coord;
+    this->chessPiece = nullptr;
     assignSquareColor();
 }
 Square::Square(Coord coord, ChessPiece* chessPiece) {
@@ -26,3 +27,8 @@ void Square::assignSquareColor() {
         squareColor = Color::White;
     }
 }
+void Square::moveToThisSquare(Square* previousLocation) {
+    chessPiece = previousLocation->getPiece();
+    previousLocation->removeChessPiece();
+}
+
