@@ -4,7 +4,8 @@
 class Pawn : public ChessPiece {
     public:
         Pawn(Color color, Coord location, ChessBoard* board);
-        bool isLegalMove(Coord destination);
+        bool isLegalMove(Coord destination) const;
+        void setDoubleMoved(bool hasDoubleMoved);
     private:  
-        bool canEnPassant(Coord destination);
+        bool canEnPassant(Coord destination) const;
 };

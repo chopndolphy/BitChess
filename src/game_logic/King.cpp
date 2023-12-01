@@ -7,7 +7,7 @@ King::King(Color color, Coord location, ChessBoard* board) {
     movedYet = false;
     createView(color, PieceType::KingType);
 }
-bool King::isLegalMove(Coord destination) {
+bool King::isLegalMove(Coord destination) const {
     int pathLengthX = std::abs(destination.x() - location.x());
     int pathLengthY = std::abs(destination.y() - location.y());
     if (location.x() == destination.x() && location.y() == destination.y()) {

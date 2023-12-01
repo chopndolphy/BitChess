@@ -13,10 +13,10 @@ public:
     ~Square();
     void addChessPiece(std::unique_ptr<ChessPiece> chessPiece);
     void removeChessPiece();
-    const std::unique_ptr<ChessPiece>& getPiece() const {
-        return chessPiece;
+    const ChessPiece* getPiece() const {
+        return chessPiece.get();
     }
-    void moveToThisSquare(std::unique_ptr<ChessPiece>& chessPiece);
+    void moveToThisSquare(Square* previousSquare);
 private:
     std::unique_ptr<ChessPiece> chessPiece;
     Coord coord;

@@ -30,7 +30,7 @@ void Square::assignSquareColor() {
         squareColor = Color::White;
     }
 }
-void Square::moveToThisSquare(std::unique_ptr<ChessPiece> chessPiece) {
-    this->chessPiece = std::move(chessPiece);
+void Square::moveToThisSquare(Square* previousSquare) {
+    this->chessPiece = std::move(previousSquare->chessPiece);
 }
 

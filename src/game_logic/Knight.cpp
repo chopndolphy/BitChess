@@ -7,7 +7,7 @@ Knight::Knight(Color color, Coord location, ChessBoard* board) {
     movedYet = false;
     createView(color, PieceType::KnightType);
 }
-bool Knight::isLegalMove(Coord destination) {
+bool Knight::isLegalMove(Coord destination) const {
     int pathLengthX = std::abs(destination.x() - location.x());
     int pathLengthY = std::abs(destination.y() - location.y());
     if (location.x() == destination.x() && location.y() == destination.y()) {

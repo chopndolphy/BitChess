@@ -7,6 +7,6 @@ Queen::Queen(Color color, Coord location, ChessBoard* board) {
     movedYet = false;
     createView(color, PieceType::QueenType);
 }
-bool Queen::isLegalMove(Coord destination) {
+bool Queen::isLegalMove(Coord destination) const {
     
 }

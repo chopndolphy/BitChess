@@ -9,12 +9,12 @@
 class ChessPiece {
     public:
         virtual ~ChessPiece();
-        void move(Coord destination) {
-            board->setPieceAt()
+        void move(const Coord destination) {
+            board->setPieceAt(location, destination);
             location = destination;
             movedYet = true;
         }
-        virtual bool isLegalMove(Coord destination) = 0;
+        virtual bool isLegalMove(Coord destination) const = 0;
         Color getColor() const {
             return color;
         }
@@ -24,7 +24,7 @@ class ChessPiece {
         bool hasDoubleMoved() const {
             return doubleMoved;
         }
-        std::string getConsoleView() {
+        const std::string getConsoleView() const {
             return view->getConsoleDisplay();
         }
     protected:

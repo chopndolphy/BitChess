@@ -4,6 +4,6 @@
 class Knight : public ChessPiece {
     public:
         Knight(Color color, Coord location, ChessBoard* board);
-        bool isLegalMove(Coord destination);
+        bool isLegalMove(Coord destination) const;
     private:
 };

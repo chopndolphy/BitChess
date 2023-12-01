@@ -9,7 +9,7 @@ Bishop::Bishop(Color color, Coord location, ChessBoard* board) {
     movedYet = false;
     createView(color, PieceType::BishopType);
 }
-bool Bishop::isLegalMove(Coord destination) {
+bool Bishop::isLegalMove(Coord destination) const {
     int pathLength = std::abs(destination.x() - location.x());
     if (destination.x() == location.x() && destination.y() == location.y()) {
         return false; // Moving to same square

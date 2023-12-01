@@ -7,6 +7,6 @@ Rook::Rook(Color color, Coord location, ChessBoard* board) {
     movedYet = false;
     createView(color, PieceType::RookType);
 }
-bool Rook::isLegalMove(Coord destination) {
+bool Rook::isLegalMove(Coord destination) const {
     
 }

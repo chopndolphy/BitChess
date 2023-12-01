@@ -9,7 +9,7 @@ Pawn::Pawn(Color color, Coord location, ChessBoard* board) {
     doubleMoved = false;
     createView(color, PieceType::PawnType);
 }
-bool Pawn::isLegalMove(Coord destination) {
+bool Pawn::isLegalMove(Coord destination) const {
     int pathLengthX = std::abs(destination.x() - location.x());
     int pathLengthY = std::abs(destination.y() - location.y());
     if (destination.x() == location.x() && destination.y() == location.y()) { 
@@ -26,7 +26,7 @@ bool Pawn::isLegalMove(Coord destination) {
         }
         return true; // Moving forward one
     } else if (pathLengthX == 0 && pathLengthY == 2 && !movedYet) {
-        doubleMoved = true;
+        setDoubleMoved(true);
         return true; // Moving forward two on first turn
     } else if (pathLengthX == 1 && pathLengthY == 1 && board->getPieceAt(destination)->getColor() != color) {
         if ((color == Color::White && destination.y() == 7) || (color == Color::Black && destination.y() == 0)) {
@@ -39,7 +39,7 @@ bool Pawn::isLegalMove(Coord destination) {
         return false;
     }
 }
-bool Pawn::canEnPassant(Coord destination) {
+bool Pawn::canEnPassant(Coord destination) const {
     if ((location.y() != 4 && destination.y() != 5 && color == Color::White) || (location.y() != 3 && destination.y() != 2 && color == Color::Black)) {
         return false; // Not on proper ranks
     } else if (std::abs(destination.x() - location.x()) != 1)

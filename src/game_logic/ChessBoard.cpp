@@ -39,15 +39,15 @@ void ChessBoard::setPieceAt(Coord destination, Coord location) {
         // promotion logic
     }
     // move piece
-    getSquare(destination)->moveToThisSquare(std::move(getSquare(location)->getPiece()));
+    getSquare(destination)->moveToThisSquare(getSquare(location));
 }
 GameState ChessBoard::checkGameState(Color colorTurn) {
     
 }
-bool ChessBoard::canCastle(const std::unique_ptr<ChessPiece>& piece, Coord destination) {
+bool ChessBoard::canCastle(const ChessPiece* piece, Coord destination) {
 
 }
-bool ChessBoard::kingIsProtected(const std::unique_ptr<ChessPiece>& piece, Coord destination) {
+bool ChessBoard::kingIsProtected(const ChessPiece* piece, Coord destination) {
 
 }
 std::array<std::array<std::string, 8>, 8> ChessBoard::getBoardView() {

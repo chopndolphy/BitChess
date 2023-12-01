@@ -4,6 +4,6 @@
 class Queen : public ChessPiece {
     public:
         Queen(Color color, Coord location, ChessBoard* board);
-        bool isLegalMove(Coord destination);
+        bool isLegalMove(Coord destination) const;
     private:
 };
