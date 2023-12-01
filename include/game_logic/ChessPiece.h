@@ -10,7 +10,7 @@ class ChessPiece {
     public:
         virtual ~ChessPiece();
         void move(Coord destination) {
-            board->setPieceAt(destination, this);
+            board->setPieceAt()
             location = destination;
             movedYet = true;
         }

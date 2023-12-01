@@ -12,11 +12,11 @@ class ChessBoard {
         ChessBoard();
         ChessBoard(BoardLayouts boardLayout);
         ~ChessBoard();
-        ChessPiece* getPieceAt(Coord location) {
+        const std::unique_ptr<ChessPiece>& getPieceAt(Coord location) {
             return getSquare(location)->getPiece();
         }
         std::array<std::array<std::string, 8>, 8> getBoardView();
-        void setPieceAt(Coord destination, ChessPiece* piece);
+        void setPieceAt(Coord destination, Coord location);
         void setNextMoveEnPassant(bool isEnPassant) {
             nextMoveEnPassant = isEnPassant;
         }
@@ -27,9 +27,8 @@ class ChessBoard {
             nextMovePromoting = isPromoting;
         }
         GameState checkGameState(Color colorTurn);
-        bool canCastle(ChessPiece* piece, Coord destination);
-        bool kingIsProtected(ChessPiece* piece, Coord destination);
-        void processInput(const std::string &moveInput, ChessPiece* &targetPiece, Coord &targetLocation);
+        bool canCastle(const std::unique_ptr<ChessPiece>& piece, Coord destination);
+        bool kingIsProtected(const std::unique_ptr<ChessPiece>& piece, Coord destination);
     private:
         std::array<std::array<Square*, 8>, 8> boardState = {};
         bool nextMoveEnPassant;

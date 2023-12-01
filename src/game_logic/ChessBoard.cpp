@@ -7,6 +7,7 @@
 #include "game_logic/Queen.h"
 #include "game_logic/Rook.h"
 #include <iostream>
+#include <memory>
 
 ChessBoard::ChessBoard() {
     loadLayout(BoardLayouts::Normal);
@@ -16,16 +17,16 @@ ChessBoard::ChessBoard(BoardLayouts boardLayout) {
 }
 ChessBoard::~ChessBoard() {
 }
-void ChessBoard::setPieceAt(Coord destination, ChessPiece* piece) {
+void ChessBoard::setPieceAt(Coord destination, Coord location) {
     if (nextMoveCastle) {
         nextMoveCastle = false;
         // castle logic
     } else if (nextMoveEnPassant) {
         nextMoveEnPassant = false;
-        if (piece->getColor() == Color::White) {
+        if (getPieceAt(location)->getColor() == Color::White) {
             // removes attacked piece (!!!TODO!!!! Piece not deleted from memory!)
             getSquare(Coord(destination.x(), destination.y()-1))->removeChessPiece(); 
-        } else if (piece->getColor() == Color::Black) {
+        } else if (getPieceAt(location)->getColor() == Color::Black) {
             // removes attacked piece (!!!TODO!!!! Piece not deleted from memory!)
             getSquare(Coord(destination.x(), destination.y()+1))->removeChessPiece(); 
         }
@@ -38,19 +39,16 @@ void ChessBoard::setPieceAt(Coord destination, ChessPiece* piece) {
         // promotion logic
     }
     // move piece
-    getSquare(destination)->moveToThisSquare(getSquare(piece->getLocation()));
+    getSquare(destination)->moveToThisSquare(std::move(getSquare(location)->getPiece()));
 }
 GameState ChessBoard::checkGameState(Color colorTurn) {
     
 }
-bool ChessBoard::canCastle(ChessPiece* piece, Coord destination) {
+bool ChessBoard::canCastle(const std::unique_ptr<ChessPiece>& piece, Coord destination) {
 
 }
-bool ChessBoard::kingIsProtected(ChessPiece* piece, Coord destination) {
+bool ChessBoard::kingIsProtected(const std::unique_ptr<ChessPiece>& piece, Coord destination) {
 
-}
-void ChessBoard::processInput(const std::string &moveInput, ChessPiece* &targetPiece, Coord &targetCoord) {
-    
 }
 std::array<std::array<std::string, 8>, 8> ChessBoard::getBoardView() {
     std::array<std::array<std::string, 8>, 8> boardView;
@@ -74,33 +72,28 @@ Square*& ChessBoard::getSquare(Coord coord) {
 void ChessBoard::addChessPiece(PieceType pieceType, Color color, Coord coord) {
     switch (pieceType) {
         case PieceType::BishopType:
-            getSquare(coord)->addChessPiece(new Bishop(color, coord, this));
+            getSquare(coord)->addChessPiece(std::make_unique<Bishop>(color, coord, this));
             break;
         case PieceType::KingType:
-            getSquare(coord)->addChessPiece(new King(color, coord, this));
+            getSquare(coord)->addChessPiece(std::make_unique<King>(color, coord, this));
             break;
         case PieceType::KnightType:
-            getSquare(coord)->addChessPiece(new Knight(color, coord, this));
+            getSquare(coord)->addChessPiece(std::make_unique<Knight>(color, coord, this));
             break;
         case PieceType::PawnType:
-            getSquare(coord)->addChessPiece(new Pawn(color, coord, this));
+            getSquare(coord)->addChessPiece(std::make_unique<Pawn>(color, coord, this));
             break;
         case PieceType::QueenType:
-            getSquare(coord)->addChessPiece(new Queen(color, coord, this));
+            getSquare(coord)->addChessPiece(std::make_unique<Queen>(color, coord, this));
             break;
         case PieceType::RookType:
-            getSquare(coord)->addChessPiece(new Rook(color, coord, this));
+            getSquare(coord)->addChessPiece(std::make_unique<Rook>(color, coord, this));
             break;
     } 
 }
 void ChessBoard::loadLayout(BoardLayouts boardLayout) {
     switch (boardLayout) {
         case BoardLayouts::Normal:
-            for (int i = 0; i < 8; i++) {
-                for (int j = 2; j < 6; j++) {
-                    getSquare(Coord(i, j))->removeChessPiece();
-                }
-            }
             for (int i = 0; i < 8; i++) {
                 addChessPiece(PieceType::PawnType, Color::White, Coord(i, 1));
                 addChessPiece(PieceType::PawnType, Color::Black, Coord(i, 6));
@@ -124,11 +117,7 @@ void ChessBoard::loadLayout(BoardLayouts boardLayout) {
             addChessPiece(PieceType::KingType, Color::Black, Coord('E', '8'));
             break;
         case BoardLayouts::Empty:
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
-                    getSquare(Coord(i, j))->removeChessPiece();
-                }
-            }
+            break;
     } 
 }
 void ChessBoard::movePiece(Coord location, Coord destination) {

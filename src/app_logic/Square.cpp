@@ -1,23 +1,26 @@
 #include "app_logic/Square.h"
 #include "game_logic/ChessPiece.h"
+#include <memory>
 
 Square::Square(Coord coord) {
     this->coord = coord;
     this->chessPiece = nullptr;
     assignSquareColor();
 }
-Square::Square(Coord coord, ChessPiece* chessPiece) {
+Square::Square(Coord coord, std::unique_ptr<ChessPiece> chessPiece) {
     this->coord = coord;
-    this->chessPiece = chessPiece;
+    this->chessPiece = std::move(chessPiece);
     assignSquareColor();
 }
 Square::~Square() {
-    delete chessPiece;
 }
-void Square::addChessPiece(ChessPiece* chessPiece) {
-    this->chessPiece = chessPiece;
+void Square::addChessPiece(std::unique_ptr<ChessPiece> chessPiece) {
+    this->chessPiece = std::move(chessPiece);
 }
 void Square::removeChessPiece() {
+    if (chessPiece = nullptr) {
+        return;
+    }
     this->chessPiece = nullptr;
 }
 void Square::assignSquareColor() {
@@ -27,8 +30,7 @@ void Square::assignSquareColor() {
         squareColor = Color::White;
     }
 }
-void Square::moveToThisSquare(Square* previousLocation) {
-    chessPiece = previousLocation->getPiece();
-    previousLocation->removeChessPiece();
+void Square::moveToThisSquare(std::unique_ptr<ChessPiece> chessPiece) {
+    this->chessPiece = std::move(chessPiece);
 }
 

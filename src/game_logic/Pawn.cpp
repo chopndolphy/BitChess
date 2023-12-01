@@ -40,16 +40,15 @@ bool Pawn::isLegalMove(Coord destination) {
     }
 }
 bool Pawn::canEnPassant(Coord destination) {
-    ChessPiece* enemyPiece = board->getPieceAt({destination.x(), destination.y() - 1});
     if ((location.y() != 4 && destination.y() != 5 && color == Color::White) || (location.y() != 3 && destination.y() != 2 && color == Color::Black)) {
         return false; // Not on proper ranks
     } else if (std::abs(destination.x() - location.x()) != 1)
         return false; // Not moving diagonally one square
     else if (board->getPieceAt(destination) != nullptr) {
         return false; // Target square is not empty
-     } else if (enemyPiece->getColor() == color) {
+     } else if (board->getPieceAt({destination.x(), destination.y() - 1})->getColor() == color) {
         return false; // Enemy piece is same color
-    } else if (enemyPiece->hasDoubleMoved()) {
+    } else if (board->getPieceAt({destination.x(), destination.y() - 1})->hasDoubleMoved()) {
         board->setNextMoveEnPassant(true);
         return true; // Can en passant
     } else {

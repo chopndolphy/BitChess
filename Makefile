@@ -1,6 +1,6 @@
 # compiler and flags
 export CXX=g++
-export CXXFLAGS = -std=c++17 -O2 -Wall -Wextra -pedantic
+export CXXFLAGS = -std=c++17 -O2 -g -Wall -Wextra -pedantic
 
 BIN=bin
 BASEBUILD=build

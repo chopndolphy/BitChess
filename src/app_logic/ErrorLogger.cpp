@@ -9,6 +9,9 @@ void ErrorLogger::relayError(ErrorCode code, UserInterface* interface) {
     case ErrorCode::MOVE02:
         interface->displayError("ERROR MOVE02: Move would put/leave player's king in check.");
         break;
+    case ErrorCode::MOVE03:
+        interface->displayError("ERROR MOVE03: Invalid move entry");
+        break;
     case ErrorCode::GAME01:
         interface->displayError("ERROR GAME01: Unable to determine gamestate.");
         break;

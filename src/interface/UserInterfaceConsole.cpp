@@ -3,14 +3,18 @@
 #include "game_logic/Player.h"
 #include "game_logic/ChessBoard.h"
 
-std::string UserInterfaceConsole::getMove(Color color) {
+bool UserInterfaceConsole::getMove(Color color, Coord &start, Coord &end) {
     std::string move;
     if (color == Color::White)
         std::cout << "White's move: ";
     else if (color == Color::Black)
         std::cout << "Black's move: ";
     std::cin >> move;
-    return move;
+    start.setFile(move[0]);
+    start.setRank(move[1]);
+    end.setFile(move[2]);
+    end.setRank(move[3]);
+    return true; // TODO: Error checking!
 }
 void UserInterfaceConsole::displayError(std::string message) {
     std::cout << message << std::endl;

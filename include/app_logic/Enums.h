@@ -18,6 +18,7 @@ enum class ViewType {
 enum class ErrorCode {
     MOVE01,
     MOVE02,
+    MOVE03,
     GAME01,
 };
 enum class PieceType {
