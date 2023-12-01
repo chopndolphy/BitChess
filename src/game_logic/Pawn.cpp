@@ -26,7 +26,7 @@ bool Pawn::isLegalMove(Coord destination) const {
         }
         return true; // Moving forward one
     } else if (pathLengthX == 0 && pathLengthY == 2 && !movedYet) {
-        setDoubleMoved(true);
+        this->setDoubleMoved(true);
         return true; // Moving forward two on first turn
     } else if (pathLengthX == 1 && pathLengthY == 1 && board->getPieceAt(destination)->getColor() != color) {
         if ((color == Color::White && destination.y() == 7) || (color == Color::Black && destination.y() == 0)) {

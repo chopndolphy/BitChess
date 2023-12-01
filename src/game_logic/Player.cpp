@@ -14,7 +14,6 @@ void Player::makeMove() {
     while (!interface->getMove(color, startCoord, endCoord)) {
         ErrorLogger::relayError(ErrorCode::MOVE03, interface);
     }
-    // does gameplay handle input conversion? do we create a coord for both start and dest? or do we directly get the piece and skip start coord?
     while (true) {
         if (board->getPieceAt(startCoord)->isLegalMove(endCoord)) { //Determines if chosen piece can move to chosen sqaure
             ErrorLogger::relayError(ErrorCode::MOVE01, interface);
