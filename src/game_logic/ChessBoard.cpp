@@ -121,4 +121,5 @@ void ChessBoard::loadLayout(BoardLayouts boardLayout) {
     } 
 }
 void ChessBoard::movePiece(Coord location, Coord destination) {
+    getSquare(destination)->moveToThisSquare(getSquare(location));
 }

@@ -29,6 +29,7 @@ class ChessBoard {
         GameState checkGameState(Color colorTurn);
         bool canCastle(const ChessPiece* piece, Coord destination);
         bool kingIsProtected(const ChessPiece* piece, Coord destination);
+        void movePiece(Coord location, Coord destination);
     private:
         std::array<std::array<Square*, 8>, 8> boardState = {};
         bool nextMoveEnPassant;
@@ -37,5 +38,4 @@ class ChessBoard {
         Square*& getSquare(Coord coord);
         void addChessPiece(PieceType pieceType, Color color, Coord location);
         void loadLayout(BoardLayouts boardLayout);
-        void movePiece(Coord location, Coord destination);
 };
