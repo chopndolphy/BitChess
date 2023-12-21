@@ -4,6 +4,7 @@
 class King : public ChessPiece {
     public:
         King(Color color, Coord location, ChessBoard* board);
-        bool isLegalMove(Coord destination) const;
+        bool isLegalMove(Coord destination);
     private:
+        void createView();
 };

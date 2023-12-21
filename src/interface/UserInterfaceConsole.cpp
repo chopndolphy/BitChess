@@ -35,13 +35,15 @@ void UserInterfaceConsole::displayGameOver(GameState gameState) {
     }
 }
 void UserInterfaceConsole::displayBoard(std::array<std::array<std::string, 8>, 8> boardView) {
-    std::cout << "-------------------------" << std::endl;
+    std::cout << "  -------------------------" << std::endl;
     for (int i = 7; i > -1; i--) {
+        std::cout << i+1 << " ";
         for (int j = 0; j < 8; j++) {
             std::cout << "|" << boardView.at(i).at(j);
         }
         std::cout << "|" << std::endl;
-        std::cout << "-------------------------" << std::endl;
+        std::cout << "  -------------------------" << std::endl;
     }
+    std::cout << "   A  B  C  D  E  F  G  H" << std::endl;
     
 }

@@ -11,7 +11,7 @@ class Player {
     public:
         Player(Color color, ChessBoard* board, UserInterface* interface);
         void makeMove();
-        Color getColor() const {
+        Color getColor() {
             return color;
         }
     private:

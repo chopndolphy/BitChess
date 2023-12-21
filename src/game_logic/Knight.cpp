@@ -1,13 +1,14 @@
 #include "game_logic/Knight.h"
+#include "interface/KnightViewConsole.h"
 
 Knight::Knight(Color color, Coord location, ChessBoard* board) {
     this->location = location;
     this->color = color;
     this->board = board;
     movedYet = false;
-    createView(color, PieceType::KnightType);
+    createView();
 }
-bool Knight::isLegalMove(Coord destination) const {
+bool Knight::isLegalMove(Coord destination) {
     int pathLengthX = std::abs(destination.x() - location.x());
     int pathLengthY = std::abs(destination.y() - location.y());
     if (location.x() == destination.x() && location.y() == destination.y()) {
@@ -21,4 +22,7 @@ bool Knight::isLegalMove(Coord destination) const {
     } else {
         return false;
     }
+}
+void Knight::createView() {
+    view = new KnightViewConsole(color);
 }

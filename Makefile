@@ -14,13 +14,14 @@ export SRC=src
 libraries := app_logic game_logic interface
 libraries := $(addprefix src/, $(libraries))
 
-target = $(BIN)/chess_game
+target := chess_game chess_game_test
+target := $(addprefix bin/, $(target))
 
 all: $(target)
 
 $(target): $(libraries) | $(BASEBUILD)
 	@echo "Compiling $(target)"
-	$(CXX) $(CXXFLAGS) $(BASEIDIR:%=-I%) -o $(target) $(SRC)/chess_game.cpp $(BASEBUILD)/*.o 
+	$(CXX) $(CXXFLAGS) $(BASEIDIR:%=-I%) -o $@ $(patsubst $(BIN)/%, $(SRC)/%.cpp, $@) $(BASEBUILD)/*.o 
 
 $(libraries): | $(BASEBUILD) 
 	$(MAKE) -C $@
@@ -30,9 +31,13 @@ clean:
 
 test: $(target)
 	@echo "Running test"
-	@./$(target) 	
+	@./bin/chess_game_test 	
 
-.PHONY: all clean test $(libraries)
+run: $(target)
+	@echo "Running program"
+	@./bin/chess_game
+
+.PHONY: all clean test run $(libraries)
 
 $(BASEBUILD):
 	mkdir -p $(BASEBUILD)

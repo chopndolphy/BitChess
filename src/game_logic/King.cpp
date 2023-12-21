@@ -1,13 +1,14 @@
 #include "game_logic/King.h"
+#include "interface/KingViewConsole.h"
 
 King::King(Color color, Coord location, ChessBoard* board) {
     this->location = location;
     this->color = color;
     this->board = board;
     movedYet = false;
-    createView(color, PieceType::KingType);
+    createView();
 }
-bool King::isLegalMove(Coord destination) const {
+bool King::isLegalMove(Coord destination) {
     int pathLengthX = std::abs(destination.x() - location.x());
     int pathLengthY = std::abs(destination.y() - location.y());
     if (location.x() == destination.x() && location.y() == destination.y()) {
@@ -23,4 +24,7 @@ bool King::isLegalMove(Coord destination) const {
     } else {
         return false;
     }
+}
+void King::createView() {
+    view = new KingViewConsole(color);
 }

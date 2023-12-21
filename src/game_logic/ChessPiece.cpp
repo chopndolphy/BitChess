@@ -17,30 +17,3 @@
 ChessPiece::~ChessPiece() {
     delete view;
 }
-void ChessPiece::createView(Color color, PieceType type) {
-    // macro to check if console or other?
-    // factory pattern?
-
-    switch (type) {
-    case PieceType::RookType:
-        view = new RookViewConsole(color);
-        break;
-    case PieceType::BishopType:
-        view = new BishopViewConsole(color);
-        break;
-    case PieceType::KnightType:
-        view = new KnightViewConsole(color);
-        break;
-    case PieceType::QueenType:
-        view = new QueenViewConsole(color);
-        break;
-    case PieceType::PawnType:
-        view = new PawnViewConsole(color);
-        break;
-    case PieceType::KingType:
-        view = new KingViewConsole(color);
-        break;
-    default:
-        break;
-    }
-}

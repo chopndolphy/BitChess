@@ -3,6 +3,7 @@
 class Bishop : public ChessPiece {
     public:
         Bishop(Color color, Coord location, ChessBoard* board);
-        bool isLegalMove(Coord destination) const;
+        bool isLegalMove(Coord destination);
     private:
+        void createView();
 };

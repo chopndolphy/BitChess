@@ -9,16 +9,17 @@ class ChessPiece;
 class Square {
 public:
     Square(Coord coord);
-    Square(Coord coord, std::unique_ptr<ChessPiece> chessPiece);
+    Square(Coord coord, ChessPiece* piece);
     ~Square();
-    void addChessPiece(std::unique_ptr<ChessPiece> chessPiece);
+    void addChessPiece(ChessPiece* piece);
     void removeChessPiece();
-    const ChessPiece* getPiece() const {
-        return chessPiece.get();
+    ChessPiece* getPiece() {
+        return chessPiece;
     }
     void moveToThisSquare(Square* previousSquare);
+    void deleteChessPiece();
 private:
-    std::unique_ptr<ChessPiece> chessPiece;
+    ChessPiece* chessPiece;
     Coord coord;
     Color squareColor;
     void assignSquareColor();

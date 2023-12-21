@@ -10,7 +10,7 @@ class GamePlay {
     public:
         GamePlay(Player* white, Player* black, ChessBoard* board, UserInterface* interface);
         void takeTurn();
-        bool isGameOver() const {
+        bool isGameOver() {
             return gameOver;
         }
 

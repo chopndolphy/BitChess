@@ -1,4 +1,5 @@
 #include "game_logic/Bishop.h"
+#include "interface/BishopViewConsole.h"
 #include <iostream>
 
 
@@ -7,9 +8,9 @@ Bishop::Bishop(Color color, Coord location, ChessBoard* board) {
     this->color = color;
     this->board = board;
     movedYet = false;
-    createView(color, PieceType::BishopType);
+    createView();
 }
-bool Bishop::isLegalMove(Coord destination) const {
+bool Bishop::isLegalMove(Coord destination) {
     int pathLength = std::abs(destination.x() - location.x());
     if (destination.x() == location.x() && destination.y() == location.y()) {
         return false; // Moving to same square
@@ -41,4 +42,7 @@ bool Bishop::isLegalMove(Coord destination) const {
     } else {
         return false;
     }
+}
+void Bishop::createView() {
+    view = new BishopViewConsole(color);
 }

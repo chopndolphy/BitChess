@@ -48,9 +48,9 @@ void Coord::setRank(char rank) {
     }
 int Coord::squareToIndex(char fileOrRank) {
     char character = toupper(fileOrRank);
-    if ('0' < character < '9') { // is a number between 1 and 8
+    if (48 < static_cast<int>(character) && static_cast<int>(character) < 57) { // is a number between 1 and 8
         character -= '1';
-    } else if ('@' < character < 'I') { // is a letter between A and H
+    } else if (64 < static_cast<int>(character) && static_cast<int>(character) < 73) { // is a letter between A and H
         character -= 'A';
     }
     return static_cast<int>(character);

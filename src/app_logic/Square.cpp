@@ -4,24 +4,24 @@
 
 Square::Square(Coord coord) {
     this->coord = coord;
-    this->chessPiece = nullptr;
+    chessPiece = nullptr;
     assignSquareColor();
 }
-Square::Square(Coord coord, std::unique_ptr<ChessPiece> chessPiece) {
+Square::Square(Coord coord, ChessPiece* piece) {
     this->coord = coord;
-    this->chessPiece = std::move(chessPiece);
+    chessPiece = piece;
     assignSquareColor();
 }
 Square::~Square() {
 }
-void Square::addChessPiece(std::unique_ptr<ChessPiece> chessPiece) {
-    this->chessPiece = std::move(chessPiece);
+void Square::addChessPiece(ChessPiece* piece) {
+    chessPiece = piece;
 }
 void Square::removeChessPiece() {
-    if (chessPiece = nullptr) {
+    if (chessPiece == nullptr) {
         return;
     }
-    this->chessPiece = nullptr;
+    chessPiece = nullptr;
 }
 void Square::assignSquareColor() {
     if (coord.x() % 2 == coord.y() % 2) {
@@ -31,6 +31,9 @@ void Square::assignSquareColor() {
     }
 }
 void Square::moveToThisSquare(Square* previousSquare) {
-    this->chessPiece = std::move(previousSquare->chessPiece);
+    chessPiece = previousSquare->chessPiece;
+    previousSquare->removeChessPiece();
 }
-
+void Square::deleteChessPiece() {
+    delete chessPiece;
+}

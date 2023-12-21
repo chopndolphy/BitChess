@@ -1,0 +1,41 @@
+<diagram program="umletino" version="15.1"><zoom_level>13</zoom_level><element><id>UMLClass</id><coordinates><x>208</x><y>273</y><w>130</w><h>39</h></coordinates><panel_attributes>GamePlay</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>468</x><y>520</y><w>130</w><h>39</h></coordinates><panel_attributes>Square
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>468</x><y>416</y><w>130</w><h>39</h></coordinates><panel_attributes>ChessBoard
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>468</x><y>273</y><w>130</w><h>39</h></coordinates><panel_attributes>Player
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>325</x><y>273</y><w>169</w><h>52</h></coordinates><panel_attributes>lt=.&gt;
+takeTurn()</panel_attributes><additional_attributes>10;20;110;20</additional_attributes></element><element><id>Relation</id><coordinates><x>494</x><y>299</y><w>429</w><h>143</h></coordinates><panel_attributes>lt=.&gt;
+(via the board) asks piece if move is valid, moves piece </panel_attributes><additional_attributes>10;10;10;90</additional_attributes></element><element><id>UMLClass</id><coordinates><x>468</x><y>624</y><w>130</w><h>39</h></coordinates><panel_attributes>/ChessPiece/
+
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>494</x><y>195</y><w>104</w><h>104</h></coordinates><panel_attributes>lt=.&gt;
+getMove()
+</panel_attributes><additional_attributes>10;60;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>455</x><y>169</y><w>130</w><h>39</h></coordinates><panel_attributes>/UserInterface/
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>494</x><y>442</y><w>117</w><h>104</h></coordinates><panel_attributes>lt=.&gt;
+setPieceAt()</panel_attributes><additional_attributes>10;10;10;60</additional_attributes></element><element><id>Relation</id><coordinates><x>494</x><y>546</y><w>182</w><h>104</h></coordinates><panel_attributes>lt=.&gt;
+moveToThisSquare()</panel_attributes><additional_attributes>10;10;10;60</additional_attributes></element><element><id>Relation</id><coordinates><x>585</x><y>429</y><w>468</w><h>247</h></coordinates><panel_attributes>lt=.&gt;
+chessPiece contains logic
+for individual legalMove 
+(?? but player still has to check board for checks??)
+(*maybe move all legalMove logic to chessBoard*)</panel_attributes><additional_attributes>10;170;70;170;70;10;10;10</additional_attributes></element><element><id>Text</id><coordinates><x>117</x><y>91</y><w>273</w><h>143</h></coordinates><panel_attributes>Need to separate into:
+- system classes with functions
+- entity classes with state
+
+(and perhaps actual data-oriented ECS design)
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>0</x><y>351</y><w>403</w><h>416</h></coordinates><panel_attributes>Possible ECS design:
+- entity class is container of component pointers
+- chessboard entity has array of pieces compoenent
+- piece entity has color compenent and type component (no location maybe?)
+- gameplay entity has turn and gamestate
+
+- components classes are pointers to data/state
+- mesh components
+- transform compenet for rendering
+
+- system classes manipulate state
+- separate system classes just manipulate datea
+- move system gets player moves and checks for checks and checks individual moves (could be split)
+- system to check for gamestate changes
+- rendering system gets coordinates and meshes
+
+- all data that components point to are stored in contiguous arrays that the systems can access
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>689</x><y>130</y><w>351</w><h>143</h></coordinates><panel_attributes>Current design kinda sucks. Wayyy too much coupling going on. Has been super annoying to manage. Also could possibly have noticably poor performance, especially if an ai is added that needs to check lots of move options, multiple moves deep.
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element></diagram>
