@@ -5,6 +5,8 @@ export CXXFLAGS = -std=c++17 -O2 -g -Wall -Wextra -pedantic
 BIN=bin
 BASEBUILD=build
 BASEIDIR=include
+TEST=test
+
 export IDIR=../$(BASEIDIR)
 export BUILD=../$(BASEBUILD)
 export SRC=src
@@ -14,14 +16,25 @@ export SRC=src
 libraries := app_logic game_logic interface
 libraries := $(addprefix src/, $(libraries))
 
-target := chess_game chess_game_test
+target := chess_game
 target := $(addprefix bin/, $(target))
+
+testtargets := coord_test board_test
+testtargets := $(addprefix bin/, $(testtargets))
 
 all: $(target)
 
 $(target): $(libraries) | $(BASEBUILD)
 	@echo "Compiling $(target)"
-	$(CXX) $(CXXFLAGS) $(BASEIDIR:%=-I%) -o $@ $(patsubst $(BIN)/%, $(SRC)/%.cpp, $@) $(BASEBUILD)/*.o 
+	$(CXX) $(CXXFLAGS) $(BASEIDIR:%=-I%) -o $@ $(patsubst $(BIN)/%, $(SRC)/%.cpp, $@) $(BASEBUILD)/*.o
+
+$(testtargets): $(libraries) | $(BASEBUILD)
+	@echo "Compiling $@"
+	$(CXX) $(CXXFLAGS) $(BASEIDIR:%=-I%) -o $@ $(TEST)/$(notdir $@)/$(notdir $@).cpp $(BASEBUILD)/*.o
+	@./$@ < $(TEST)/$(notdir $@)/input.txt $@ > $(TEST)/$(notdir $@)/output.txt
+	@diff $(TEST)/$(notdir $@)/expected.txt $(TEST)/$(notdir $@)/output.txt
+	@> $(TEST)/$(notdir $@)/output.txt
+	@echo "$@ successful"
 
 $(libraries): | $(BASEBUILD) 
 	$(MAKE) -C $@
@@ -29,15 +42,17 @@ $(libraries): | $(BASEBUILD)
 clean:
 	rm -rf $(BASEBUILD)
 
-test: $(target)
-	@echo "Running test"
-	@./bin/chess_game_test 	
+test: $(testtargets)
+	@echo "All tests successful"
 
 run: $(target)
 	@echo "Running program"
 	@./bin/chess_game
 
-.PHONY: all clean test run $(libraries)
+maketest:
+	@./scripts/make_test.sh $(N)
+
+.PHONY: all clean test run maketest $(libraries)
 
 $(BASEBUILD):
 	mkdir -p $(BASEBUILD)
