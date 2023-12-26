@@ -1,58 +1,91 @@
-# compiler and flags
-export CXX=g++
-export CXXFLAGS = -std=c++17 -O2 -g -Wall -Wextra -pedantic
+# Directories
+SRC = src
+BUILD = build
+INCLUDE = include
+LIB = lib
 
-BIN=bin
-BASEBUILD=build
-BASEIDIR=include
-TEST=test
+ALL_INCLUDES = -I./$(LIB) -I$(GLAD_INC) -I./$(INCLUDE) -I./$(IMGUI_DIR) -I./$(IMGUI_DIR)/backends -I./$(FLECS) -I./$(STB_IMAGE) -I./$(GLM)
+GLAD = ./$(LIB)/glad
+GLAD_INC = $(GLAD)/include
+IMGUI_DIR = $(LIB)/imgui
+FLECS = $(LIB)/flecs
+STB_IMAGE = $(LIB)/stb_image
+GLM = $(LIB)/glm
 
-export IDIR=../$(BASEIDIR)
-export BUILD=../$(BASEBUILD)
-export SRC=src
+IMGUI_SOURCES := $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_demo.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp $(IMGUI_DIR)/imgui_stdlib.cpp $(IMGUI_DIR)/backends/imgui_impl_glfw.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
 
-# := is needed to avoid a recursive expansion
-#https://stackoverflow.com/questions/1605623/how-can-i-affect-path-in-a-makefile-variable-why-is-my-example-not-working
-libraries := app_logic game_logic interface
-libraries := $(addprefix src/, $(libraries))
+# Compiler and flags
+CC = gcc
+CXX = g++
+CFLAGS = -Wall -O2 $(ALL_INCLUDES)
+# CFLAGS = -Wall -ggdb -O3 $(INCLUDES)
+CXXFLAGS = -std=c++17 -O2 -Wall -Wextra -pedantic -O2 $(ALL_INCLUDES)
+# CXXFLAGS = -Wall -ggdb -O3 $(INCLUDES)
+LDFLAGS = -lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lassimp
 
-target := chess_game
-target := $(addprefix bin/, $(target))
+# SHARED OBJECTS AND TARGETS  (Targets are executables)
 
-testtargets := coord_test board_test
-testtargets := $(addprefix bin/, $(testtargets))
+# Shared objects by multiple executables
+CPP_FILES := Shader.cpp Renderer2D.cpp Sprite.cpp Game.cpp
+OBJECTS := $(CPP_FILES:.cpp=.o) glad.o flecs.o stb_image.o imgui_impl_glfw.o imgui_impl_opengl3.o imgui_demo.o imgui_draw.o imgui_tables.o imgui_widgets.o imgui_stdlib.o imgui.o
+OBJECTS := $(addprefix $(BUILD)/, $(OBJECTS))
 
-all: $(target)
+# Targets
+CPP_EXEC := chess.cpp
+TARGETS_OBJ := $(CPP_EXEC:%.cpp=$(BUILD)/%.o)
+TARGETS := $(TARGETS_OBJ:%.o=%)
 
-$(target): $(libraries) | $(BASEBUILD)
-	@echo "Compiling $(target)"
-	$(CXX) $(CXXFLAGS) $(BASEIDIR:%=-I%) -o $@ $(patsubst $(BIN)/%, $(SRC)/%.cpp, $@) $(BASEBUILD)/*.o
+# RECIPES
+all: $(TARGETS)
 
-$(testtargets): $(libraries) | $(BASEBUILD)
-	@echo "Compiling $@"
-	$(CXX) $(CXXFLAGS) $(BASEIDIR:%=-I%) -o $@ $(TEST)/$(notdir $@)/$(notdir $@).cpp $(BASEBUILD)/*.o
-	@./$@ < $(TEST)/$(notdir $@)/input.txt $@ 1> $(TEST)/$(notdir $@)/output.txt 2> $(TEST)/$(notdir $@)/errors.txt 
-	@diff $(TEST)/$(notdir $@)/expected.txt $(TEST)/$(notdir $@)/output.txt
-	@> $(TEST)/$(notdir $@)/output.txt
-	@echo "$@ successful"
+# executables depend on shared objects
+$(TARGETS): $(OBJECTS) 
 
-$(libraries): | $(BASEBUILD) 
-	$(MAKE) -C $@
+# Link
+# Secondary expansions allow to use the automatic variable $@ in the prerequisites list.
+# https://www.gnu.org/software/make/manual/html_node/Secondary-Expansion.html
+.SECONDEXPANSION:
+$(TARGETS): $(OBJECTS) $$@.o 
+	$(CXX) -o $@ $^ $(LDFLAGS)
 
-clean:
-	rm -rf $(BASEBUILD)
+# Compile objects
+# Order of recipes matter. Recipe 2 has to be before recipe 3 to take into account .h prerrequisites. 
 
-test: $(testtargets)
-	@echo "All tests successful"
+# recipe 1: Complie glad
+$(BUILD)/glad.o: $(GLAD)/src/glad.c $(GLAD)/include/glad/glad.h | $(BUILD)
+	$(CC) -c $(CFLAGS) -o $@ $< 
 
-run: $(target)
-	@echo "Running program"
-	@./bin/chess_game
+# imgui:
+$(BUILD)/%.o:$(IMGUI_DIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-maketest:
-	@./scripts/make_test.sh $(N)
+$(BUILD)/%.o:$(IMGUI_DIR)/backends/%.cpp
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-.PHONY: all clean test run maketest $(libraries)
+#flecs:
+$(BUILD)/flecs.o: $(FLECS)/flecs.c $(FLECS)/flecs.h | $(BUILD)
+	$(CC) -c $(CFLAGS) -std=gnu99 -o $@ $<
 
-$(BASEBUILD):
-	mkdir -p $(BASEBUILD)
+#stb_image:
+$(BUILD)/stb_image.o: $(STB_IMAGE)/stb_image.cpp $(STB_IMAGE)/stb_image.h | $(BUILD)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# recipe 2: compile objects - cpp files with header files
+$(BUILD)/%.o: $(SRC)/%.cpp $(INCLUDE)/%.h | $(BUILD)
+	$(CXX) $(CXXFLAGS) -c $< -o $@ 
+
+# recipe 3: compile executables - cpp files without header files
+$(BUILD)/%.o: $(SRC)/%.cpp | $(BUILD)
+	$(CXX) $(CXXFLAGS) -c $< -o $@    
+
+# PHONY
+.PHONY : all clean run-test
+
+clean :
+	rm -rf $(BUILD)
+
+run-test: $(TARGETS)
+	./$(BUILD)/hello_triangle
+
+$(BUILD):
+	mkdir -p $(BUILD)

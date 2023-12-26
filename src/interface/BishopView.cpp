@@ -1,1 +1,0 @@
-#include "interface/BishopView.h"
