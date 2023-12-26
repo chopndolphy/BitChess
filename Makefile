@@ -31,7 +31,7 @@ $(target): $(libraries) | $(BASEBUILD)
 $(testtargets): $(libraries) | $(BASEBUILD)
 	@echo "Compiling $@"
 	$(CXX) $(CXXFLAGS) $(BASEIDIR:%=-I%) -o $@ $(TEST)/$(notdir $@)/$(notdir $@).cpp $(BASEBUILD)/*.o
-	@./$@ < $(TEST)/$(notdir $@)/input.txt $@ > $(TEST)/$(notdir $@)/output.txt
+	@./$@ < $(TEST)/$(notdir $@)/input.txt $@ 1> $(TEST)/$(notdir $@)/output.txt 2> $(TEST)/$(notdir $@)/errors.txt 
 	@diff $(TEST)/$(notdir $@)/expected.txt $(TEST)/$(notdir $@)/output.txt
 	@> $(TEST)/$(notdir $@)/output.txt
 	@echo "$@ successful"

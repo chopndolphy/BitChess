@@ -20,7 +20,7 @@ bool Pawn::isLegalMove(Coord destination) {
     } else if (location.x() > 7 || location.x() < 0 || location.y() > 7 || location.y() < 0) {
         return false; // Moving out of bounds
     } else if (board->getPieceAt(destination) != nullptr) {
-        } if (board->getPieceAt(destination)->getColor() == color) {
+        if (board->getPieceAt(destination)->getColor() == color) {
             return false; // Moving to own color piece
         } else if (pathLengthX == 1 && pathLengthY == 1 && board->getPieceAt(destination)->getColor() != color) {
             if ((color == Color::White && destination.y() == 7) || (color == Color::Black && destination.y() == 0)) {
@@ -29,6 +29,7 @@ bool Pawn::isLegalMove(Coord destination) {
             return true; // Capturing normally
         } else if (canEnPassant(destination)) {
             return true; // Capturing en passant
+        }
     } else if (pathLengthX == 0 && pathLengthY == 1) {
         if ((color == Color::White && destination.y() == 7) || (color == Color::Black && destination.y() == 0)) {
             board->setNextMovePromoting(true);
