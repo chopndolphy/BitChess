@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Renderer2D.h"
 
 Game::Game() {
     try {

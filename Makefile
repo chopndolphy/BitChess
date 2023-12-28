@@ -17,16 +17,16 @@ IMGUI_SOURCES := $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_demo.cpp $(IMGUI_DIR)
 # Compiler and flags
 CC = gcc
 CXX = g++
-CFLAGS = -Wall -O2 $(ALL_INCLUDES)
+CFLAGS = -Wall -O2 -g $(ALL_INCLUDES)
 # CFLAGS = -Wall -ggdb -O3 $(INCLUDES)
-CXXFLAGS = -std=c++17 -O2 -Wall -Wextra -pedantic -O2 $(ALL_INCLUDES)
+CXXFLAGS = -std=c++17 -O2 -Wall -Wextra -pedantic -g -O2 $(ALL_INCLUDES)
 # CXXFLAGS = -Wall -ggdb -O3 $(INCLUDES)
 LDFLAGS = -lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lassimp
 
 # SHARED OBJECTS AND TARGETS  (Targets are executables)
 
 # Shared objects by multiple executables
-CPP_FILES := Shader.cpp Renderer2D.cpp Sprite.cpp Game.cpp
+CPP_FILES := Shader.cpp Renderer2D.cpp Sprite.cpp Game.cpp MyGlWindow.cpp Texture2D.cpp ResourceManager.cpp
 OBJECTS := $(CPP_FILES:.cpp=.o) glad.o flecs.o stb_image.o imgui_impl_glfw.o imgui_impl_opengl3.o imgui_demo.o imgui_draw.o imgui_tables.o imgui_widgets.o imgui_stdlib.o imgui.o
 OBJECTS := $(addprefix $(BUILD)/, $(OBJECTS))
 
@@ -79,13 +79,13 @@ $(BUILD)/%.o: $(SRC)/%.cpp | $(BUILD)
 	$(CXX) $(CXXFLAGS) -c $< -o $@    
 
 # PHONY
-.PHONY : all clean run-test
+.PHONY : all clean run
 
 clean :
 	rm -rf $(BUILD)
 
-run-test: $(TARGETS)
-	./$(BUILD)/hello_triangle
+run: $(TARGETS)
+	./$(BUILD)/chess
 
 $(BUILD):
 	mkdir -p $(BUILD)

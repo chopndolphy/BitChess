@@ -1,7 +1,8 @@
 #pragma once
-#include "Renderer2D.h"
 
 #include <memory>
+
+class Renderer2D;
 
 class Game {
     public:

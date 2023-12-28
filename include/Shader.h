@@ -11,10 +11,10 @@
 class Shader {
 public:
     unsigned int ID;
-    Shader(const char* vertexPath, const char* fragmentPath);
-    void activate_shader() { glUseProgram(ID); }
+    Shader();
+    void compile(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr);
+    Shader& activate_shader() { glUseProgram(ID); return *this;}
     void delete_shader() { glDeleteProgram(ID); }
-
     // utility uniform functions
     void setBool(const std::string &name, bool value) const {
         glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);

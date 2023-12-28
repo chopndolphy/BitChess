@@ -1,4 +1,6 @@
 #include "Renderer2D.h"
+#include "MyGlWindow.h"
+
 Renderer2D::Renderer2D() {
     initWindow();
     initOpenGL();
@@ -6,6 +8,7 @@ Renderer2D::Renderer2D() {
 }
 Renderer2D::~Renderer2D() {
     glfwTerminate();
+    delete myWindow;
 }
 void Renderer2D::PrepareFrame() {
     float currentFrame = static_cast<float>(glfwGetTime());
@@ -19,6 +22,8 @@ void Renderer2D::ProcessInput() {
 void Renderer2D::RenderFrame() {
     glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(myWindow->SCR_WIDTH), static_cast<float>(myWindow->SCR_HEIGHT), 0.0f, -1.0f, 1.0f);
 }
 void Renderer2D::EndFrame() {
     glfwSwapBuffers(window);
@@ -34,21 +39,31 @@ void Renderer2D::initOpenGL() {
     glEnable(GL_DEPTH_TEST);
 }
 void Renderer2D::initWindow() {
+    myWindow = new MyGlWindow;
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "HelloTriangle", NULL, NULL);
-    if (window == NULL) {
+    glfwWindowHint(GLFW_RESIZABLE, false);
+    
+    window = glfwCreateWindow(myWindow->SCR_WIDTH, myWindow->SCR_HEIGHT, "Chess", NULL, NULL);
+    if (!window) {
         throw std::runtime_error("Failed to create GLFW window");
         glfwTerminate();
     }
-    
     glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwSetCursorPosCallback(window, mouse_callback);
-}
-GLFWframebuffersizefun framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-    glViewport(0, 0, width, height);
+
+    glfwSetWindowUserPointer(window, myWindow);
+    auto resizeFunc = [](GLFWwindow* w, int width, int height) {
+        static_cast<MyGlWindow*>(glfwGetWindowUserPointer(w))->ResizeWindow(w, width, height);
+    };
+    glfwSetFramebufferSizeCallback(window, resizeFunc);
+    auto mouseMoveFunc = [](GLFWwindow* w, double xposIn, double yposIn) {
+        static_cast<MyGlWindow*>(glfwGetWindowUserPointer(w))->MoveMouse(w, xposIn, yposIn);
+    };
+    glfwSetCursorPosCallback(window, mouseMoveFunc);
+
+    glViewport(0, 0, myWindow->SCR_WIDTH, myWindow->SCR_HEIGHT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
