@@ -11,6 +11,6 @@ class Game {
         void ExecuteFrame();
         bool IsRunning();
     private:
-        std::unique_ptr<Renderer2D> renderer;
+        Renderer2D* renderer;
 
 };

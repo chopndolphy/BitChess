@@ -12,7 +12,7 @@ class Shader {
 public:
     unsigned int ID;
     Shader();
-    void compile(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr);
+    void compile(const char* vertexSource, const char* fragmentSource, const char* geometrySource = nullptr);
     Shader& activate_shader() { glUseProgram(ID); return *this;}
     void delete_shader() { glDeleteProgram(ID); }
     // utility uniform functions

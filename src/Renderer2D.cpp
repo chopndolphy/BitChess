@@ -1,10 +1,16 @@
 #include "Renderer2D.h"
 #include "MyGlWindow.h"
+#include "ResourceManager.h"
+#include "Sprite.h"
+#include "Texture2D.h"
+
+#include <filesystem>
 
 Renderer2D::Renderer2D() {
     initWindow();
     initOpenGL();
     stbi_set_flip_vertically_on_load(true);
+    initSprites();
 }
 Renderer2D::~Renderer2D() {
     glfwTerminate();
@@ -20,10 +26,9 @@ void Renderer2D::ProcessInput() {
         glfwSetWindowShouldClose(window, true);
 }
 void Renderer2D::RenderFrame() {
-    glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(myWindow->SCR_WIDTH), static_cast<float>(myWindow->SCR_HEIGHT), 0.0f, -1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    spriteRenderer->DrawSprite(ResourceManager::GetTexture("face"), glm::vec2(200.0f, 200.0f),
+        glm::vec2(300.0f, 400.0f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 void Renderer2D::EndFrame() {
     glfwSwapBuffers(window);
@@ -36,7 +41,11 @@ void Renderer2D::initOpenGL() {
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         throw std::runtime_error("Failed to initialize GLAD");
     }
-    glEnable(GL_DEPTH_TEST);
+    glViewport(0, 0, myWindow->SCR_WIDTH, myWindow->SCR_HEIGHT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
+    projection = glm::ortho(0.0f, static_cast<float>(myWindow->SCR_WIDTH), static_cast<float>(myWindow->SCR_HEIGHT), 0.0f, -1.0f, 1.0f);
 }
 void Renderer2D::initWindow() {
     myWindow = new MyGlWindow;
@@ -62,8 +71,13 @@ void Renderer2D::initWindow() {
         static_cast<MyGlWindow*>(glfwGetWindowUserPointer(w))->MoveMouse(w, xposIn, yposIn);
     };
     glfwSetCursorPosCallback(window, mouseMoveFunc);
-
-    glViewport(0, 0, myWindow->SCR_WIDTH, myWindow->SCR_HEIGHT);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+void Renderer2D::initSprites() {
+    std::filesystem::path shaderAbsPath = std::filesystem::absolute("./shaders/");
+    std::filesystem::path textureAbsPath = std::filesystem::absolute("./textures/");
+    ResourceManager::LoadShader((shaderAbsPath / "sprite.vert").string().c_str(), (shaderAbsPath / "sprite.frag").string().c_str(), nullptr, "sprite");
+    ResourceManager::GetShader("sprite").activate_shader().setInt("image", 0);
+    ResourceManager::GetShader("sprite").setMat4("projection", projection);
+    spriteRenderer = new Sprite(ResourceManager::GetShader("sprite"));
+    ResourceManager::LoadTexture((textureAbsPath / "chessboard.png").string().c_str(), true, "chessboard");
 }

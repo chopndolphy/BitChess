@@ -10,6 +10,7 @@
 #include <iostream>
 #include <memory>
 
+class Sprite;
 class MyGlWindow;
 class Renderer2D {
     public:
@@ -25,7 +26,10 @@ class Renderer2D {
     private:
         GLFWwindow* window;
         MyGlWindow* myWindow;
+        Sprite* spriteRenderer;
         void initOpenGL();
         void initWindow();
+        void initSprites();
         glm::vec3 clearColor = glm::vec3(0.1f, 0.1f, 0.1f);
+        glm::mat4 projection;
 };

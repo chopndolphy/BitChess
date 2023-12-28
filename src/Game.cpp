@@ -3,13 +3,13 @@
 
 Game::Game() {
     try {
-        renderer = std::make_unique<Renderer2D>();
+        renderer = new Renderer2D;
     } catch (std::exception &e) {
         std::cerr << "Game Initialization Error: " << e.what() << std::endl;
     }
 }
 Game::~Game() {
-
+    delete renderer;
 }
 void Game::ExecuteFrame() {
     renderer->PrepareFrame();
