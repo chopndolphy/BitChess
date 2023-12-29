@@ -4,8 +4,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Shader.h"
+#include "Texture2D.h"
 
-class Texture2D;
 class Sprite {
     public:
         Sprite(Shader &shader);

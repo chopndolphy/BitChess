@@ -9,7 +9,6 @@
 Renderer2D::Renderer2D() {
     initWindow();
     initOpenGL();
-    stbi_set_flip_vertically_on_load(true);
     initSprites();
 }
 Renderer2D::~Renderer2D() {
@@ -27,8 +26,8 @@ void Renderer2D::ProcessInput() {
 }
 void Renderer2D::RenderFrame() {
     glClear(GL_COLOR_BUFFER_BIT);
-    spriteRenderer->DrawSprite(ResourceManager::GetTexture("face"), glm::vec2(200.0f, 200.0f),
-        glm::vec2(300.0f, 400.0f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+    Texture2D &board = ResourceManager::GetTexture("chessboard"); //move somewhere else
+    spriteRenderer->DrawSprite(board, glm::vec2(static_cast<float>(myWindow->SCR_WIDTH / 5), static_cast<float>(myWindow->SCR_HEIGHT / 10)), glm::vec2(static_cast<float>((3 * myWindow->SCR_WIDTH) / 5), static_cast<float>((3 * myWindow->SCR_WIDTH) / 5)));
 }
 void Renderer2D::EndFrame() {
     glfwSwapBuffers(window);

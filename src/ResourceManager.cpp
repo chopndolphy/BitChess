@@ -34,7 +34,6 @@ void ResourceManager::Clear() {
     }
 }
 Shader ResourceManager::loadShaderFromFile(const char* vertexPath, const char* fragmentPath, const char* geometryPath) {
-    // NEED TO MOVE SHADER LOADING HERE (CURRENTLY IN SPRITE)
     // 1. retrieve the vertex/fragment source code from filePath
     std::string vertexCode;
     std::string fragmentCode;

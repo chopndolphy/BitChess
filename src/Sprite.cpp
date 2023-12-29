@@ -1,5 +1,4 @@
 #include "Sprite.h"
-#include "Texture2D.h"
 
 Sprite::Sprite(Shader &shader) {
     this->shader = shader;
