@@ -1,23 +1,23 @@
 #include "Sprite.h"
 
-Sprite::Sprite(Shader &shader) {
+Sprite::Sprite(Shader &shader, glm::vec4 texCoords) {
     this->shader = shader;
-    initRenderData();
+    initRenderData(texCoords);
 }
 Sprite::~Sprite() {
     glDeleteVertexArrays(1, &this->quadVAO);
 }
-void Sprite::initRenderData() {
+void Sprite::initRenderData(glm::vec4 texCoords) {
     unsigned int VBO;
     float vertices[] = {
         // pos      // tex 
-        0.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, texCoords.x, texCoords.w,
+        1.0f, 0.0f, texCoords.z, texCoords.y,
+        0.0f, 0.0f, texCoords.x, texCoords.y,
 
-        0.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, 1.0f, 1.0f, 1.0f,
-        1.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, texCoords.x, texCoords.w,
+        1.0f, 1.0f, texCoords.z, texCoords.w,
+        1.0f, 0.0f, texCoords.z, texCoords.y,
     };
     
     glGenVertexArrays(1, &this->quadVAO);

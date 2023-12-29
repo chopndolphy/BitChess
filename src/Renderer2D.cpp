@@ -26,7 +26,7 @@ void Renderer2D::ProcessInput() {
 }
 void Renderer2D::RenderFrame() {
     glClear(GL_COLOR_BUFFER_BIT);
-    Texture2D &board = ResourceManager::GetTexture("chessboard"); //move somewhere else
+    Texture2D &board = ResourceManager::GetTexture("chess"); //move somewhere else
     spriteRenderer->DrawSprite(board, glm::vec2(static_cast<float>(myWindow->SCR_WIDTH / 5), static_cast<float>(myWindow->SCR_HEIGHT / 10)), glm::vec2(static_cast<float>((3 * myWindow->SCR_WIDTH) / 5), static_cast<float>((3 * myWindow->SCR_WIDTH) / 5)));
 }
 void Renderer2D::EndFrame() {
@@ -77,6 +77,6 @@ void Renderer2D::initSprites() {
     ResourceManager::LoadShader((shaderAbsPath / "sprite.vert").string().c_str(), (shaderAbsPath / "sprite.frag").string().c_str(), nullptr, "sprite");
     ResourceManager::GetShader("sprite").activate_shader().setInt("image", 0);
     ResourceManager::GetShader("sprite").setMat4("projection", projection);
-    spriteRenderer = new Sprite(ResourceManager::GetShader("sprite"));
-    ResourceManager::LoadTexture((textureAbsPath / "chessboard.png").string().c_str(), true, "chessboard");
+    spriteRenderer = new Sprite(ResourceManager::GetShader("sprite"), glm::vec4(0.5f, 0.0f, 1.0f, 0.5f));
+    ResourceManager::LoadTexture((textureAbsPath / "chess.png").string().c_str(), true, "chess");
 }
