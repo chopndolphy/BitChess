@@ -13,6 +13,7 @@ class Sprite {
         ~Sprite();
         void Draw();
         void Move(glm::vec2 position);
+        void Scale(glm::vec2 size);
     private:
         std::weak_ptr<Shader> shader;
         unsigned int quadVAO;

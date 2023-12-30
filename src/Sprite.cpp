@@ -3,11 +3,9 @@
 Sprite::Sprite(std::weak_ptr<Shader> shader, glm::vec4 texCoords, glm::vec2 position, glm::vec2 size) {
     this->shader = shader;
     initRenderData(texCoords);
-    shader.lock()->activate_shader();
     model = glm::mat4(1.0f);
     Move(position);
-    model = glm::scale(model, glm::vec3(size, 1.0f));
-    shader.lock()->setMat4("model", model);
+    Scale(size);
 }
 Sprite::~Sprite() {
     glDeleteVertexArrays(1, &this->quadVAO);
@@ -48,5 +46,10 @@ void Sprite::Draw() {
 void Sprite::Move(glm::vec2 position) {
     shader.lock()->activate_shader();
     model = glm::translate(model, glm::vec3(position, 0.0f));
+    shader.lock()->setMat4("model", model);
+}
+void Sprite::Scale(glm::vec2 size) {
+    shader.lock()->activate_shader();
+    model = glm::scale(model, glm::vec3(size, 1.0f));
     shader.lock()->setMat4("model", model);
 }

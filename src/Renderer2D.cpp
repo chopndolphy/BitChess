@@ -39,9 +39,9 @@ bool Renderer2D::IsRunning() {
     return !glfwWindowShouldClose(window);
 }
 void Renderer2D::UpdateBoardState(std::string boardState) {
-    pieces.clear(); //some way to not have to clear every update and just update changed ones?
+    pieces.clear();
     for (size_t i = 0; i < boardState.length(); i++) {
-        switch (boardState[i]) { // could also use inheritance
+        switch (boardState[i]) {
             case 'K':
                 // TODO: function to calculate position vector based on position in string 
                 // TODO: scale factor can be a constant
