@@ -37,7 +37,7 @@ bool Renderer2D::IsRunning() {
     return !glfwWindowShouldClose(window);
 }
 void Renderer2D::UpdateBoardState(std::string boardState) {
-    pieces.clear();
+    pieces.clear(); //some way to not have to clear every update and just update changed ones?
     for (size_t i = 0; i < boardState.length(); i++) {
         switch (boardState[i]) { // could also use inheritance
             case 'K':
