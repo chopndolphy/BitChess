@@ -2,21 +2,22 @@
 
 #include <glad/glad.h>
 
-#include <map>
+#include <unordered_map>
 #include <string>
+#include <memory>
 
 class Shader;
 class Texture2D;
 
 class ResourceManager {
     public:
-        static Shader& LoadShader(const char* vShaderFile, const char* fShaderFile, const char* gShaderFile, std::string name);
-        static Shader& GetShader(std::string name);
-        static Texture2D& LoadTexture(const char* file, bool alpha, std::string name);
-        static Texture2D& GetTexture(std::string name);
+        static std::weak_ptr<Shader> LoadShader(const char* vShaderFile, const char* fShaderFile, const char* gShaderFile, std::string name);
+        static std::weak_ptr<Shader> GetShader(std::string name);
+        static std::weak_ptr<Texture2D> LoadTexture(const char* file, bool alpha, std::string name);
+        static std::weak_ptr<Texture2D> GetTexture(std::string name);
         static void Clear();
-        static std::map<std::string, Shader> Shaders;
-        static std::map<std::string, Texture2D> Textures;
+        static std::unordered_map<std::string, std::shared_ptr<Shader>> Shaders;
+        static std::unordered_map<std::string, std::shared_ptr<Texture2D>> Textures;
     private:
         ResourceManager() {}
         static Shader loadShaderFromFile(const char* vShaderFile, const char* fShaderFile, const char* gShaderFile = nullptr);

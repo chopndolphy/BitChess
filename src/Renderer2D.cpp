@@ -1,19 +1,15 @@
 #include "Renderer2D.h"
-#include "MyGlWindow.h"
 #include "ResourceManager.h"
-#include "Sprite.h"
-#include "Texture2D.h"
 
 #include <filesystem>
 
 Renderer2D::Renderer2D() {
     initWindow();
     initOpenGL();
-    initSprites();
+    initShadersAndTextures();
 }
 Renderer2D::~Renderer2D() {
     glfwTerminate();
-    delete myWindow;
 }
 void Renderer2D::PrepareFrame() {
     float currentFrame = static_cast<float>(glfwGetTime());
@@ -26,8 +22,12 @@ void Renderer2D::ProcessInput() {
 }
 void Renderer2D::RenderFrame() {
     glClear(GL_COLOR_BUFFER_BIT);
-    Texture2D &board = ResourceManager::GetTexture("chess"); //move somewhere else
-    spriteRenderer->DrawSprite(board, glm::vec2(static_cast<float>(myWindow->SCR_WIDTH / 5), static_cast<float>(myWindow->SCR_HEIGHT / 10)), glm::vec2(static_cast<float>((3 * myWindow->SCR_WIDTH) / 5), static_cast<float>((3 * myWindow->SCR_WIDTH) / 5)));
+    for (auto uiElement = uiElements.begin(); uiElement != uiElements.end(); uiElement++) {
+        uiElement->second->Draw();
+    }
+    for (auto &piece : pieces) {
+        piece->Draw(); 
+    }
 }
 void Renderer2D::EndFrame() {
     glfwSwapBuffers(window);
@@ -36,18 +36,51 @@ void Renderer2D::EndFrame() {
 bool Renderer2D::IsRunning() {
     return !glfwWindowShouldClose(window);
 }
-void Renderer2D::initOpenGL() {
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        throw std::runtime_error("Failed to initialize GLAD");
+void Renderer2D::UpdateBoardState(std::string boardState) {
+    pieces.clear();
+    for (size_t i = 0; i < boardState.length(); i++) {
+        switch (boardState[i]) { // could also use inheritance
+            case 'K':
+                // pieces.emplace_back(Sprite(/*shader, texCoord in map, position (need coord converter), size (set default size for piece)*/))
+                break;
+            case 'k':
+
+                break;
+            case 'Q':
+
+                break;
+            case 'q':
+                
+                break;
+            case 'R':
+
+                break;
+            case 'r':
+
+                break;
+            case 'B':
+
+                break;
+            case 'b':
+
+                break;
+            case 'N':
+
+                break;
+            case 'n':
+
+                break;
+            case 'P':
+
+                break;
+            case 'p':
+
+                break;
+        }
     }
-    glViewport(0, 0, myWindow->SCR_WIDTH, myWindow->SCR_HEIGHT);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
-    projection = glm::ortho(0.0f, static_cast<float>(myWindow->SCR_WIDTH), static_cast<float>(myWindow->SCR_HEIGHT), 0.0f, -1.0f, 1.0f);
 }
 void Renderer2D::initWindow() {
-    myWindow = new MyGlWindow;
+    myWindow = std::make_shared<MyGlWindow>();
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -61,7 +94,7 @@ void Renderer2D::initWindow() {
     }
     glfwMakeContextCurrent(window);
 
-    glfwSetWindowUserPointer(window, myWindow);
+    glfwSetWindowUserPointer(window, myWindow.get());
     auto resizeFunc = [](GLFWwindow* w, int width, int height) {
         static_cast<MyGlWindow*>(glfwGetWindowUserPointer(w))->ResizeWindow(w, width, height);
     };
@@ -71,12 +104,23 @@ void Renderer2D::initWindow() {
     };
     glfwSetCursorPosCallback(window, mouseMoveFunc);
 }
-void Renderer2D::initSprites() {
+void Renderer2D::initOpenGL() {
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        throw std::runtime_error("Failed to initialize GLAD");
+    }
+    glViewport(0, 0, myWindow->SCR_WIDTH, myWindow->SCR_HEIGHT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
+    projection = glm::ortho(0.0f, static_cast<float>(myWindow->SCR_WIDTH), static_cast<float>(myWindow->SCR_HEIGHT), 0.0f, -1.0f, 1.0f);
+}
+void Renderer2D::initShadersAndTextures() {
     std::filesystem::path shaderAbsPath = std::filesystem::absolute("./shaders/");
     std::filesystem::path textureAbsPath = std::filesystem::absolute("./textures/");
     ResourceManager::LoadShader((shaderAbsPath / "sprite.vert").string().c_str(), (shaderAbsPath / "sprite.frag").string().c_str(), nullptr, "sprite");
-    ResourceManager::GetShader("sprite").activate_shader().setInt("image", 0);
-    ResourceManager::GetShader("sprite").setMat4("projection", projection);
-    spriteRenderer = new Sprite(ResourceManager::GetShader("sprite"), glm::vec4(0.5f, 0.0f, 1.0f, 0.5f));
-    ResourceManager::LoadTexture((textureAbsPath / "chess.png").string().c_str(), true, "chess");
+    ResourceManager::GetShader("sprite").lock()->activate_shader().setInt("image", 0);
+    ResourceManager::GetShader("sprite").lock()->setMat4("projection", projection);
+    uiElements.try_emplace("board", std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), glm::vec4(0.5f, 0.0f, 1.0f, 0.5f), glm::vec2(static_cast<float>(myWindow->SCR_WIDTH / 5), static_cast<float>(myWindow->SCR_HEIGHT / 10)), glm::vec2(static_cast<float>((3 * myWindow->SCR_WIDTH) / 5), static_cast<float>((3 * myWindow->SCR_WIDTH) / 5))));
+    glActiveTexture(GL_TEXTURE0);
+    ResourceManager::LoadTexture((textureAbsPath / "chess.png").string().c_str(), true, "chess").lock()->Bind();
 }

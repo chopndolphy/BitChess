@@ -8,29 +8,29 @@
 
 #include <stb_image.h>
 
-std::map<std::string, Texture2D> ResourceManager::Textures;
-std::map<std::string, Shader> ResourceManager::Shaders;
+std::unordered_map<std::string, std::shared_ptr<Texture2D>> ResourceManager::Textures;
+std::unordered_map<std::string, std::shared_ptr<Shader>> ResourceManager::Shaders;
 
-Shader& ResourceManager::LoadShader(const char* vShaderFile, const char* fShaderFile, const char* gShaderFile, std::string name) {
-    Shaders[name] = loadShaderFromFile(vShaderFile, fShaderFile, gShaderFile);
+std::weak_ptr<Shader> ResourceManager::LoadShader(const char* vShaderFile, const char* fShaderFile, const char* gShaderFile, std::string name) {
+    Shaders.try_emplace(name, std::make_shared<Shader>(std::move(loadShaderFromFile(vShaderFile, fShaderFile, gShaderFile))));
     return Shaders[name];
 }
-Shader& ResourceManager::GetShader(std::string name) {
+std::weak_ptr<Shader> ResourceManager::GetShader(std::string name) {
     return Shaders[name];
 }
-Texture2D& ResourceManager::LoadTexture(const char* file, bool alpha, std::string name) {
-    Textures[name] = loadTextureFromFile(file, alpha);
+std::weak_ptr<Texture2D> ResourceManager::LoadTexture(const char* file, bool alpha, std::string name) {
+    Textures.try_emplace(name, std::make_shared<Texture2D>(std::move(loadTextureFromFile(file, alpha))));
     return Textures[name];
 }
-Texture2D& ResourceManager::GetTexture(std::string name) {
+std::weak_ptr<Texture2D> ResourceManager::GetTexture(std::string name) {
     return Textures[name];
 }
 void ResourceManager::Clear() {
     for (auto iter : Shaders) {
-        glDeleteProgram(iter.second.ID);
+        glDeleteProgram(iter.second->ID);
     }
     for (auto iter : Textures) {
-        glDeleteTextures(1, &iter.second.id);
+        glDeleteTextures(1, &iter.second->id);
     }
 }
 Shader ResourceManager::loadShaderFromFile(const char* vertexPath, const char* fragmentPath, const char* geometryPath) {

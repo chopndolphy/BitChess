@@ -9,9 +9,12 @@
 
 #include <iostream>
 #include <memory>
+#include <unordered_map>
+#include <vector>
 
-class Sprite;
-class MyGlWindow;
+#include "Sprite.h"
+#include "MyGlWindow.h"
+#include "Texture2D.h"
 class Renderer2D {
     public:
         Renderer2D();
@@ -21,15 +24,18 @@ class Renderer2D {
         void RenderFrame();
         void EndFrame();
         bool IsRunning();
+        void UpdateBoardState(std::string boardState);
         float deltaTime = 0.0f;
         float lastFrame = 0.0f;
     private:
         GLFWwindow* window;
-        MyGlWindow* myWindow;
-        Sprite* spriteRenderer;
+        std::shared_ptr<MyGlWindow> myWindow;
+        std::unordered_map<std::string, std::unique_ptr<Sprite>> uiElements;
+        std::vector<std::unique_ptr<Sprite>> pieces;
+        std::weak_ptr<Texture2D> textureMap;
         void initOpenGL();
         void initWindow();
-        void initSprites();
+        void initShadersAndTextures();
         glm::vec3 clearColor = glm::vec3(0.1f, 0.1f, 0.1f);
         glm::mat4 projection;
 };

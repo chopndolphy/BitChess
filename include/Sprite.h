@@ -6,15 +6,16 @@
 #include "Shader.h"
 #include "Texture2D.h"
 
+#include <memory>
 class Sprite {
     public:
-        Sprite(Shader &shader, glm::vec4 texCoords);
+        Sprite(std::weak_ptr<Shader> shader, glm::vec4 texCoords, glm::vec2 position, glm::vec2 size);
         ~Sprite();
-        void DrawSprite(Texture2D &texure, glm::vec2 position, 
-            glm::vec2 size = glm::vec2(10.0f, 10.0f), float rotate = 0.0f, 
-            glm::vec3 color = glm::vec3(1.0f));
+        void Draw();
+        void Move(glm::vec2 position);
     private:
-        Shader shader;
+        std::weak_ptr<Shader> shader;
         unsigned int quadVAO;
         void initRenderData(glm::vec4 texCoords);
+        glm::mat4 model;
 };
