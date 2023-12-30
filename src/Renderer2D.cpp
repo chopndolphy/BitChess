@@ -8,7 +8,7 @@ Renderer2D::Renderer2D() {
     initOpenGL();
     initShadersAndTextures();
     initUIElements();
-    UpdateBoardState("K");
+    UpdateBoardState("rnbqkbnr-ppppppp--------p-----------------------PPPPPPPPRNBQKBNR");
 }
 Renderer2D::~Renderer2D() {
     glfwTerminate();
@@ -42,44 +42,53 @@ void Renderer2D::UpdateBoardState(std::string boardState) {
     pieces.clear();
     for (size_t i = 0; i < boardState.length(); i++) {
         switch (boardState[i]) {
-            case 'K':
-                // TODO: function to calculate position vector based on position in string 
-                // TODO: scale factor can be a constant
-                // TODO: piece positions and scales should be calculated using the size of the board, for sake of easy UI redesign
-                pieces.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), glm::vec4(0.1875f, 0.0f, 0.25f, 0.0625f), glm::vec2(0.5f * myWindow->SCR_WIDTH, 0.8f * myWindow->SCR_HEIGHT), glm::vec2(0.075f * myWindow->SCR_WIDTH, 0.075f * myWindow->SCR_WIDTH)));
-                break;
-            case 'k':
-
-                break;
-            case 'Q':
-
-                break;
-            case 'q':
-                
-                break;
-            case 'R':
-
-                break;
-            case 'r':
-
-                break;
-            case 'B':
-
-                break;
-            case 'b':
-
-                break;
-            case 'N':
-
-                break;
-            case 'n':
-
-                break;
             case 'P':
-
+                pieces.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                    glm::vec4(0.125f, 0.0f, 0.1875f, 0.0625f), indexToPosition(i), pieceSize));
                 break;
             case 'p':
-
+                pieces.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                    glm::vec4(0.125f, 0.0625f, 0.1875f, 0.125f), indexToPosition(i), pieceSize));
+                break;
+            case 'K':
+                pieces.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                    glm::vec4(0.1875f, 0.0f, 0.25f, 0.0625f), indexToPosition(i), pieceSize));
+                break;
+            case 'k':
+                pieces.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                    glm::vec4(0.1875f, 0.0625f, 0.25f, 0.125f), indexToPosition(i), pieceSize));
+                break;
+            case 'Q':
+                pieces.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                    glm::vec4(0.25f, 0.0f, 0.3125f, 0.0625f), indexToPosition(i), pieceSize));
+                break;
+            case 'q':
+                pieces.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                    glm::vec4(0.25f, 0.0625f, 0.3125f, 0.125f), indexToPosition(i), pieceSize));
+                break;
+            case 'B':
+                pieces.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                    glm::vec4(0.3125f, 0.0f, 0.375f, 0.0625f), indexToPosition(i), pieceSize));
+                break;
+            case 'b':
+                pieces.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                    glm::vec4(0.3125f, 0.0625f, 0.375f, 0.125f), indexToPosition(i), pieceSize));
+                break;
+            case 'N':
+                pieces.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                    glm::vec4(0.375f, 0.0f, 0.4375f, 0.0625f), indexToPosition(i), pieceSize));
+                break;
+            case 'n':
+                pieces.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                    glm::vec4(0.375f, 0.0625f, 0.4375f, 0.125f), indexToPosition(i), pieceSize));
+                break;
+            case 'R':
+                pieces.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                    glm::vec4(0.4375f, 0.0f, 0.5f, 0.0625f), indexToPosition(i), pieceSize));
+                break;
+            case 'r':
+                pieces.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                    glm::vec4(0.4375f, 0.0625f, 0.5f, 0.125f), indexToPosition(i), pieceSize));
                 break;
         }
     }
@@ -129,9 +138,17 @@ void Renderer2D::initShadersAndTextures() {
     ResourceManager::LoadTexture((textureAbsPath / "chess.png").string().c_str(), true, "chess").lock()->Bind();
 }
 void Renderer2D::initUIElements() {
+    boardOffset = glm::vec2((0.2f * myWindow->SCR_WIDTH), (0.1f * myWindow->SCR_HEIGHT));
+    boardSize = glm::vec2((0.6f * myWindow->SCR_WIDTH), 0.6f * myWindow->SCR_WIDTH);
     uiElements.try_emplace("board", std::make_unique<Sprite>(
         ResourceManager::GetShader("sprite"), 
         glm::vec4(0.5f, 0.0f, 1.0f, 0.5f), 
-        glm::vec2(static_cast<float>(myWindow->SCR_WIDTH / 5), static_cast<float>(myWindow->SCR_HEIGHT / 10)), 
-        glm::vec2(static_cast<float>((3 * myWindow->SCR_WIDTH) / 5), static_cast<float>((3 * myWindow->SCR_WIDTH) / 5))));
+        glm::vec2(boardOffset), 
+        glm::vec2(boardSize)));
+    pieceSize = glm::vec2((0.125f * boardSize.x), (0.125f * boardSize.y));
+}
+glm::vec2 Renderer2D::indexToPosition(size_t boardIndex) {
+    float posX = (boardOffset.x + ((0.125f * boardSize.x) * (static_cast<float>(boardIndex % 8))));
+    float posY = (boardOffset.y + ((0.125f * boardSize.y) * (std::floor(static_cast<float>(boardIndex / 8)))));
+    return glm::vec2(posX, posY);
 }

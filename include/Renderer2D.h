@@ -37,6 +37,10 @@ class Renderer2D {
         void initWindow();
         void initShadersAndTextures();
         void initUIElements();
+        glm::vec2 indexToPosition(size_t boardIndex);
         glm::vec3 clearColor = glm::vec3(0.1f, 0.1f, 0.1f);
         glm::mat4 projection;
+        glm::vec2 boardOffset;
+        glm::vec2 boardSize;
+        glm::vec2 pieceSize;
 };
