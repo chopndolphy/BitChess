@@ -36,6 +36,7 @@ class Renderer2D {
         void initOpenGL();
         void initWindow();
         void initShadersAndTextures();
+        void initUIElements();
         glm::vec3 clearColor = glm::vec3(0.1f, 0.1f, 0.1f);
         glm::mat4 projection;
 };

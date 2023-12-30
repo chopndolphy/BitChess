@@ -40,6 +40,7 @@ void Sprite::initRenderData(glm::vec4 texCoords) {
 }
 void Sprite::Draw() {
     shader.lock()->activate_shader();
+    shader.lock()->setMat4("model", model);
     glBindVertexArray(this->quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);

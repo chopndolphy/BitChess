@@ -7,6 +7,8 @@ Renderer2D::Renderer2D() {
     initWindow();
     initOpenGL();
     initShadersAndTextures();
+    initUIElements();
+    UpdateBoardState("K");
 }
 Renderer2D::~Renderer2D() {
     glfwTerminate();
@@ -41,7 +43,10 @@ void Renderer2D::UpdateBoardState(std::string boardState) {
     for (size_t i = 0; i < boardState.length(); i++) {
         switch (boardState[i]) { // could also use inheritance
             case 'K':
-                // pieces.emplace_back(Sprite(/*shader, texCoord in map, position (need coord converter), size (set default size for piece)*/))
+                // TODO: function to calculate position vector based on position in string 
+                // TODO: scale factor can be a constant
+                // TODO: piece positions and scales should be calculated using the size of the board, for sake of easy UI redesign
+                pieces.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), glm::vec4(0.1875f, 0.0f, 0.25f, 0.0625f), glm::vec2(0.5f * myWindow->SCR_WIDTH, 0.8f * myWindow->SCR_HEIGHT), glm::vec2(0.075f * myWindow->SCR_WIDTH, 0.075f * myWindow->SCR_WIDTH)));
                 break;
             case 'k':
 
@@ -120,7 +125,13 @@ void Renderer2D::initShadersAndTextures() {
     ResourceManager::LoadShader((shaderAbsPath / "sprite.vert").string().c_str(), (shaderAbsPath / "sprite.frag").string().c_str(), nullptr, "sprite");
     ResourceManager::GetShader("sprite").lock()->activate_shader().setInt("image", 0);
     ResourceManager::GetShader("sprite").lock()->setMat4("projection", projection);
-    uiElements.try_emplace("board", std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), glm::vec4(0.5f, 0.0f, 1.0f, 0.5f), glm::vec2(static_cast<float>(myWindow->SCR_WIDTH / 5), static_cast<float>(myWindow->SCR_HEIGHT / 10)), glm::vec2(static_cast<float>((3 * myWindow->SCR_WIDTH) / 5), static_cast<float>((3 * myWindow->SCR_WIDTH) / 5))));
     glActiveTexture(GL_TEXTURE0);
     ResourceManager::LoadTexture((textureAbsPath / "chess.png").string().c_str(), true, "chess").lock()->Bind();
+}
+void Renderer2D::initUIElements() {
+    uiElements.try_emplace("board", std::make_unique<Sprite>(
+        ResourceManager::GetShader("sprite"), 
+        glm::vec4(0.5f, 0.0f, 1.0f, 0.5f), 
+        glm::vec2(static_cast<float>(myWindow->SCR_WIDTH / 5), static_cast<float>(myWindow->SCR_HEIGHT / 10)), 
+        glm::vec2(static_cast<float>((3 * myWindow->SCR_WIDTH) / 5), static_cast<float>((3 * myWindow->SCR_WIDTH) / 5))));
 }
