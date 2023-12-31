@@ -47,6 +47,7 @@ void Sprite::Move(glm::vec2 position) {
     shader.lock()->activate_shader();
     model = glm::translate(model, glm::vec3(position, 0.0f));
     shader.lock()->setMat4("model", model);
+    this->position = position;
 }
 void Sprite::Scale(glm::vec2 size) {
     shader.lock()->activate_shader();

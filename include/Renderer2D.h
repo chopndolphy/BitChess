@@ -25,16 +25,22 @@ class Renderer2D {
         void EndFrame();
         bool IsRunning();
         void UpdateBoardState(std::string boardState);
+        void ShowAvailableMoves(std::string availableMoves);
+        void ShowPreviousMove(std::string previousMove);
         float deltaTime = 0.0f;
         float lastFrame = 0.0f;
     private:
         GLFWwindow* window;
         std::shared_ptr<MyGlWindow> myWindow;
-        std::unordered_map<std::string, std::unique_ptr<Sprite>> uiElements;
-        std::vector<std::unique_ptr<Sprite>> pieces;
+        std::unordered_map<std::string, std::unique_ptr<Sprite>> staticSprites;
+        std::vector<std::unique_ptr<Sprite>> pieceSprites;
+        std::vector<std::unique_ptr<Sprite>> availableMovesSprites;
+        std::unique_ptr<Sprite> chosenPieceSprite;
+        std::vector<std::unique_ptr<Sprite>> previousMoveSprites;
         std::weak_ptr<Texture2D> textureMap;
-        void initOpenGL();
         void initWindow();
+        void initOpenGL();
+        void initFrameBuffer();
         void initShadersAndTextures();
         void initUIElements();
         glm::vec2 indexToPosition(size_t boardIndex);
@@ -42,5 +48,5 @@ class Renderer2D {
         glm::mat4 projection;
         glm::vec2 boardOffset;
         glm::vec2 boardSize;
-        glm::vec2 pieceSize;
+        glm::vec2 squareSize;
 };

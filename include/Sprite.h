@@ -14,6 +14,11 @@ class Sprite {
         void Draw();
         void Move(glm::vec2 position);
         void Scale(glm::vec2 size);
+        glm::vec2 position;
+        void setHovering(bool hovering) {
+            shader.lock()->activate_shader();
+            shader.lock()->setBool("hoverOver", hovering);
+        }
     private:
         std::weak_ptr<Shader> shader;
         unsigned int quadVAO;

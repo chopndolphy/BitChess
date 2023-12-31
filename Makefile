@@ -19,7 +19,7 @@ CC = gcc
 CXX = g++
 CFLAGS = -Wall -O2 -g $(ALL_INCLUDES)
 # CFLAGS = -Wall -ggdb -O3 $(INCLUDES)
-CXXFLAGS = -std=c++17 -O2 -Wall -Wextra -pedantic -g -O2 $(ALL_INCLUDES)
+CXXFLAGS = -std=c++17 -O2 -Wall -Wextra -pedantic -g -O2 -D_GLIBCXX_DEBUG $(ALL_INCLUDES)
 # CXXFLAGS = -Wall -ggdb -O3 $(INCLUDES)
 LDFLAGS = -lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lassimp
 
