@@ -4,15 +4,11 @@ BUILD = build
 INCLUDE = include
 LIB = lib
 
-ALL_INCLUDES = -I./$(LIB) -I$(GLAD_INC) -I./$(INCLUDE) -I./$(IMGUI_DIR) -I./$(IMGUI_DIR)/backends -I./$(FLECS) -I./$(STB_IMAGE) -I./$(GLM)
+ALL_INCLUDES = -I./$(LIB) -I$(GLAD_INC) -I./$(INCLUDE) -I./$(STB_IMAGE) -I./$(GLM)
 GLAD = ./$(LIB)/glad
 GLAD_INC = $(GLAD)/include
-IMGUI_DIR = $(LIB)/imgui
-FLECS = $(LIB)/flecs
 STB_IMAGE = $(LIB)/stb_image
 GLM = $(LIB)/glm
-
-IMGUI_SOURCES := $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_demo.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp $(IMGUI_DIR)/imgui_stdlib.cpp $(IMGUI_DIR)/backends/imgui_impl_glfw.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
 
 # Compiler and flags
 CC = gcc
@@ -21,13 +17,13 @@ CFLAGS = -Wall -O2 -g $(ALL_INCLUDES)
 # CFLAGS = -Wall -ggdb -O3 $(INCLUDES)
 CXXFLAGS = -std=c++17 -O2 -Wall -Wextra -pedantic -g -O2 -D_GLIBCXX_DEBUG $(ALL_INCLUDES)
 # CXXFLAGS = -Wall -ggdb -O3 $(INCLUDES)
-LDFLAGS = -lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lassimp
+LDFLAGS = -lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl
 
 # SHARED OBJECTS AND TARGETS  (Targets are executables)
 
 # Shared objects by multiple executables
 CPP_FILES := Shader.cpp Renderer2D.cpp Sprite.cpp Game.cpp MyGlWindow.cpp Texture2D.cpp ResourceManager.cpp Board.cpp
-OBJECTS := $(CPP_FILES:.cpp=.o) glad.o flecs.o stb_image.o imgui_impl_glfw.o imgui_impl_opengl3.o imgui_demo.o imgui_draw.o imgui_tables.o imgui_widgets.o imgui_stdlib.o imgui.o
+OBJECTS := $(CPP_FILES:.cpp=.o) glad.o flecs.o stb_image.o
 OBJECTS := $(addprefix $(BUILD)/, $(OBJECTS))
 
 # Targets
@@ -54,17 +50,6 @@ $(TARGETS): $(OBJECTS) $$@.o
 # recipe 1: Complie glad
 $(BUILD)/glad.o: $(GLAD)/src/glad.c $(GLAD)/include/glad/glad.h | $(BUILD)
 	$(CC) -c $(CFLAGS) -o $@ $< 
-
-# imgui:
-$(BUILD)/%.o:$(IMGUI_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
-
-$(BUILD)/%.o:$(IMGUI_DIR)/backends/%.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
-
-#flecs:
-$(BUILD)/flecs.o: $(FLECS)/flecs.c $(FLECS)/flecs.h | $(BUILD)
-	$(CC) -c $(CFLAGS) -std=gnu99 -o $@ $<
 
 #stb_image:
 $(BUILD)/stb_image.o: $(STB_IMAGE)/stb_image.cpp $(STB_IMAGE)/stb_image.h | $(BUILD)
