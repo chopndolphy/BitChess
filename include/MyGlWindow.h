@@ -13,6 +13,7 @@ class MyGlWindow {
         float lastX = (float)SCR_WIDTH / 2.0f;
         float lastY = (float)SCR_HEIGHT / 2.0f;
         void MoveMouse(GLFWwindow* window, double xposIn, double yposIn);
-        void ResizeWindow(GLFWwindow* window, int width, int height); 
+        void ResizeWindow(GLFWwindow* window, int width, int height);
+        void ClickMouse(GLFWwindow* window, int button, int action, int mods);
         glm::vec2 lastCursorPos;
 };

@@ -15,3 +15,6 @@ void MyGlWindow::MoveMouse(GLFWwindow* window, double xposIn, double yposIn) {
 void MyGlWindow::ResizeWindow(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
+void MyGlWindow::ClickMouse(GLFWwindow* window, int button, int action, int mods) {
+
+}

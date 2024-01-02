@@ -26,7 +26,7 @@ LDFLAGS = -lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl -lassimp
 # SHARED OBJECTS AND TARGETS  (Targets are executables)
 
 # Shared objects by multiple executables
-CPP_FILES := Shader.cpp Renderer2D.cpp Sprite.cpp Game.cpp MyGlWindow.cpp Texture2D.cpp ResourceManager.cpp
+CPP_FILES := Shader.cpp Renderer2D.cpp Sprite.cpp Game.cpp MyGlWindow.cpp Texture2D.cpp ResourceManager.cpp Board.cpp
 OBJECTS := $(CPP_FILES:.cpp=.o) glad.o flecs.o stb_image.o imgui_impl_glfw.o imgui_impl_opengl3.o imgui_demo.o imgui_draw.o imgui_tables.o imgui_widgets.o imgui_stdlib.o imgui.o
 OBJECTS := $(addprefix $(BUILD)/, $(OBJECTS))
 

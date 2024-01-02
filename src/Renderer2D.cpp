@@ -8,9 +8,6 @@ Renderer2D::Renderer2D() {
     initOpenGL();
     initShadersAndTextures();
     initUIElements();
-    UpdateBoardState  ("rnbqkb-rpppppppp-----n--------------------------PPP-PPPPRNBQKBNR");
-    ShowAvailableMoves("-----------a-------m-------m-------m-------m-------m-------c----");
-    ShowPreviousMove  ("------m--------------m------------------------------------------");
 }
 Renderer2D::~Renderer2D() {
     glfwTerminate();
@@ -36,7 +33,9 @@ void Renderer2D::RenderFrame() {
             highlight->Draw();
         }
     }
-    chosenPieceSprite->Draw();
+    if (chosenPieceSprite != nullptr) {
+        chosenPieceSprite->Draw();
+    }
     glm::vec2 cursorPos = myWindow->lastCursorPos;
     if (!availableMovesSprites.empty()) {
         for (auto &highlight : availableMovesSprites) {
@@ -170,10 +169,16 @@ void Renderer2D::initWindow() {
         static_cast<MyGlWindow*>(glfwGetWindowUserPointer(w))->ResizeWindow(w, width, height);
     };
     glfwSetFramebufferSizeCallback(window, resizeFunc);
+
     auto mouseMoveFunc = [](GLFWwindow* w, double xposIn, double yposIn) {
         static_cast<MyGlWindow*>(glfwGetWindowUserPointer(w))->MoveMouse(w, xposIn, yposIn);
     };
     glfwSetCursorPosCallback(window, mouseMoveFunc);
+
+    auto mouseClickFunc = [](GLFWwindow* w, int button, int action, int mods) {
+        static_cast<MyGlWindow*>(glfwGetWindowUserPointer(w))->ClickMouse(w, button, action, mods);
+    };
+    glfwSetMouseButtonCallback(window, mouseClickFunc);
 }
 void Renderer2D::initOpenGL() {
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
