@@ -3,5 +3,4 @@
 .vscode/
 build/
 bin/*
-lib/*
 notes.txt
