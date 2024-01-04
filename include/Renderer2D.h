@@ -15,6 +15,7 @@
 #include "Sprite.h"
 #include "MyGlWindow.h"
 #include "Texture2D.h"
+#include "Util.h"
 class Renderer2D {
     public:
         Renderer2D();
@@ -44,8 +45,6 @@ class Renderer2D {
         void initFrameBuffer();
         void initShadersAndTextures();
         void initUIElements();
-        glm::vec2 indexToPosition(size_t boardIndex);
-        uint64_t positionToBitSquare(glm::vec2 screenPos);
         glm::vec3 clearColor = glm::vec3(0.1f, 0.1f, 0.1f);
         glm::mat4 projection;
         glm::vec2 boardOffset;

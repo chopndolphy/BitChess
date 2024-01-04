@@ -25,7 +25,7 @@ void Renderer2D::ProcessInput() {
         if (lastClickPos.x > boardOffset.x && lastClickPos.x < (boardOffset.x + boardSize.x) && 
             lastClickPos.y > boardOffset.y && lastClickPos.y < (boardOffset.y + boardSize.y)) { // lastClickPos on board
 
-            lastSquareClicked.push_back(positionToBitSquare(lastClickPos));
+            lastSquareClicked.push_back(Util::IndexToBitBoard(Util::PositionToIndex(lastClickPos, squareSize, boardOffset)));
         }
 
     } 
@@ -77,51 +77,51 @@ void Renderer2D::UpdateBoardState(std::string boardState) {
         switch (boardState[i]) {
             case 'P':
                 pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
-                    glm::vec4(0.125f, 0.0f, 0.1875f, 0.0625f), indexToPosition(i), squareSize));
+                    glm::vec4(0.125f, 0.0f, 0.1875f, 0.0625f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'p':
                 pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
-                    glm::vec4(0.125f, 0.0625f, 0.1875f, 0.125f), indexToPosition(i), squareSize));
+                    glm::vec4(0.125f, 0.0625f, 0.1875f, 0.125f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'K':
                 pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
-                    glm::vec4(0.1875f, 0.0f, 0.25f, 0.0625f), indexToPosition(i), squareSize));
+                    glm::vec4(0.1875f, 0.0f, 0.25f, 0.0625f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'k':
                 pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
-                    glm::vec4(0.1875f, 0.0625f, 0.25f, 0.125f), indexToPosition(i), squareSize));
+                    glm::vec4(0.1875f, 0.0625f, 0.25f, 0.125f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'Q':
                 pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
-                    glm::vec4(0.25f, 0.0f, 0.3125f, 0.0625f), indexToPosition(i), squareSize));
+                    glm::vec4(0.25f, 0.0f, 0.3125f, 0.0625f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'q':
                 pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
-                    glm::vec4(0.25f, 0.0625f, 0.3125f, 0.125f), indexToPosition(i), squareSize));
+                    glm::vec4(0.25f, 0.0625f, 0.3125f, 0.125f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'B':
                 pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
-                    glm::vec4(0.3125f, 0.0f, 0.375f, 0.0625f), indexToPosition(i), squareSize));
+                    glm::vec4(0.3125f, 0.0f, 0.375f, 0.0625f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'b':
                 pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
-                    glm::vec4(0.3125f, 0.0625f, 0.375f, 0.125f), indexToPosition(i), squareSize));
+                    glm::vec4(0.3125f, 0.0625f, 0.375f, 0.125f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'N':
                 pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
-                    glm::vec4(0.375f, 0.0f, 0.4375f, 0.0625f), indexToPosition(i), squareSize));
+                    glm::vec4(0.375f, 0.0f, 0.4375f, 0.0625f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'n':
                 pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
-                    glm::vec4(0.375f, 0.0625f, 0.4375f, 0.125f), indexToPosition(i), squareSize));
+                    glm::vec4(0.375f, 0.0625f, 0.4375f, 0.125f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'R':
                 pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
-                    glm::vec4(0.4375f, 0.0f, 0.5f, 0.0625f), indexToPosition(i), squareSize));
+                    glm::vec4(0.4375f, 0.0f, 0.5f, 0.0625f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'r':
                 pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
-                    glm::vec4(0.4375f, 0.0625f, 0.5f, 0.125f), indexToPosition(i), squareSize));
+                    glm::vec4(0.4375f, 0.0625f, 0.5f, 0.125f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             default:
                 break;
@@ -135,15 +135,15 @@ void Renderer2D::ShowAvailableMoves(std::string availableMoves) {
         switch (availableMoves[i]) {
             case 'a':
                 availableMovesSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("hoverable"), 
-                    glm::vec4(0.0f, 0.0625f, 0.0625f, 0.125f), indexToPosition(i), squareSize));
+                    glm::vec4(0.0f, 0.0625f, 0.0625f, 0.125f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'm':
                 availableMovesSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("hoverable"), 
-                    glm::vec4(0.0625f, 0.0625f, 0.125f, 0.125f), indexToPosition(i), squareSize));
+                    glm::vec4(0.0625f, 0.0625f, 0.125f, 0.125f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'c':
                 chosenPieceSprite = std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
-                    glm::vec4(0.0f, 0.0f, 0.0625f, 0.0625f), indexToPosition(i), squareSize);
+                    glm::vec4(0.0f, 0.0f, 0.0625f, 0.0625f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize);
             default:
                 break;
         }
@@ -154,7 +154,7 @@ void Renderer2D::ShowPreviousMove(std::string previousMove) {
     for (size_t i = 0; i < previousMove.length(); i++) {
         if (previousMove[i] == 'm') {
             previousMoveSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
-                glm::vec4(0.0625f, 0.0f, 0.125f, 0.0625f), indexToPosition(i), squareSize));
+                glm::vec4(0.0625f, 0.0f, 0.125f, 0.0625f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
         }
     }
 }
@@ -230,13 +230,4 @@ void Renderer2D::initUIElements() {
         glm::vec2(boardOffset), 
         glm::vec2(boardSize)));
     squareSize = glm::vec2((0.125f * boardSize.x), (0.125f * boardSize.y));
-}
-glm::vec2 Renderer2D::indexToPosition(size_t boardIndex) { // calculates screen coordinate for a board position based on index
-    float posX = (boardOffset.x + (squareSize.x * (static_cast<float>(boardIndex % 8))));
-    float posY = (boardOffset.y + (squareSize.y * (glm::floor(static_cast<float>(boardIndex / 8)))));
-    return glm::vec2(posX, posY);
-}
-uint64_t Renderer2D::positionToBitSquare(glm::vec2 screenPos) { // returns a bitboard with a 1 located at the screenPos input
-    return static_cast<uint64_t>(glm::exp2((7 - glm::floor((screenPos.x - boardOffset.x) / squareSize.x)) + 
-                     (56 - (8 * glm::floor((screenPos.y - boardOffset.y)/ squareSize.y)))));
 }

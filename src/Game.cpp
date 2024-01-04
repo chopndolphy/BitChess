@@ -33,8 +33,11 @@ void Game::processClicks() {
         return;
     }
     std::string stringBoard = "----------------------------------------------------------------";
-    size_t index = static_cast<size_t>(std::abs(std::log2l(static_cast<long double>(bitSquareClicked)) - 63));
-    stringBoard.at(index) = 'c';
-    renderer->ShowAvailableMoves(stringBoard);
-    
+    try {
+        if (Util::PopulateStringBoard(stringBoard, bitSquareClicked, 'c')) {
+            renderer->ShowAvailableMoves(stringBoard);
+        }
+    } catch (std::exception &e) {
+        std::cerr << "Mouse Click Error: " << e.what() << std::endl;
+    }
 }
