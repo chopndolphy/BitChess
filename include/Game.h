@@ -14,4 +14,5 @@ class Game {
     private:
         std::unique_ptr<Renderer2D> renderer;
         std::unique_ptr<Board> board;
+        void processClicks();
 };

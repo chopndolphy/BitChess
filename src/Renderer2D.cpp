@@ -20,6 +20,15 @@ void Renderer2D::PrepareFrame() {
 void Renderer2D::ProcessInput() {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+    glm::vec2 lastClickPos;
+    if (myWindow->GetLastClickPos(lastClickPos)) {
+        if (lastClickPos.x > boardOffset.x && lastClickPos.x < (boardOffset.x + boardSize.x) && 
+            lastClickPos.y > boardOffset.y && lastClickPos.y < (boardOffset.y + boardSize.y)) { // lastClickPos on board
+
+            lastSquareClicked.push_back(positionToBitSquare(lastClickPos));
+        }
+
+    } 
 }
 void Renderer2D::RenderFrame() {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -36,11 +45,11 @@ void Renderer2D::RenderFrame() {
     if (chosenPieceSprite != nullptr) {
         chosenPieceSprite->Draw();
     }
-    glm::vec2 cursorPos = myWindow->lastCursorPos;
+    glm::vec2 cursorPos = myWindow->LastCursorPos;
     if (!availableMovesSprites.empty()) {
         for (auto &highlight : availableMovesSprites) {
             if (highlight->position.x <= cursorPos.x && highlight->position.x + squareSize.x >= cursorPos.x && 
-                highlight->position.y <= cursorPos.y && highlight->position.y + squareSize.y >= cursorPos.y) {
+                highlight->position.y <= cursorPos.y && highlight->position.y + squareSize.y >= cursorPos.y) { // cursor over square
             
                 highlight->setHovering(true);
             } else {
@@ -149,6 +158,15 @@ void Renderer2D::ShowPreviousMove(std::string previousMove) {
         }
     }
 }
+bool Renderer2D::GetLastSquareClicked(uint64_t &bitSquareClicked) {
+    if (lastSquareClicked.empty()) {
+        return false;
+    } else {
+        bitSquareClicked = lastSquareClicked.back();
+        lastSquareClicked.clear();
+        return true;
+    }
+}
 void Renderer2D::initWindow() {
     myWindow = std::make_shared<MyGlWindow>();
     glfwInit();
@@ -214,7 +232,11 @@ void Renderer2D::initUIElements() {
     squareSize = glm::vec2((0.125f * boardSize.x), (0.125f * boardSize.y));
 }
 glm::vec2 Renderer2D::indexToPosition(size_t boardIndex) { // calculates screen coordinate for a board position based on index
-    float posX = (boardOffset.x + ((0.125f * boardSize.x) * (static_cast<float>(boardIndex % 8))));
-    float posY = (boardOffset.y + ((0.125f * boardSize.y) * (std::floor(static_cast<float>(boardIndex / 8)))));
+    float posX = (boardOffset.x + (squareSize.x * (static_cast<float>(boardIndex % 8))));
+    float posY = (boardOffset.y + (squareSize.y * (glm::floor(static_cast<float>(boardIndex / 8)))));
     return glm::vec2(posX, posY);
+}
+uint64_t Renderer2D::positionToBitSquare(glm::vec2 screenPos) { // returns a bitboard with a 1 located at the screenPos input
+    return static_cast<uint64_t>(glm::exp2((7 - glm::floor((screenPos.x - boardOffset.x) / squareSize.x)) + 
+                     (56 - (8 * glm::floor((screenPos.y - boardOffset.y)/ squareSize.y)))));
 }

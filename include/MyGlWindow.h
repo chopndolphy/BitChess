@@ -3,6 +3,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <vector>
+
 class MyGlWindow {
     public:
         MyGlWindow();
@@ -15,5 +17,8 @@ class MyGlWindow {
         void MoveMouse(GLFWwindow* window, double xposIn, double yposIn);
         void ResizeWindow(GLFWwindow* window, int width, int height);
         void ClickMouse(GLFWwindow* window, int button, int action, int mods);
-        glm::vec2 lastCursorPos;
+        bool GetLastClickPos(glm::vec2 &lastClick);
+        glm::vec2 LastCursorPos;
+    private:
+        std::vector<glm::vec2> lastClickPos;
 };

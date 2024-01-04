@@ -27,6 +27,7 @@ class Renderer2D {
         void UpdateBoardState(std::string boardState);
         void ShowAvailableMoves(std::string availableMoves);
         void ShowPreviousMove(std::string previousMove);
+        bool GetLastSquareClicked(uint64_t &bitSquareClicked);
         float deltaTime = 0.0f;
         float lastFrame = 0.0f;
     private:
@@ -44,9 +45,11 @@ class Renderer2D {
         void initShadersAndTextures();
         void initUIElements();
         glm::vec2 indexToPosition(size_t boardIndex);
+        uint64_t positionToBitSquare(glm::vec2 screenPos);
         glm::vec3 clearColor = glm::vec3(0.1f, 0.1f, 0.1f);
         glm::mat4 projection;
         glm::vec2 boardOffset;
         glm::vec2 boardSize;
         glm::vec2 squareSize;
+        std::vector<uint64_t> lastSquareClicked;
 };
