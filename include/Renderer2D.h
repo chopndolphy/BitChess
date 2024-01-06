@@ -33,6 +33,7 @@ class Renderer2D {
         float lastFrame = 0.0f;
     private:
         GLFWwindow* window;
+        GLFWcursor* cursor;
         std::shared_ptr<MyGlWindow> myWindow;
         std::unordered_map<std::string, std::unique_ptr<Sprite>> staticSprites;
         std::vector<std::unique_ptr<Sprite>> pieceSprites;
@@ -45,6 +46,7 @@ class Renderer2D {
         void initFrameBuffer();
         void initShadersAndTextures();
         void initUIElements();
+        void initCursor();
         glm::vec3 clearColor = glm::vec3(0.1f, 0.1f, 0.1f);
         glm::mat4 projection;
         glm::vec2 boardOffset;

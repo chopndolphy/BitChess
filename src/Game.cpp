@@ -1,9 +1,15 @@
 #include "Game.h"
 #include "Renderer2D.h"
 #include "Board.h"
+#include "GameState.h"
+#include "BlackSelectingMoveState.h"
+#include "BlackSelectingPieceState.h"
+#include "WhiteSelectingMoveState.h"
+#include "WhiteSelectingPieceState.h"
 #include <cmath>
 
-Game::Game() {
+Game::Game() 
+    : currentState(WhiteSelectingPieceState::GetInstance()) {
     try {
         board    = std::make_unique<Board>();
         renderer = std::make_unique<Renderer2D>();
@@ -27,17 +33,17 @@ void Game::ExecuteFrame() {
 bool Game::IsRunning() {
     return renderer->IsRunning();
 }
+void Game::SetState(GameState &newState){
+    currentState.Exit(Me());
+    currentState = newState;
+    currentState.Enter(Me());
+}
+const GameState& Game::GetCurrentState() {
+    return currentState;
+}
+std::weak_ptr<Renderer2D> Game::GetRenderer() {
+    return renderer;
+}
 void Game::processClicks() {
-    uint64_t bitSquareClicked;
-    if (!renderer->GetLastSquareClicked(bitSquareClicked)) {
-        return;
-    }
-    std::string stringBoard = "----------------------------------------------------------------";
-    try {
-        if (Util::PopulateStringBoard(stringBoard, bitSquareClicked, 'c')) {
-            renderer->ShowAvailableMoves(stringBoard);
-        }
-    } catch (std::exception &e) {
-        std::cerr << "Mouse Click Error: " << e.what() << std::endl;
-    }
+    currentState.ProcessClicks(Me());
 }

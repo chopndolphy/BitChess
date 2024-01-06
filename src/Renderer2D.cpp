@@ -8,6 +8,7 @@ Renderer2D::Renderer2D() {
     initOpenGL();
     initShadersAndTextures();
     initUIElements();
+    initCursor();
 }
 Renderer2D::~Renderer2D() {
     glfwTerminate();
@@ -230,4 +231,12 @@ void Renderer2D::initUIElements() {
         glm::vec2(boardOffset), 
         glm::vec2(boardSize)));
     squareSize = glm::vec2((0.125f * boardSize.x), (0.125f * boardSize.y));
+}
+void Renderer2D::initCursor() {
+    GLFWimage image;
+    std::filesystem::path cursorAbsPath = std::filesystem::absolute("./textures/");
+    image.pixels = stbi_load((cursorAbsPath / "chess_cursor.png").string().c_str(), &image.width, &image.height, 0, 4);
+    cursor = glfwCreateCursor(&image, 0, 0);
+    glfwSetCursor(window, cursor);
+    stbi_image_free(image.pixels);
 }
