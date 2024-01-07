@@ -5,9 +5,9 @@ class Game;
 
 class WhiteSelectingPieceState : public GameState {
     public:
-        void Enter(Game &game) const;
-        void ProcessClicks(Game &game) const;
-        void Exit(Game &game) const;
+        void Enter(Game &game);
+        void ProcessClicks(Game &game);
+        void Exit(Game &game);
         static GameState& GetInstance();
     private:
         WhiteSelectingPieceState() {};

@@ -15,13 +15,17 @@ class Game {
         Game& Me() && = delete;
         void ExecuteFrame();
         bool IsRunning();
-        void SetState(const GameState &newState);
+        void SetState(GameState &newState);
+        void SetSelectedPiece(uint64_t selectedPiece);
+        uint64_t GetSelectedPiece();
         void ShutDown();
         const GameState& GetCurrentState();
         std::weak_ptr<Renderer2D> GetRenderer();
+        std::weak_ptr<Board> GetBoard();
     private:
-        GameState& currentState;
+        GameState* currentState;
         std::shared_ptr<Renderer2D> renderer;
-        std::unique_ptr<Board> board;
+        std::shared_ptr<Board> board;
         void processClicks();
+        uint64_t selectedPiece;
 };

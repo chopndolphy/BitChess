@@ -8,16 +8,15 @@
 #include "WhiteSelectingPieceState.h"
 #include <cmath>
 
-Game::Game() 
-    : currentState(WhiteSelectingPieceState::GetInstance()) {
+Game::Game() {
+    currentState = &WhiteSelectingPieceState::GetInstance();
     try {
         board    = std::make_unique<Board>();
         renderer = std::make_unique<Renderer2D>();
     } catch (std::exception &e) {
         std::cerr << "Game Initialization Error: " << e.what() << std::endl;
     }
-    renderer->UpdateBoardState  ("rnbqkb-rpppppppp-----n--------------------------PPP-PPPPRNBQKBNR");
-    renderer->ShowPreviousMove  ("------m--------------m------------------------------------------");
+    renderer->UpdateBoardState("rnbqkbnrpppppppp--------------------------------PPPPPPPPRNBQKBNR");
 }
 Game::~Game() {
 
@@ -32,21 +31,30 @@ void Game::ExecuteFrame() {
 bool Game::IsRunning() {
     return renderer->IsRunning();
 }
-void Game::SetState(const GameState &newState){
-    currentState.Exit(Me());
-    currentState = newState;
-    currentState.Enter(Me());
+void Game::SetState(GameState &newState){
+    currentState->Exit(Me());
+    currentState = &newState;
+    currentState->Enter(Me());
 }
-void Game::ShutDown() {
+void Game::SetSelectedPiece(uint64_t selectedPiece) {
+    this->selectedPiece = selectedPiece;
+}
+uint64_t Game::GetSelectedPiece() {
+    return selectedPiece;
+}
+void Game::ShutDown(){
+    board.reset();
     renderer.reset();
 }
-const GameState &Game::GetCurrentState()
-{
-    return currentState;
+const GameState &Game::GetCurrentState() {
+    return *currentState;
 }
 std::weak_ptr<Renderer2D> Game::GetRenderer() {
     return renderer;
 }
+std::weak_ptr<Board> Game::GetBoard() {
+    return board;
+}
 void Game::processClicks() {
-    currentState.ProcessClicks(Me());
+    currentState->ProcessClicks(Me());
 }
