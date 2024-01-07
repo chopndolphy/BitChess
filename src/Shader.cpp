@@ -10,7 +10,12 @@
 Shader::Shader() {
 
 }
-
+Shader::Shader(const char* vertexSource, const char* fragmentSource, const char* geometrySource) {
+    compile(vertexSource, fragmentSource, geometrySource);
+}
+Shader::Shader(const char* vertexSource, const char* fragmentSource) {
+    compile(vertexSource, fragmentSource, nullptr);
+}
 void Shader::compile(const char* vertexSource, const char* fragmentSource, const char* geometrySource) {
     // 2. compile shaders
     unsigned int vertex, fragment, geometry;

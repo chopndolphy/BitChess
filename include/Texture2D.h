@@ -4,6 +4,7 @@
 class Texture2D {
     public:
         Texture2D();
+        Texture2D(bool hasAlpha, unsigned int width, unsigned int height, unsigned char* data);
         void Generate(unsigned int width, unsigned int height, unsigned char* data);
         void Bind() const;
         unsigned int id;

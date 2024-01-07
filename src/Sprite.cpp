@@ -8,7 +8,7 @@ Sprite::Sprite(std::weak_ptr<Shader> shader, glm::vec4 texCoords, glm::vec2 posi
     Scale(size);
 }
 Sprite::~Sprite() {
-    glDeleteVertexArrays(1, &this->quadVAO);
+    glDeleteVertexArrays(1, &quadVAO);
 }
 void Sprite::initRenderData(glm::vec4 texCoords) {
     unsigned int VBO;

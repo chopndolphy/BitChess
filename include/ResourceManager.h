@@ -20,6 +20,6 @@ class ResourceManager {
         static std::unordered_map<std::string, std::shared_ptr<Texture2D>> Textures;
     private:
         ResourceManager() {}
-        static Shader loadShaderFromFile(const char* vShaderFile, const char* fShaderFile, const char* gShaderFile = nullptr);
-        static Texture2D loadTextureFromFile(const char* file, bool alpha);
+        static std::shared_ptr<Shader> loadShaderFromFile(const char* vShaderFile, const char* fShaderFile, const char* gShaderFile = nullptr);
+        static std::shared_ptr<Texture2D> loadTextureFromFile(const char* file, bool alpha);
 };

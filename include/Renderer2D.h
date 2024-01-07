@@ -11,6 +11,7 @@
 #include <memory>
 #include <unordered_map>
 #include <vector>
+#include <unordered_set>
 
 #include "Sprite.h"
 #include "MyGlWindow.h"
@@ -36,10 +37,10 @@ class Renderer2D {
         GLFWcursor* cursor;
         std::shared_ptr<MyGlWindow> myWindow;
         std::unordered_map<std::string, std::unique_ptr<Sprite>> staticSprites;
-        std::vector<std::unique_ptr<Sprite>> pieceSprites;
-        std::vector<std::unique_ptr<Sprite>> availableMovesSprites;
+        std::unordered_set<std::unique_ptr<Sprite>> pieceSprites;
+        std::unordered_set<std::unique_ptr<Sprite>> availableMovesSprites;
+        std::unordered_set<std::unique_ptr<Sprite>> previousMoveSprites;
         std::unique_ptr<Sprite> chosenPieceSprite;
-        std::vector<std::unique_ptr<Sprite>> previousMoveSprites;
         std::weak_ptr<Texture2D> textureMap;
         void initWindow();
         void initOpenGL();
@@ -47,10 +48,11 @@ class Renderer2D {
         void initShadersAndTextures();
         void initUIElements();
         void initCursor();
+        void destroySprites();
         glm::vec3 clearColor = glm::vec3(0.1f, 0.1f, 0.1f);
         glm::mat4 projection;
         glm::vec2 boardOffset;
         glm::vec2 boardSize;
         glm::vec2 squareSize;
-        std::vector<uint64_t> lastSquareClicked;
+        std::unique_ptr<uint64_t> lastSquareClicked;
 };

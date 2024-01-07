@@ -15,7 +15,8 @@ class Game {
         Game& Me() && = delete;
         void ExecuteFrame();
         bool IsRunning();
-        void SetState(GameState &newState);
+        void SetState(const GameState &newState);
+        void ShutDown();
         const GameState& GetCurrentState();
         std::weak_ptr<Renderer2D> GetRenderer();
     private:

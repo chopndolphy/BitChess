@@ -12,6 +12,8 @@ class Shader {
 public:
     unsigned int ID;
     Shader();
+    Shader(const char* vertexSource, const char* fragmentSource, const char* geometrySource);
+    Shader(const char* vertexSource, const char* fragmentSource);
     void compile(const char* vertexSource, const char* fragmentSource, const char* geometrySource = nullptr);
     Shader& activate_shader() { glUseProgram(ID); return *this;}
     void delete_shader() { glDeleteProgram(ID); }

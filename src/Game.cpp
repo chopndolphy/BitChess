@@ -25,7 +25,6 @@ Game::~Game() {
 void Game::ExecuteFrame() {
     renderer->PrepareFrame();
     renderer->ProcessInput();
-    // insert game logic here
     processClicks();
     renderer->RenderFrame();
     renderer->EndFrame();
@@ -33,12 +32,16 @@ void Game::ExecuteFrame() {
 bool Game::IsRunning() {
     return renderer->IsRunning();
 }
-void Game::SetState(GameState &newState){
+void Game::SetState(const GameState &newState){
     currentState.Exit(Me());
     currentState = newState;
     currentState.Enter(Me());
 }
-const GameState& Game::GetCurrentState() {
+void Game::ShutDown() {
+    renderer.reset();
+}
+const GameState &Game::GetCurrentState()
+{
     return currentState;
 }
 std::weak_ptr<Renderer2D> Game::GetRenderer() {

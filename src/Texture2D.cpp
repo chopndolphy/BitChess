@@ -12,6 +12,25 @@ Texture2D::Texture2D() {
 
     glGenTextures(1, &this->id); 
 }
+Texture2D::Texture2D(bool hasAlpha, unsigned int width, unsigned int height, unsigned char* data) {
+    this->width = 0;
+    this->height = 0;
+    if (hasAlpha) {
+    internalFormat = GL_RGBA;
+    imageFormat = GL_RGBA;
+    } else {
+    internalFormat = GL_RGB;
+    imageFormat = GL_RGB;
+    }
+    wrap_S = GL_REPEAT;
+    wrap_T = GL_REPEAT;
+    filter_Min = GL_LINEAR;
+    filter_Max = GL_LINEAR;
+
+    glGenTextures(1, &this->id); 
+
+    Generate(width, height, data);
+}
 void Texture2D::Generate(unsigned int width, unsigned int height, unsigned char* data) {
     this->width = width;
     this->height = height;

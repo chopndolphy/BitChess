@@ -2,6 +2,7 @@
 #include "ResourceManager.h"
 
 #include <filesystem>
+#include <iostream>
 
 Renderer2D::Renderer2D() {
     initWindow();
@@ -11,6 +12,8 @@ Renderer2D::Renderer2D() {
     initCursor();
 }
 Renderer2D::~Renderer2D() {
+    destroySprites();
+    ResourceManager::Clear();
     glfwTerminate();
 }
 void Renderer2D::PrepareFrame() {
@@ -26,7 +29,7 @@ void Renderer2D::ProcessInput() {
         if (lastClickPos.x > boardOffset.x && lastClickPos.x < (boardOffset.x + boardSize.x) && 
             lastClickPos.y > boardOffset.y && lastClickPos.y < (boardOffset.y + boardSize.y)) { // lastClickPos on board
 
-            lastSquareClicked.push_back(Util::IndexToBitBoard(Util::PositionToIndex(lastClickPos, squareSize, boardOffset)));
+            lastSquareClicked = std::make_unique<uint64_t>(Util::IndexToBitBoard(Util::PositionToIndex(lastClickPos, squareSize, boardOffset)));
         }
 
     } 
@@ -77,51 +80,52 @@ void Renderer2D::UpdateBoardState(std::string boardState) {
     for (size_t i = 0; i < boardState.length(); i++) {
         switch (boardState[i]) {
             case 'P':
-                pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                
+                pieceSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
                     glm::vec4(0.125f, 0.0f, 0.1875f, 0.0625f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'p':
-                pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                pieceSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
                     glm::vec4(0.125f, 0.0625f, 0.1875f, 0.125f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'K':
-                pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                pieceSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
                     glm::vec4(0.1875f, 0.0f, 0.25f, 0.0625f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'k':
-                pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                pieceSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
                     glm::vec4(0.1875f, 0.0625f, 0.25f, 0.125f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'Q':
-                pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                pieceSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
                     glm::vec4(0.25f, 0.0f, 0.3125f, 0.0625f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'q':
-                pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                pieceSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
                     glm::vec4(0.25f, 0.0625f, 0.3125f, 0.125f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'B':
-                pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                pieceSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
                     glm::vec4(0.3125f, 0.0f, 0.375f, 0.0625f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'b':
-                pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                pieceSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
                     glm::vec4(0.3125f, 0.0625f, 0.375f, 0.125f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'N':
-                pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                pieceSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
                     glm::vec4(0.375f, 0.0f, 0.4375f, 0.0625f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'n':
-                pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                pieceSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
                     glm::vec4(0.375f, 0.0625f, 0.4375f, 0.125f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'R':
-                pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                pieceSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
                     glm::vec4(0.4375f, 0.0f, 0.5f, 0.0625f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'r':
-                pieceSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+                pieceSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
                     glm::vec4(0.4375f, 0.0625f, 0.5f, 0.125f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             default:
@@ -135,11 +139,11 @@ void Renderer2D::ShowAvailableMoves(std::string availableMoves) {
     for (size_t i = 0; i < availableMoves.length(); i++) {
         switch (availableMoves[i]) {
             case 'a':
-                availableMovesSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("hoverable"), 
+                availableMovesSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("hoverable"), 
                     glm::vec4(0.0f, 0.0625f, 0.0625f, 0.125f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'm':
-                availableMovesSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("hoverable"), 
+                availableMovesSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("hoverable"), 
                     glm::vec4(0.0625f, 0.0625f, 0.125f, 0.125f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
                 break;
             case 'c':
@@ -154,17 +158,17 @@ void Renderer2D::ShowPreviousMove(std::string previousMove) {
     previousMoveSprites.clear();
     for (size_t i = 0; i < previousMove.length(); i++) {
         if (previousMove[i] == 'm') {
-            previousMoveSprites.emplace_back(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
+            previousMoveSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
                 glm::vec4(0.0625f, 0.0f, 0.125f, 0.0625f), Util::IndexToPosition(i, squareSize, boardOffset), squareSize));
         }
     }
 }
 bool Renderer2D::GetLastSquareClicked(uint64_t &bitSquareClicked) {
-    if (lastSquareClicked.empty()) {
+    if (!lastSquareClicked) {
         return false;
     } else {
-        bitSquareClicked = lastSquareClicked.back();
-        lastSquareClicked.clear();
+        bitSquareClicked = *lastSquareClicked.get();
+        lastSquareClicked.reset();
         return true;
     }
 }
@@ -174,8 +178,9 @@ void Renderer2D::initWindow() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_RESIZABLE, false);
-    
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+
     window = glfwCreateWindow(myWindow->SCR_WIDTH, myWindow->SCR_HEIGHT, "Chess", NULL, NULL);
     if (!window) {
         throw std::runtime_error("Failed to create GLFW window");
@@ -184,11 +189,6 @@ void Renderer2D::initWindow() {
     glfwMakeContextCurrent(window);
     glfwSetWindowUserPointer(window, myWindow.get());
     
-    auto resizeFunc = [](GLFWwindow* w, int width, int height) {
-        static_cast<MyGlWindow*>(glfwGetWindowUserPointer(w))->ResizeWindow(w, width, height);
-    };
-    glfwSetFramebufferSizeCallback(window, resizeFunc);
-
     auto mouseMoveFunc = [](GLFWwindow* w, double xposIn, double yposIn) {
         static_cast<MyGlWindow*>(glfwGetWindowUserPointer(w))->MoveMouse(w, xposIn, yposIn);
     };
@@ -210,8 +210,10 @@ void Renderer2D::initOpenGL() {
     projection = glm::ortho(0.0f, static_cast<float>(myWindow->SCR_WIDTH), static_cast<float>(myWindow->SCR_HEIGHT), 0.0f, -1.0f, 1.0f);
 }
 void Renderer2D::initShadersAndTextures() {
-    std::filesystem::path shaderAbsPath = std::filesystem::absolute("./shaders/");
-    std::filesystem::path textureAbsPath = std::filesystem::absolute("./textures/");
+    std::filesystem::path fileAbsPath = std::filesystem::absolute(__FILE__);
+    std::filesystem::path shaderAbsPath = std::filesystem::absolute(fileAbsPath.parent_path().parent_path() / "shaders/");
+    std::filesystem::path textureAbsPath = std::filesystem::absolute(fileAbsPath.parent_path().parent_path() / "textures/");
+    std::cout << shaderAbsPath << std::endl << textureAbsPath << std::endl;
     ResourceManager::LoadShader((shaderAbsPath / "sprite.vert").string().c_str(), (shaderAbsPath / "sprite.frag").string().c_str(), nullptr, "sprite");
     ResourceManager::GetShader("sprite").lock()->activate_shader().setInt("image", 0);
     ResourceManager::GetShader("sprite").lock()->setMat4("projection", projection);
@@ -234,9 +236,17 @@ void Renderer2D::initUIElements() {
 }
 void Renderer2D::initCursor() {
     GLFWimage image;
-    std::filesystem::path cursorAbsPath = std::filesystem::absolute("./textures/");
+    std::filesystem::path fileAbsPath = std::filesystem::absolute(__FILE__);
+    std::filesystem::path cursorAbsPath = std::filesystem::absolute(fileAbsPath.parent_path().parent_path() / "textures/");
     image.pixels = stbi_load((cursorAbsPath / "chess_cursor.png").string().c_str(), &image.width, &image.height, 0, 4);
     cursor = glfwCreateCursor(&image, 0, 0);
     glfwSetCursor(window, cursor);
     stbi_image_free(image.pixels);
+}
+void Renderer2D::destroySprites() {
+    staticSprites.clear();
+    pieceSprites.clear();
+    availableMovesSprites.clear();
+    chosenPieceSprite.reset();
+    previousMoveSprites.clear();
 }

@@ -5,5 +5,6 @@ int main() {
     while (game.IsRunning()) {
         game.ExecuteFrame();
     }
+    game.ShutDown();
     return 0;
 }

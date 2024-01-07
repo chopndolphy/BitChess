@@ -12,14 +12,14 @@ std::unordered_map<std::string, std::shared_ptr<Texture2D>> ResourceManager::Tex
 std::unordered_map<std::string, std::shared_ptr<Shader>> ResourceManager::Shaders;
 
 std::weak_ptr<Shader> ResourceManager::LoadShader(const char* vShaderFile, const char* fShaderFile, const char* gShaderFile, std::string name) {
-    Shaders.try_emplace(name, std::make_shared<Shader>(std::move(loadShaderFromFile(vShaderFile, fShaderFile, gShaderFile))));
+    Shaders.try_emplace(name, loadShaderFromFile(vShaderFile, fShaderFile, gShaderFile));
     return Shaders[name];
 }
 std::weak_ptr<Shader> ResourceManager::GetShader(std::string name) {
     return Shaders[name];
 }
 std::weak_ptr<Texture2D> ResourceManager::LoadTexture(const char* file, bool alpha, std::string name) {
-    Textures.try_emplace(name, std::make_shared<Texture2D>(std::move(loadTextureFromFile(file, alpha))));
+    Textures.try_emplace(name, loadTextureFromFile(file, alpha));
     return Textures[name];
 }
 std::weak_ptr<Texture2D> ResourceManager::GetTexture(std::string name) {
@@ -33,7 +33,7 @@ void ResourceManager::Clear() {
         glDeleteTextures(1, &iter.second->id);
     }
 }
-Shader ResourceManager::loadShaderFromFile(const char* vertexPath, const char* fragmentPath, const char* geometryPath) {
+std::shared_ptr<Shader> ResourceManager::loadShaderFromFile(const char* vertexPath, const char* fragmentPath, const char* geometryPath) {
     // 1. retrieve the vertex/fragment source code from filePath
     std::string vertexCode;
     std::string fragmentCode;
@@ -73,19 +73,13 @@ Shader ResourceManager::loadShaderFromFile(const char* vertexPath, const char* f
     const char* vShaderCode = vertexCode.c_str();
     const char* fShaderCode = fragmentCode.c_str();
     const char* gShaderCode = geometryCode.c_str();
-    Shader shader;
-    shader.compile(vShaderCode, fShaderCode, geometryPath != nullptr ? gShaderCode : nullptr);
-    return shader;
+
+    return std::make_unique<Shader>(vShaderCode, fShaderCode, geometryPath != nullptr ? gShaderCode : nullptr);
 }
-Texture2D ResourceManager::loadTextureFromFile(const char* file, bool alpha) {
-    Texture2D texture;
-    if (alpha) {
-        texture.internalFormat = GL_RGBA;
-        texture.imageFormat = GL_RGBA;
-    }
+std::shared_ptr<Texture2D> ResourceManager::loadTextureFromFile(const char* file, bool alpha) {
     int width, height, nrChannels;
     unsigned char* data = stbi_load(file, &width, &height, &nrChannels, 0);
-    texture.Generate(width, height, data);
+    std::shared_ptr<Texture2D> texture = std::make_shared<Texture2D>(alpha, width, height, data);
     stbi_image_free(data);
     return texture;
 }
