@@ -2,7 +2,6 @@
 #include "ResourceManager.h"
 
 #include <filesystem>
-#include <iostream>
 
 Renderer2D::Renderer2D() {
     initWindow();
@@ -210,10 +209,8 @@ void Renderer2D::initOpenGL() {
     projection = glm::ortho(0.0f, static_cast<float>(myWindow->SCR_WIDTH), static_cast<float>(myWindow->SCR_HEIGHT), 0.0f, -1.0f, 1.0f);
 }
 void Renderer2D::initShadersAndTextures() {
-    std::filesystem::path fileAbsPath = std::filesystem::absolute(__FILE__);
-    std::filesystem::path shaderAbsPath = std::filesystem::absolute(fileAbsPath.parent_path().parent_path() / "shaders/");
-    std::filesystem::path textureAbsPath = std::filesystem::absolute(fileAbsPath.parent_path().parent_path() / "textures/");
-    std::cout << shaderAbsPath << std::endl << textureAbsPath << std::endl;
+    std::filesystem::path shaderAbsPath = Util::AbsProjectDirectory().append("shaders/");
+    std::filesystem::path textureAbsPath = Util::AbsProjectDirectory().append("textures/");
     ResourceManager::LoadShader((shaderAbsPath / "sprite.vert").string().c_str(), (shaderAbsPath / "sprite.frag").string().c_str(), nullptr, "sprite");
     ResourceManager::GetShader("sprite").lock()->activate_shader().setInt("image", 0);
     ResourceManager::GetShader("sprite").lock()->setMat4("projection", projection);
@@ -235,9 +232,8 @@ void Renderer2D::initUIElements() {
     squareSize = glm::vec2((0.125f * boardSize.x), (0.125f * boardSize.y));
 }
 void Renderer2D::initCursor() {
+    std::filesystem::path cursorAbsPath = Util::AbsProjectDirectory().append("textures/");
     GLFWimage image;
-    std::filesystem::path fileAbsPath = std::filesystem::absolute(__FILE__);
-    std::filesystem::path cursorAbsPath = std::filesystem::absolute(fileAbsPath.parent_path().parent_path() / "textures/");
     image.pixels = stbi_load((cursorAbsPath / "chess_cursor.png").string().c_str(), &image.width, &image.height, 0, 4);
     cursor = glfwCreateCursor(&image, 0, 0);
     glfwSetCursor(window, cursor);

@@ -29,3 +29,8 @@ bool Util::PopulateStringBoard(std::string &stringBoard, uint64_t bitBoard, char
         return true;
     }
 }
+std::filesystem::path Util::AbsProjectDirectory() {
+    char path[FILENAME_MAX];
+    ssize_t count = readlink("/proc/self/exe", path, FILENAME_MAX);
+    return std::filesystem::path(std::string(path, (count > 0) ? count : 0)).parent_path().parent_path().string();
+}
