@@ -20,6 +20,7 @@ void WhiteSelectingMoveState::ProcessClicks(Game &game) {
         std::string previousMoveString(64, '-');
         Util::PopulateStringBoard(previousMoveString, (game.GetSelectedPiece() | bitSquareClicked), 'm');
         game.GetRenderer().lock()->ShowPreviousMove(previousMoveString);
+        // maybe flip board?
         game.SetState(BlackSelectingPieceState::GetInstance());
     } else {
         if (bitSquareClicked & game.GetBoard().lock()->white_bb) {
