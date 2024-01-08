@@ -1,0 +1,64 @@
+<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><element><id>UMLClass</id><coordinates><x>350</x><y>590</y><w>100</w><h>30</h></coordinates><panel_attributes>Application</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>350</x><y>520</y><w>100</w><h>30</h></coordinates><panel_attributes>Game
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>350</x><y>300</y><w>100</w><h>30</h></coordinates><panel_attributes>Position
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>350</x><y>0</y><w>100</w><h>30</h></coordinates><panel_attributes>Bitboard</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>350</x><y>810</y><w>100</w><h>30</h></coordinates><panel_attributes>UserInterface</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>350</x><y>1020</y><w>100</w><h>30</h></coordinates><panel_attributes>Renderer</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>390</x><y>20</y><w>30</w><h>300</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;280</additional_attributes></element><element><id>Relation</id><coordinates><x>390</x><y>320</y><w>30</w><h>220</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;200</additional_attributes></element><element><id>Relation</id><coordinates><x>390</x><y>540</y><w>30</w><h>70</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>390</x><y>610</y><w>30</w><h>220</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;200;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>390</x><y>830</y><w>30</w><h>210</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;190;10;10</additional_attributes></element><element><id>Text</id><coordinates><x>450</x><y>810</y><w>460</w><h>170</h></coordinates><panel_attributes>- has some state related to UI
+        - what elements are active
+        - where buttons are located
+        - where the chessboard is located
+
+- liason between application and renderer
+        - converts game updates into draw commands for renderer
+
+- liason between application and window
+        - converts click positions into game events
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>450</x><y>1020</y><w>290</w><h>70</h></coordinates><panel_attributes>- only understands simple draw commands
+- outputs to the screen
+
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>900</y><w>100</w><h>30</h></coordinates><panel_attributes>Window</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>40</x><y>920</y><w>330</w><h>140</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;120;310;120</additional_attributes></element><element><id>Relation</id><coordinates><x>40</x><y>810</y><w>330</w><h>110</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;90;10;10;310;10</additional_attributes></element><element><id>Text</id><coordinates><x>100</x><y>710</y><w>290</w><h>70</h></coordinates><panel_attributes>
+
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>100</x><y>900</y><w>290</w><h>40</h></coordinates><panel_attributes>- contains info regarding the rendering context
+- recieves user input
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>450</x><y>590</y><w>520</w><h>190</h></coordinates><panel_attributes>- runs the main loop
+- loads game
+- has multi-leveled state machine (deeper levels might be implemented in other classes)
+        - startup
+                - pick/load/start game
+        - game
+                - whose turn it is
+                        - picking a piece
+                        - picking a destination
+        - shutdown
+                - display outcome
+                - start a new game or close application
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>450</x><y>520</y><w>460</w><h>50</h></coordinates><panel_attributes>- basically just a vector of positions in chronological order
+- when move is made, previous move is copied, but with changes passed
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>450</x><y>300</y><w>460</w><h>200</h></coordinates><panel_attributes>- stores information about the position
+        - location of pieces
+        - casting rights
+        - en passant vulnerable pieces
+        - move counter
+        - previous 2 moves (for 3 fold repetition checking)
+        - 50 unproductive half-moves counter
+
+- can generate list of possible moves for each piece
+        - uses bitboards to generate moves
+        - checks for checks
+        - no possible moves for any piece is checkmate
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>80</x><y>200</y><w>300</w><h>70</h></coordinates><panel_attributes>- 
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>450</x><y>0</y><w>460</w><h>270</h></coordinates><panel_attributes>- uint64_t data type
+- can represent locations of pieces
+        - all pieces
+        - all pieces of a color
+        - all pieces of a type
+        - all pieces attacked
+        - all pieces with available moves
+        - etc
+
+- can be used to facilitate move generation
+        - masks for bit shift operations
+        - straight lines
+        - diagonal lines
+
+- can be a move
+        - location of selection
+        - location of destination 
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element></diagram>
