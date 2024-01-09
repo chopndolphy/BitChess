@@ -13,7 +13,9 @@ void WhiteSelectingMoveState::ProcessClicks(Game &game) {
     if (!game.GetRenderer().lock()->GetLastSquareClicked(bitSquareClicked)) {
         return;
     }
-    if (bitSquareClicked & (game.GetBoard().lock()->GetQuietMoves(game.GetSelectedPiece(), true) | game.GetBoard().lock()->GetCaptures(game.GetSelectedPiece(), true))) {
+    if (bitSquareClicked & (game.GetBoard().lock()->GetQuietMoves(game.GetSelectedPiece(), true) |
+        game.GetBoard().lock()->GetCaptures(game.GetSelectedPiece(), true))) {
+            
         game.GetBoard().lock()->MakeMove(game.GetSelectedPiece(), bitSquareClicked, true);
         game.GetRenderer().lock()->UpdateBoardState(game.GetBoard().lock()->GetBoardString());
         game.GetRenderer().lock()->ShowAvailableMoves(std::string(64, '-'));
