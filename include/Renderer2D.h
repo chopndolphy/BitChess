@@ -50,9 +50,5 @@ class Renderer2D {
         void initCursor();
         void destroySprites();
         glm::vec3 clearColor = glm::vec3(0.1f, 0.1f, 0.1f);
-        glm::mat4 projection;
-        glm::vec2 boardOffset;
-        glm::vec2 boardSize;
-        glm::vec2 squareSize;
         std::unique_ptr<uint64_t> lastSquareClicked;
 };

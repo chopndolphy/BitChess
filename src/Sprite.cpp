@@ -1,11 +1,16 @@
 #include "Sprite.h"
 
-Sprite::Sprite(std::weak_ptr<Shader> shader, glm::vec4 texCoords, glm::vec2 position, glm::vec2 size) {
+Sprite::Sprite(std::weak_ptr<Shader> shader, glm::vec4 texCoords) {
     this->shader = shader;
     initRenderData(texCoords);
     model = glm::mat4(1.0f);
-    Move(position);
-    Scale(size);
+    this->BoardLocation = 65;
+}
+Sprite::Sprite(std::weak_ptr<Shader> shader, glm::vec4 texCoords, size_t boardLocation) {
+    this->shader = shader;
+    initRenderData(texCoords);
+    model = glm::mat4(1.0f);
+    this->BoardLocation = boardLocation;
 }
 Sprite::~Sprite() {
     glDeleteVertexArrays(1, &quadVAO);
@@ -36,9 +41,13 @@ void Sprite::initRenderData(glm::vec4 texCoords) {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
-void Sprite::Draw() {
+void Sprite::Draw(glm::mat4 projection, glm::vec2 position, glm::vec2 size) {
     shader.lock()->activate_shader();
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(position, 0.0f));
+    model = glm::scale(model, glm::vec3(size, 0.0f));
     shader.lock()->setMat4("model", model);
+    shader.lock()->setMat4("projection", projection);
     glBindVertexArray(this->quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
@@ -47,7 +56,6 @@ void Sprite::Move(glm::vec2 position) {
     shader.lock()->activate_shader();
     model = glm::translate(model, glm::vec3(position, 0.0f));
     shader.lock()->setMat4("model", model);
-    this->position = position;
 }
 void Sprite::Scale(glm::vec2 size) {
     shader.lock()->activate_shader();

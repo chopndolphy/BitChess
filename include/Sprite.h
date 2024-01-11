@@ -9,12 +9,13 @@
 #include <memory>
 class Sprite {
     public:
-        Sprite(std::weak_ptr<Shader> shader, glm::vec4 texCoords, glm::vec2 position, glm::vec2 size);
+        Sprite(std::weak_ptr<Shader> shader, glm::vec4 texCoords);
+        Sprite(std::weak_ptr<Shader> shader, glm::vec4 texCoords, size_t boardLocation);
         ~Sprite();
-        void Draw();
+        void Draw(glm::mat4 projection, glm::vec2 position, glm::vec2 size);
         void Move(glm::vec2 position);
         void Scale(glm::vec2 size);
-        glm::vec2 position;
+        size_t BoardLocation;
         void setHovering(bool hovering) {
             shader.lock()->activate_shader();
             shader.lock()->setBool("hoverOver", hovering);
