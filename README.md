@@ -6,6 +6,7 @@ BitChess is a 16-bit-style local-two-player chess-game, made with OpenGL. The pr
 ### Building and Running
 BitChess is currently only available for linux and requires GLFW 3.4 or later to be installed
 <https://github.com/glfw/glfw>
+
 <https://www.glfw.org/docs/latest/compile.html>
 
 After GLFW is installed, from the terminal, navigate to the BitChess project directory and enter:
