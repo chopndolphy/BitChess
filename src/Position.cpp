@@ -1,7 +1,7 @@
-#include "Board.h"
+#include "Position.h"
 #include "Util.h"
 
-Board::Board() {
+Position::Position() {
     pawn_bb   = 0x00FF00000000FF00;
     knight_bb = 0x4200000000000042; 
     bishop_bb = 0x2400000000000024;
@@ -12,7 +12,7 @@ Board::Board() {
     black_bb  = 0xFFFF000000000000;
     pieces_bb = 0xFFFF00000000FFFF;
 }
-uint64_t Board::GetCaptures(uint64_t piece, bool whitesTurn) {
+uint64_t Position::GetCaptures(uint64_t piece, bool whitesTurn) {
     uint64_t moves = 0;
     if (whitesTurn) {
 
@@ -21,7 +21,7 @@ uint64_t Board::GetCaptures(uint64_t piece, bool whitesTurn) {
     }
     return moves;
 }
-uint64_t Board::GetQuietMoves(uint64_t piece, bool whitesTurn) {
+uint64_t Position::GetQuietMoves(uint64_t piece, bool whitesTurn) {
     uint64_t moves = 0;
     if (whitesTurn) {
         (pawn_bb & white_bb & piece) ? moves = (piece << 8 | piece << 16) : 
@@ -32,7 +32,7 @@ uint64_t Board::GetQuietMoves(uint64_t piece, bool whitesTurn) {
     }
     return moves;
 }
-std::string Board::GetBoardString() {
+std::string Position::GetBoardString() {
     std::string boardString(64, '-');
     Util::PopulateStringBoard(boardString, (pawn_bb & white_bb), 'P');
     Util::PopulateStringBoard(boardString, (pawn_bb & black_bb), 'p');
@@ -48,7 +48,7 @@ std::string Board::GetBoardString() {
     Util::PopulateStringBoard(boardString, (king_bb & black_bb), 'k');
     return boardString;
 }
-void Board::MakeMove(uint64_t from, uint64_t to, bool whitesTurn){
+void Position::MakeMove(uint64_t from, uint64_t to, bool whitesTurn){
     uint64_t fromTo = from | to;
     if (whitesTurn) {
         if (pawn_bb & white_bb & from) pawn_bb ^= fromTo;

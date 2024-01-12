@@ -2,9 +2,9 @@
 #include <stdint.h>
 #include <string>
 
-class Board {
+class Position {
     public:
-        Board();
+        Position();
         uint64_t pawn_bb;
         uint64_t knight_bb;
         uint64_t bishop_bb;

@@ -5,10 +5,10 @@
 
 #include <memory>
 
-class MyGlWindow {
+class MyGLWindow {
     public:
-        MyGlWindow();
-        ~MyGlWindow();
+        MyGLWindow();
+        ~MyGLWindow();
         unsigned int SCR_WIDTH = 1600;
         unsigned int SCR_HEIGHT = 1200;
         void MoveMouse(GLFWwindow* window, double xposIn, double yposIn);

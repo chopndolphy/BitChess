@@ -1,0 +1,91 @@
+<diagram program="umletino" version="15.1"><zoom_level>6</zoom_level><element><id>UMLClass</id><coordinates><x>342</x><y>388</y><w>60</w><h>18</h></coordinates><panel_attributes>Application</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>342</x><y>316</y><w>60</w><h>18</h></coordinates><panel_attributes>Game
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>342</x><y>160</y><w>60</w><h>18</h></coordinates><panel_attributes>Position
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>180</x><y>160</y><w>60</w><h>18</h></coordinates><panel_attributes>Bitboard</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>342</x><y>520</y><w>60</w><h>18</h></coordinates><panel_attributes>UserInterface</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>342</x><y>646</y><w>60</w><h>18</h></coordinates><panel_attributes>Renderer</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>234</x><y>160</y><w>120</w><h>18</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;180;10</additional_attributes></element><element><id>Relation</id><coordinates><x>366</x><y>172</y><w>18</w><h>156</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;240</additional_attributes></element><element><id>Relation</id><coordinates><x>366</x><y>328</y><w>18</w><h>72</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;100</additional_attributes></element><element><id>Relation</id><coordinates><x>366</x><y>400</y><w>18</w><h>132</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;200;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>366</x><y>532</y><w>18</w><h>126</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;190;10;10</additional_attributes></element><element><id>Text</id><coordinates><x>402</x><y>520</y><w>276</w><h>102</h></coordinates><panel_attributes>- has some state related to UI
+        - what elements are active
+        - where buttons are located
+        - where the chessboard is located
+
+- liason between application and renderer
+        - converts game updates into draw commands for renderer
+
+- liason between application and window
+        - converts click positions into game events
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>402</x><y>646</y><w>204</w><h>54</h></coordinates><panel_attributes>- only understands simple draw commands
+- outputs to the screen
+- has collections of sprite instances
+- has a weak_ptr to one main texture map
+- passes resources to sprites from resource manager
+
+
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>132</x><y>580</y><w>72</w><h>18</h></coordinates><panel_attributes>MyGLWindow</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>162</x><y>520</y><w>192</w><h>72</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;100;10;10;300;10</additional_attributes></element><element><id>Text</id><coordinates><x>204</x><y>580</y><w>174</w><h>24</h></coordinates><panel_attributes>- contains info regarding the rendering context
+- recieves user input
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>402</x><y>388</y><w>210</w><h>84</h></coordinates><panel_attributes>- runs the main loop
+- uses finite state machine design
+        - state determines processClicks() implementation
+        - has singular instance of each state
+- has a user interface
+- loads a game instance
+        - can be a new game
+        - can be a previously saved game
+- manages proper object destruction on shutdown
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>402</x><y>316</y><w>276</w><h>30</h></coordinates><panel_attributes>- list of positions in chronological order
+- when move is made, previous move is copied, but with changes passed
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>402</x><y>160</y><w>276</w><h>120</h></coordinates><panel_attributes>- stores information about the position
+        - location of pieces
+        - casting rights
+        - en passant vulnerable pieces
+        - move counter
+        - previous 2 moves (for 3 fold repetition checking)
+        - 50 unproductive half-moves counter
+
+- can generate list of possible moves for each piece
+        - uses bitboards to generate moves
+        - checks for checks
+        - no possible moves for any piece is checkmate
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>180</x><y>178</y><w>144</w><h>162</h></coordinates><panel_attributes>- uint64_t data type
+- can represent locations of pieces
+        - all pieces
+        - all pieces of a color
+        - all pieces of a type
+        - all pieces attacked
+        - all pieces with available moves
+        - etc
+
+- can be used to facilitate move generation
+        - masks for bit shift operations
+        - straight lines
+        - diagonal lines
+
+- can be a move
+        - location of selection
+        - location of destination 
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>316</y><w>96</w><h>18</h></coordinates><panel_attributes>WhiteSelectingPieceState</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>132</x><y>388</y><w>60</w><h>18</h></coordinates><panel_attributes>/AppState/
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>186</x><y>388</y><w>168</w><h>18</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;260;10</additional_attributes></element><element><id>Relation</id><coordinates><x>186</x><y>394</y><w>168</w><h>18</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>260;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>268</y><w>96</w><h>18</h></coordinates><panel_attributes>StartState</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>364</y><w>96</w><h>18</h></coordinates><panel_attributes>WhiteSelectingMoveState</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>412</y><w>96</w><h>18</h></coordinates><panel_attributes>BlackSelectingPieceState</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>460</y><w>96</w><h>18</h></coordinates><panel_attributes>BlackSelectingMoveState</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>508</y><w>96</w><h>18</h></coordinates><panel_attributes>EndState</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>90</x><y>268</y><w>54</w><h>138</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>70;210;40;210;40;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>90</x><y>316</y><w>54</w><h>90</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>70;130;40;130;40;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>90</x><y>364</y><w>54</w><h>42</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>70;50;40;50;40;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>90</x><y>388</y><w>54</w><h>42</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>70;10;40;10;40;50;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>90</x><y>388</y><w>54</w><h>90</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>70;10;40;10;40;130;10;130</additional_attributes></element><element><id>Relation</id><coordinates><x>90</x><y>388</y><w>54</w><h>138</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>70;10;40;10;40;210;10;210</additional_attributes></element><element><id>Text</id><coordinates><x>132</x><y>406</y><w>186</w><h>36</h></coordinates><panel_attributes>- states are instanced (not static singletons)
+- see state machine flowchart 
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>0</x><y>286</y><w>102</w><h>24</h></coordinates><panel_attributes>- menu to start new game or load saved game
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>0</x><y>334</y><w>102</w><h>24</h></coordinates><panel_attributes>- white is choosing which piece to move
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>0</x><y>382</y><w>102</w><h>24</h></coordinates><panel_attributes>- white is choosing where to move the piece
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>0</x><y>430</y><w>102</w><h>24</h></coordinates><panel_attributes>- black is choosing which piece to move
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>0</x><y>478</y><w>102</w><h>24</h></coordinates><panel_attributes>- black is choosing where to move the piece
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>0</x><y>526</y><w>102</w><h>30</h></coordinates><panel_attributes>- displays game result
+- option to return to menu
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>132</x><y>706</y><w>72</w><h>18</h></coordinates><panel_attributes>ResourceManager</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>336</x><y>814</y><w>72</w><h>18</h></coordinates><panel_attributes>Shader</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>474</x><y>706</y><w>72</w><h>18</h></coordinates><panel_attributes>Sprite</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>336</x><y>766</y><w>72</w><h>18</h></coordinates><panel_attributes>Texture2D</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>198</x><y>658</y><w>174</w><h>66</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;90;270;90;270;10</additional_attributes></element><element><id>Relation</id><coordinates><x>378</x><y>658</y><w>108</w><h>66</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>160;90;10;90;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>198</x><y>712</y><w>150</w><h>96</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>230;100;200;100;200;140;180;140;180;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>198</x><y>712</y><w>150</w><h>120</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>230;180;200;180;200;140;180;140;180;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>366</x><y>658</y><w>18</w><h>120</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>10;180;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>162</x><y>592</y><w>192</w><h>72</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>10;10;10;100;300;100</additional_attributes></element><element><id>Relation</id><coordinates><x>402</x><y>712</y><w>84</w><h>120</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>10;180;80;180;80;10;120;10</additional_attributes></element><element><id>Text</id><coordinates><x>126</x><y>724</y><w>168</w><h>54</h></coordinates><panel_attributes>- loads and keeps a collections of:
+        - Texture2D instances
+        - Shader instances
+
+- ensures only one resoursce is created per file
+
+
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>336</x><y>784</y><w>72</w><h>24</h></coordinates><panel_attributes>- opengl texture
+- immutable
+
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>336</x><y>832</y><w>78</w><h>24</h></coordinates><panel_attributes>- opengl program
+- can add uniforms
+
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>474</x><y>724</y><w>114</w><h>42</h></coordinates><panel_attributes>- opengl vertex array object
+- quad with texture coords
+- has a weak_ptr to shader
+- has individual draw call
+
+
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element></diagram>

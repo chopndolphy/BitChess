@@ -178,13 +178,13 @@ bool Renderer2D::GetLastSquareClicked(uint64_t &bitSquareClicked) {
     }
 }
 void Renderer2D::initWindow() {
-    myWindow = std::make_shared<MyGlWindow>();
+    myWindow = std::make_shared<MyGLWindow>();
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-    // glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 
     window = glfwCreateWindow(myWindow->SCR_WIDTH, myWindow->SCR_HEIGHT, "Chess", NULL, NULL);
     if (!window) {
@@ -195,17 +195,17 @@ void Renderer2D::initWindow() {
     glfwSetWindowUserPointer(window, myWindow.get());
     
     auto mouseMoveFunc = [](GLFWwindow* w, double xposIn, double yposIn) {
-        static_cast<MyGlWindow*>(glfwGetWindowUserPointer(w))->MoveMouse(w, xposIn, yposIn);
+        static_cast<MyGLWindow*>(glfwGetWindowUserPointer(w))->MoveMouse(w, xposIn, yposIn);
     };
     glfwSetCursorPosCallback(window, mouseMoveFunc);
 
     auto mouseClickFunc = [](GLFWwindow* w, int button, int action, int mods) {
-        static_cast<MyGlWindow*>(glfwGetWindowUserPointer(w))->ClickMouse(w, button, action, mods);
+        static_cast<MyGLWindow*>(glfwGetWindowUserPointer(w))->ClickMouse(w, button, action, mods);
     };
     glfwSetMouseButtonCallback(window, mouseClickFunc);
 
     auto resizeWindowFunc = [](GLFWwindow* w, int width, int height) {
-        static_cast<MyGlWindow*>(glfwGetWindowUserPointer(w))->ResizeWindow(w, width, height);
+        static_cast<MyGLWindow*>(glfwGetWindowUserPointer(w))->ResizeWindow(w, width, height);
         
     };
     glfwSetFramebufferSizeCallback(window, resizeWindowFunc);

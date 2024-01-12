@@ -1,23 +1,23 @@
-#include "MyGlWindow.h"
+#include "MyGLWindow.h"
 
-MyGlWindow::MyGlWindow() {
+MyGLWindow::MyGLWindow() {
     Projection = glm::ortho(0.0f, static_cast<float>(SCR_WIDTH), static_cast<float>(SCR_HEIGHT), 0.0f, -1.0f, 1.0f);
     BoardOffset = glm::vec2((0.2f * SCR_WIDTH), (0.1f * SCR_HEIGHT));
     BoardSize = glm::vec2((0.6f * SCR_WIDTH), 0.6f * SCR_WIDTH);
     SquareSize = glm::vec2((0.125f * BoardSize.x), (0.125f * BoardSize.y));
 }
-MyGlWindow::~MyGlWindow() {
+MyGLWindow::~MyGLWindow() {
 
 }
-void MyGlWindow::MoveMouse(GLFWwindow* window, double xposIn, double yposIn) {
+void MyGLWindow::MoveMouse(GLFWwindow* window, double xposIn, double yposIn) {
     LastCursorPos = glm::vec2(static_cast<float>(xposIn), static_cast<float>(yposIn)); 
 }
-void MyGlWindow::ClickMouse(GLFWwindow* window, int button, int action, int mods) {
+void MyGLWindow::ClickMouse(GLFWwindow* window, int button, int action, int mods) {
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         lastClickPos = std::make_unique<glm::vec2>(LastCursorPos);
     }
 }
-void MyGlWindow::ResizeWindow(GLFWwindow *window, int width, int height) {
+void MyGLWindow::ResizeWindow(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
     SCR_WIDTH = width;
     SCR_HEIGHT = height;
@@ -26,7 +26,7 @@ void MyGlWindow::ResizeWindow(GLFWwindow *window, int width, int height) {
     BoardSize = glm::vec2((0.6f * SCR_WIDTH), 0.6f * SCR_WIDTH);
     SquareSize = glm::vec2((0.125f * BoardSize.x), (0.125f * BoardSize.y));
 }
-bool MyGlWindow::GetLastClickPos(glm::vec2 &lastClick)
+bool MyGLWindow::GetLastClickPos(glm::vec2 &lastClick)
 {
     if (!lastClickPos) {
         return false;

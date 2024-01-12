@@ -1,9 +1,9 @@
 #pragma once
 #include "AppState.h"
 
-class BlackSelectingPieceState : public AppState {
+class StartState : public AppState {
     public:
-        BlackSelectingPieceState(Application &application) : app(application) {};
+        StartState(Application &application) : app(application) {};
         void Enter();
         void ProcessClicks();
         void Exit();

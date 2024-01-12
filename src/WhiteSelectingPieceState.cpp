@@ -1,33 +1,29 @@
 #include "WhiteSelectingPieceState.h"
 #include "WhiteSelectingMoveState.h"
-#include "Game.h"
+#include "Application.h"
 #include "Renderer2D.h"
-#include "Board.h"
+#include "Position.h"
 
-void WhiteSelectingPieceState::Enter(Game &game) {
+void WhiteSelectingPieceState::Enter() {
     std::cout << "Entering W select P" << std::endl;
 }
-void WhiteSelectingPieceState::ProcessClicks(Game &game) {
+void WhiteSelectingPieceState::ProcessClicks() {
     uint64_t bitSquareClicked;
-    if (!game.GetRenderer().lock()->GetLastSquareClicked(bitSquareClicked)) {
+    if (!app.Renderer().lock()->GetLastSquareClicked(bitSquareClicked)) {
         return;
     }
-    if (bitSquareClicked & game.GetBoard().lock()->white_bb) {
+    if (bitSquareClicked & app.Board().lock()->white_bb) {
         std::string stringBoard(64, '-');
         Util::PopulateStringBoard(stringBoard, bitSquareClicked, 'c');
-        Util::PopulateStringBoard(stringBoard, game.GetBoard().lock()->GetQuietMoves(bitSquareClicked, true), 'm'); 
-        Util::PopulateStringBoard(stringBoard, game.GetBoard().lock()->GetCaptures(bitSquareClicked, true), 'a');
-        game.GetRenderer().lock()->ShowAvailableMoves(stringBoard);
-        game.SetSelectedPiece(bitSquareClicked);
-        game.SetState(WhiteSelectingMoveState::GetInstance());
+        Util::PopulateStringBoard(stringBoard, app.Board().lock()->GetQuietMoves(bitSquareClicked, true), 'm'); 
+        Util::PopulateStringBoard(stringBoard, app.Board().lock()->GetCaptures(bitSquareClicked, true), 'a');
+        app.Renderer().lock()->ShowAvailableMoves(stringBoard);
+        app.SelectedPiece(bitSquareClicked);
+        app.CurrentState(app.WhiteSelectingMove());
     } else {
-        game.SetState(WhiteSelectingPieceState::GetInstance());
+        app.CurrentState(app.WhiteSelectingPiece());
     }
 }
-void WhiteSelectingPieceState::Exit(Game &game) {
+void WhiteSelectingPieceState::Exit() {
 
-}
-GameState& WhiteSelectingPieceState::GetInstance() {
-    static WhiteSelectingPieceState singleton;
-    return singleton;
 }

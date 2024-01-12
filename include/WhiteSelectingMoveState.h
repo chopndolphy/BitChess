@@ -1,16 +1,12 @@
 #pragma once
-#include "GameState.h"
+#include "AppState.h"
 
-class Game;
-
-class WhiteSelectingMoveState : public GameState {
+class WhiteSelectingMoveState : public AppState {
     public:
-        void Enter(Game &game);
-        void ProcessClicks(Game &game);
-        void Exit(Game &game);
-        static GameState& GetInstance();
+        WhiteSelectingMoveState(Application &application) : app(application) {};
+        void Enter();
+        void ProcessClicks();
+        void Exit();
     private:
-        WhiteSelectingMoveState() {};
-        WhiteSelectingMoveState(const WhiteSelectingMoveState& rs);
-        WhiteSelectingMoveState& operator=(const WhiteSelectingMoveState rs);
+        Application &app;
 };

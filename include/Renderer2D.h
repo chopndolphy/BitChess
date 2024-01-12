@@ -14,7 +14,7 @@
 #include <unordered_set>
 
 #include "Sprite.h"
-#include "MyGlWindow.h"
+#include "MyGLWindow.h"
 #include "Texture2D.h"
 #include "Util.h"
 class Renderer2D {
@@ -35,9 +35,9 @@ class Renderer2D {
     private:
         GLFWwindow* window;
         GLFWcursor* cursor;
-        std::shared_ptr<MyGlWindow> myWindow;
+        std::shared_ptr<MyGLWindow> myWindow;
         std::unordered_map<std::string, std::unique_ptr<Sprite>> staticSprites;
-        std::unordered_set<std::unique_ptr<Sprite>> pieceSprites;
+        std::unordered_set<std::unique_ptr<Sprite>> pieceSprites; //instead of having sprite saving board position, save it in 
         std::unordered_set<std::unique_ptr<Sprite>> availableMovesSprites;
         std::unordered_set<std::unique_ptr<Sprite>> previousMoveSprites;
         std::unique_ptr<Sprite> chosenPieceSprite;

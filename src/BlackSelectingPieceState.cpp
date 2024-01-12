@@ -1,33 +1,29 @@
 #include "BlackSelectingPieceState.h"
 #include "BlackSelectingMoveState.h"
-#include "Game.h"
+#include "Application.h"
 #include "Renderer2D.h"
-#include "Board.h"
+#include "Position.h"
 
-void BlackSelectingPieceState::Enter(Game &game) {
+void BlackSelectingPieceState::Enter() {
     std::cout << "Entering B select P" << std::endl;
 }
-void BlackSelectingPieceState::ProcessClicks(Game &game) {
+void BlackSelectingPieceState::ProcessClicks() {
     uint64_t bitSquareClicked;
-    if (!game.GetRenderer().lock()->GetLastSquareClicked(bitSquareClicked)) {
+    if (!app.Renderer().lock()->GetLastSquareClicked(bitSquareClicked)) {
         return;
     }
-    if (bitSquareClicked & game.GetBoard().lock()->black_bb) {
+    if (bitSquareClicked & app.Board().lock()->black_bb) {
         std::string stringBoard(64, '-');
         Util::PopulateStringBoard(stringBoard, bitSquareClicked, 'c');
-        Util::PopulateStringBoard(stringBoard, game.GetBoard().lock()->GetQuietMoves(bitSquareClicked, false), 'm'); 
-        Util::PopulateStringBoard(stringBoard, game.GetBoard().lock()->GetCaptures(bitSquareClicked, false), 'a');
-        game.GetRenderer().lock()->ShowAvailableMoves(stringBoard);
-        game.SetSelectedPiece(bitSquareClicked);
-        game.SetState(BlackSelectingMoveState::GetInstance());
+        Util::PopulateStringBoard(stringBoard, app.Board().lock()->GetQuietMoves(bitSquareClicked, false), 'm'); 
+        Util::PopulateStringBoard(stringBoard, app.Board().lock()->GetCaptures(bitSquareClicked, false), 'a');
+        app.Renderer().lock()->ShowAvailableMoves(stringBoard);
+        app.SelectedPiece(bitSquareClicked);
+        app.CurrentState(app.BlackSelectingMove());
     } else {
-        game.SetState(BlackSelectingPieceState::GetInstance());
+        app.CurrentState(app.BlackSelectingPiece());
     }
 }
-void BlackSelectingPieceState::Exit(Game &game) {
+void BlackSelectingPieceState::Exit() {
 
-}
-GameState& BlackSelectingPieceState::GetInstance() {
-    static BlackSelectingPieceState singleton;
-    return singleton;
 }
