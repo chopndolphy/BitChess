@@ -12,7 +12,7 @@
 
 Application::Application() {
     try {
-        board    = std::make_unique<Position>();
+        board = std::make_unique<Position>();
         renderer = std::make_unique<Renderer2D>();
         startState = std::make_shared<StartState>(Me());
         whiteSelectingPieceState = std::make_shared<WhiteSelectingPieceState>(Me()); 

@@ -22,14 +22,34 @@ uint64_t Position::GetCaptures(uint64_t piece, bool whitesTurn) {
     return moves;
 }
 uint64_t Position::GetQuietMoves(uint64_t piece, bool whitesTurn) {
-    uint64_t moves = 0;
-    if (whitesTurn) {
-        (pawn_bb & white_bb & piece) ? moves = (piece << 8 | piece << 16) : 
-        moves = 0;
-    } else {
-        (pawn_bb & black_bb & piece) ? moves = (piece >> 8 | piece >> 16) : 
-        moves = 0;
+    if ((!whitesTurn && (white_bb & piece)) || (whitesTurn && (black_bb & piece))) {
+        return 0;
     }
+    uint64_t moves = 0;
+
+    if (whitesTurn && (pawn_bb & piece)) {
+        moves |= piece << 8;
+        if (piece & (Bitboard::horiLine_bb << 8)) { // pawn is at start square and can move two
+            moves |= piece << 16;
+        }
+    } else if (!whitesTurn && (pawn_bb & piece)) {
+        moves |= piece >> 8;
+        if (piece & (Bitboard::horiLine_bb << 48)) { // pawn is at start square and can move two
+            moves |= piece >> 16;
+        }
+    } else if (knight_bb & piece) {
+        moves = (((piece <<  6) & Bitboard::notABfile_bb) |
+                 ((piece << 10) & Bitboard::notGHfile_bb) | 
+                 ((piece << 15) & Bitboard::notAfile_bb ) | 
+                 ((piece << 17) & Bitboard::notHfile_bb ) | 
+                 ((piece >>  6) & Bitboard::notGHfile_bb) |
+                 ((piece >> 10) & Bitboard::notABfile_bb) |
+                 ((piece >> 15) & Bitboard::notHfile_bb ) |
+                 ((piece >> 17) & Bitboard::notAfile_bb ));
+    }
+
+    moves &= ~pieces_bb;
+
     return moves;
 }
 std::string Position::GetBoardString() {
@@ -50,29 +70,33 @@ std::string Position::GetBoardString() {
 }
 void Position::MakeMove(uint64_t from, uint64_t to, bool whitesTurn){
     uint64_t fromTo = from | to;
+    if (whitesTurn && (to & black_bb)) { // white capturing
+        black_bb ^= to;
+        if (pawn_bb & to) pawn_bb ^= to;
+        if (knight_bb & to) knight_bb ^= to;
+        if (bishop_bb & to) bishop_bb ^= to;
+        if (rook_bb & to) rook_bb ^= to;
+        if (queen_bb & to) queen_bb ^= to;
+        if (king_bb & to) king_bb ^= to;
+    } else if (!whitesTurn && (to & white_bb)) { // black capturing
+        white_bb ^= to;
+        if (pawn_bb & to) pawn_bb ^= to;
+        if (knight_bb & to) knight_bb ^= to;
+        if (bishop_bb & to) bishop_bb ^= to;
+        if (rook_bb & to) rook_bb ^= to;
+        if (queen_bb & to) queen_bb ^= to;
+        if (king_bb & to) king_bb ^= to;
+    }
     if (whitesTurn) {
-        if (pawn_bb & white_bb & from) pawn_bb ^= fromTo;
-        //insert more piece checks 
-        if (to & black_bb) {
-            black_bb ^= to;
-            if (pawn_bb & black_bb & to) pawn_bb ^= to;
-            //insert more piece checks
-            pieces_bb ^= from;
-        } else {
-            pieces_bb ^= fromTo;
-        }
         white_bb ^= fromTo;
     } else {
-        if (pawn_bb & black_bb & from) pawn_bb ^= fromTo;
-        //insert more piece checks
-        if (to & white_bb) {
-            white_bb ^= to;
-            if (pawn_bb & white_bb & from) pawn_bb ^= to;
-            //insert more piece checks
-            pieces_bb ^= from;
-        } else {
-            pieces_bb ^= fromTo;
-        }
         black_bb ^= fromTo;
     }
+    if (pawn_bb & from) pawn_bb ^= fromTo;
+    if (knight_bb & from) knight_bb ^= fromTo;
+    if (bishop_bb & from) bishop_bb ^= fromTo;
+    if (rook_bb & from) rook_bb ^= fromTo;
+    if (queen_bb & from) queen_bb ^= fromTo;
+    if (king_bb & from) king_bb ^= fromTo;
+    pieces_bb = (white_bb | black_bb);
 }
