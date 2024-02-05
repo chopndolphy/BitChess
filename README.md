@@ -1,6 +1,7 @@
 # BitChess (in development)
-Version 0.1.0
+Version 0.1.1
 - See [Changelog](#changelog)
+- See [Chess Programming Resources](https://github.com/chopndolphy/BitChess/blob/refactor/doc/Resources.md "Essential information for understand the BitChess source code")
 ## Getting Started
 BitChess is a 16-bit-style local-two-player chess-game, made with OpenGL. The project is intended as a portfolio piece and a educational tool for learning game development, specifically game engine architecture and 2D graphics programming.
 ### Building and Running
