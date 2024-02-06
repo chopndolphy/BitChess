@@ -5,7 +5,7 @@
 #include "Position.h"
 
 void WhiteSelectingPieceState::Enter() {
-    std::cout << "Entering W select P" << std::endl;
+    // std::cout << "Entering W select P" << std::endl;
 }
 void WhiteSelectingPieceState::ProcessClicks() {
     uint64_t bitSquareClicked;

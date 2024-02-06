@@ -6,7 +6,7 @@
 #include "Position.h"
 
 void BlackSelectingMoveState::Enter() {
-    std::cout << "Entering B select M" << std::endl;
+    // std::cout << "Entering B select M" << std::endl;
 }
 void BlackSelectingMoveState::ProcessClicks() {
     uint64_t bitSquareClicked;
