@@ -13,13 +13,26 @@ Position::Position() {
     pieces_bb = 0xFFFF00000000FFFF;
 }
 uint64_t Position::GetCaptures(uint64_t piece, bool whitesTurn) {
-    uint64_t moves = 0;
-    if (whitesTurn) {
-
-    } else {
-
+    if ((!whitesTurn && (white_bb & piece)) || (whitesTurn && (black_bb & piece))) {
+        return 0;
     }
-    return moves;
+    uint64_t pseudoCaps = 0;
+    
+    if (whitesTurn && (pawn_bb & piece)) {
+        pseudoCaps = (((piece << 7) & Bitboard::notAfile_bb) |
+                      ((piece << 9) & Bitboard::notHfile_bb));
+    } else if (!whitesTurn && (pawn_bb & piece)) {
+        pseudoCaps = (((piece >> 7) & Bitboard::notHfile_bb) |
+                      ((piece >> 9) & Bitboard::notAfile_bb));
+    } else if ((knight_bb & piece) || (king_bb & piece) || (bishop_bb & piece) || (rook_bb & piece) || (queen_bb & piece)) {
+        pseudoCaps = GetQuietMoves(piece, whitesTurn); //this function isnt totally true to it's name for the purpose
+                                                       //of not reusing code here. might change.
+    }
+    if (whitesTurn) {
+        return (pseudoCaps & black_bb);
+    } else {
+        return (pseudoCaps & white_bb);
+    }
 }
 uint64_t Position::GetQuietMoves(uint64_t piece, bool whitesTurn) {
     if ((!whitesTurn && (white_bb & piece)) || (whitesTurn && (black_bb & piece))) {
@@ -32,11 +45,13 @@ uint64_t Position::GetQuietMoves(uint64_t piece, bool whitesTurn) {
         if (piece & (Bitboard::horiLine_bb << 8)) { // pawn is at start square and can move two
             moves |= piece << 16;
         }
+        moves &= ~pieces_bb;
     } else if (!whitesTurn && (pawn_bb & piece)) {
         moves |= piece >> 8;
         if (piece & (Bitboard::horiLine_bb << 48)) { // pawn is at start square and can move two
             moves |= piece >> 16;
         }
+        moves &= ~pieces_bb;
     } else if (knight_bb & piece) {
         moves = (((piece <<  6) & Bitboard::notABfile_bb) |
                  ((piece << 10) & Bitboard::notGHfile_bb) | 
@@ -46,9 +61,206 @@ uint64_t Position::GetQuietMoves(uint64_t piece, bool whitesTurn) {
                  ((piece >> 10) & Bitboard::notABfile_bb) |
                  ((piece >> 15) & Bitboard::notHfile_bb ) |
                  ((piece >> 17) & Bitboard::notAfile_bb ));
-    }
+        moves &= (whitesTurn) ? ~white_bb : ~black_bb; // might later change to not include captures
+    } else if (king_bb & piece) {
+        moves = (((piece << 1) & Bitboard::notHfile_bb) |
+                 ((piece << 7) & Bitboard::notAfile_bb) |
+                 ((piece << 8)                        ) |
+                 ((piece << 9) & Bitboard::notHfile_bb) |
+                 ((piece >> 1) & Bitboard::notAfile_bb) |
+                 ((piece >> 7) & Bitboard::notHfile_bb) |
+                 ((piece >> 8)                        ) |
+                 ((piece >> 9) & Bitboard::notAfile_bb));
+        moves &= (whitesTurn) ? ~white_bb : ~black_bb; // might later change to not include captures
+    } else if (bishop_bb & piece) {
+        uint64_t empty = ~pieces_bb;
+        uint64_t scan = piece;
+        uint64_t flood = piece;
+        
+        scan = piece;
+        flood = piece;
+        empty = ~pieces_bb & Bitboard::notHfile_bb;
+        flood |= scan = (scan << 9) & empty; // northwest
+        flood |= scan = (scan << 9) & empty;
+        flood |= scan = (scan << 9) & empty;
+        flood |= scan = (scan << 9) & empty;
+        flood |= scan = (scan << 9) & empty;
+        flood |=        (scan << 9) & empty; 
+        moves |= (flood << 9) & Bitboard::notHfile_bb; // might later change to not include captures
+        
+        scan = piece;
+        flood = piece;
+        empty = ~pieces_bb & Bitboard::notAfile_bb;
+        flood |= scan = (scan >> 9) & empty; // southeast
+        flood |= scan = (scan >> 9) & empty;
+        flood |= scan = (scan >> 9) & empty;
+        flood |= scan = (scan >> 9) & empty;
+        flood |= scan = (scan >> 9) & empty;
+        flood |=        (scan >> 9) & empty; 
+        moves |= (flood >> 9) & Bitboard::notAfile_bb; // might later change to not include captures
 
-    moves &= ~pieces_bb;
+
+        scan = piece;
+        flood = piece;
+        empty = ~pieces_bb & Bitboard::notAfile_bb;
+        flood |= scan = (scan << 7) & empty; // northeast
+        flood |= scan = (scan << 7) & empty;
+        flood |= scan = (scan << 7) & empty;
+        flood |= scan = (scan << 7) & empty;
+        flood |= scan = (scan << 7) & empty;
+        flood |=        (scan << 7) & empty; 
+        moves |= (flood << 7) & Bitboard::notAfile_bb; // might later change to not include captures
+        
+        scan = piece;
+        flood = piece;
+        empty = ~pieces_bb & Bitboard::notHfile_bb;
+        flood |= scan = (scan >> 7) & empty; // southwest
+        flood |= scan = (scan >> 7) & empty;
+        flood |= scan = (scan >> 7) & empty;
+        flood |= scan = (scan >> 7) & empty;
+        flood |= scan = (scan >> 7) & empty;
+        flood |=        (scan >> 7) & empty; 
+        moves |= (flood >> 7) & Bitboard::notHfile_bb; // might later change to not include captures
+
+        moves &= (whitesTurn) ? ~white_bb : ~black_bb; // might later change to not include captures
+    } else if (rook_bb & piece) {
+        uint64_t empty = ~pieces_bb;
+        uint64_t scan = piece;
+        uint64_t flood = piece;
+
+        flood |= scan = (scan << 8) & empty; // north
+        flood |= scan = (scan << 8) & empty;
+        flood |= scan = (scan << 8) & empty;
+        flood |= scan = (scan << 8) & empty;
+        flood |= scan = (scan << 8) & empty;
+        flood |=        (scan << 8) & empty; 
+        moves |= flood << 8; // might later change to not include captures
+
+        scan = piece;
+        flood = piece;
+        flood |= scan = (scan >> 8) & empty; // south
+        flood |= scan = (scan >> 8) & empty;
+        flood |= scan = (scan >> 8) & empty;
+        flood |= scan = (scan >> 8) & empty;
+        flood |= scan = (scan >> 8) & empty;
+        flood |=        (scan >> 8) & empty; 
+        moves |= flood >> 8; // might later change to not include captures
+
+        scan = piece;
+        flood = piece;
+        empty = ~pieces_bb & Bitboard::notHfile_bb;
+        flood |= scan = (scan << 1) & empty; // west
+        flood |= scan = (scan << 1) & empty;
+        flood |= scan = (scan << 1) & empty;
+        flood |= scan = (scan << 1) & empty;
+        flood |= scan = (scan << 1) & empty;
+        flood |=        (scan << 1) & empty; 
+        moves |= (flood << 1) & Bitboard::notHfile_bb; // might later change to not include captures
+        
+        scan = piece;
+        flood = piece;
+        empty = ~pieces_bb & Bitboard::notAfile_bb;
+        flood |= scan = (scan >> 1) & empty; // east
+        flood |= scan = (scan >> 1) & empty;
+        flood |= scan = (scan >> 1) & empty;
+        flood |= scan = (scan >> 1) & empty;
+        flood |= scan = (scan >> 1) & empty;
+        flood |=        (scan >> 1) & empty; 
+        moves |= (flood >> 1) & Bitboard::notAfile_bb; // might later change to not include captures
+
+        moves &= (whitesTurn) ? ~white_bb : ~black_bb; // might later change to not include captures
+    } else if (queen_bb & piece) {
+        uint64_t empty = ~pieces_bb;
+        uint64_t scan = piece;
+        uint64_t flood = piece;
+
+        flood |= scan = (scan << 8) & empty; // north
+        flood |= scan = (scan << 8) & empty;
+        flood |= scan = (scan << 8) & empty;
+        flood |= scan = (scan << 8) & empty;
+        flood |= scan = (scan << 8) & empty;
+        flood |=        (scan << 8) & empty; 
+        moves |= flood << 8; // might later change to not include captures
+
+        scan = piece;
+        flood = piece;
+        flood |= scan = (scan >> 8) & empty; // south
+        flood |= scan = (scan >> 8) & empty;
+        flood |= scan = (scan >> 8) & empty;
+        flood |= scan = (scan >> 8) & empty;
+        flood |= scan = (scan >> 8) & empty;
+        flood |=        (scan >> 8) & empty; 
+        moves |= flood >> 8; // might later change to not include captures
+
+        scan = piece;
+        flood = piece;
+        empty = ~pieces_bb & Bitboard::notHfile_bb;
+        flood |= scan = (scan << 1) & empty; // west
+        flood |= scan = (scan << 1) & empty;
+        flood |= scan = (scan << 1) & empty;
+        flood |= scan = (scan << 1) & empty;
+        flood |= scan = (scan << 1) & empty;
+        flood |=        (scan << 1) & empty; 
+        moves |= (flood << 1) & Bitboard::notHfile_bb; // might later change to not include captures
+        
+        scan = piece;
+        flood = piece;
+        empty = ~pieces_bb & Bitboard::notAfile_bb;
+        flood |= scan = (scan >> 1) & empty; // east
+        flood |= scan = (scan >> 1) & empty;
+        flood |= scan = (scan >> 1) & empty;
+        flood |= scan = (scan >> 1) & empty;
+        flood |= scan = (scan >> 1) & empty;
+        flood |=        (scan >> 1) & empty; 
+        moves |= (flood >> 1) & Bitboard::notAfile_bb; // might later change to not include captures
+
+        scan = piece;
+        flood = piece;
+        empty = ~pieces_bb & Bitboard::notHfile_bb;
+        flood |= scan = (scan << 9) & empty; // northwest
+        flood |= scan = (scan << 9) & empty;
+        flood |= scan = (scan << 9) & empty;
+        flood |= scan = (scan << 9) & empty;
+        flood |= scan = (scan << 9) & empty;
+        flood |=        (scan << 9) & empty; 
+        moves |= (flood << 9) & Bitboard::notHfile_bb; // might later change to not include captures
+        
+        scan = piece;
+        flood = piece;
+        empty = ~pieces_bb & Bitboard::notAfile_bb;
+        flood |= scan = (scan >> 9) & empty; // southeast
+        flood |= scan = (scan >> 9) & empty;
+        flood |= scan = (scan >> 9) & empty;
+        flood |= scan = (scan >> 9) & empty;
+        flood |= scan = (scan >> 9) & empty;
+        flood |=        (scan >> 9) & empty; 
+        moves |= (flood >> 9) & Bitboard::notAfile_bb; // might later change to not include captures
+
+
+        scan = piece;
+        flood = piece;
+        empty = ~pieces_bb & Bitboard::notAfile_bb;
+        flood |= scan = (scan << 7) & empty; // northeast
+        flood |= scan = (scan << 7) & empty;
+        flood |= scan = (scan << 7) & empty;
+        flood |= scan = (scan << 7) & empty;
+        flood |= scan = (scan << 7) & empty;
+        flood |=        (scan << 7) & empty; 
+        moves |= (flood << 7) & Bitboard::notAfile_bb; // might later change to not include captures
+        
+        scan = piece;
+        flood = piece;
+        empty = ~pieces_bb & Bitboard::notHfile_bb;
+        flood |= scan = (scan >> 7) & empty; // southwest
+        flood |= scan = (scan >> 7) & empty;
+        flood |= scan = (scan >> 7) & empty;
+        flood |= scan = (scan >> 7) & empty;
+        flood |= scan = (scan >> 7) & empty;
+        flood |=        (scan >> 7) & empty; 
+        moves |= (flood >> 7) & Bitboard::notHfile_bb; // might later change to not include captures
+
+        moves &= (whitesTurn) ? ~white_bb : ~black_bb; // might later change to not include captures
+    }
 
     return moves;
 }

@@ -14,7 +14,7 @@ void BlackSelectingMoveState::ProcessClicks() {
         return;
     }
     if (bitSquareClicked & (app.Board().lock()->GetQuietMoves(app.SelectedPiece(), false) | 
-    app.Board().lock()->GetCaptures(app.SelectedPiece(), true))) {
+    app.Board().lock()->GetCaptures(app.SelectedPiece(), false))) {
         app.Board().lock()->MakeMove(app.SelectedPiece(), bitSquareClicked, false);
         app.Renderer().lock()->UpdateBoardState(app.Board().lock()->GetBoardString());
         app.Renderer().lock()->ShowAvailableMoves(std::string(64, '-'));
