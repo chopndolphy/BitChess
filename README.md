@@ -39,6 +39,7 @@ to delete the entire build directory (it will be remade upon recompilation).
 ## Bugs
 - Legal move generation for the king when in check is inaccurate (when simply checked by bishop or queen, the only available move generated in the direction of the attacking piece)
 - Cannot resize (unresizable on purpose: need to implement custom window decorations and custom resizing, because wsl is broken)
+- Pawn double move doesn't check for pieces blocking
 ## To-Do
 - Finish architectural refactor
     - Bitboard
