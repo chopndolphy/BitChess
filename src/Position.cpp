@@ -29,10 +29,11 @@ uint64_t Position::GetCaptures(uint64_t piece, bool whitesTurn) {
                                                        //of not reusing code here. might change.
     }
     if (whitesTurn) {
-        return (pseudoCaps & black_bb);
+        pseudoCaps &= black_bb;
     } else {
-        return (pseudoCaps & white_bb);
+        pseudoCaps &= white_bb;
     }
+    return Bitboard::RemoveIllegalMoves(piece, pseudoCaps, *this);
 }
 uint64_t Position::GetQuietMoves(uint64_t piece, bool whitesTurn) {
     if ((!whitesTurn && (white_bb & piece)) || (whitesTurn && (black_bb & piece))) {
@@ -262,7 +263,7 @@ uint64_t Position::GetQuietMoves(uint64_t piece, bool whitesTurn) {
         moves &= (whitesTurn) ? ~white_bb : ~black_bb; // might later change to not include captures
     }
 
-    return moves;
+    return Bitboard::RemoveIllegalMoves(piece, moves, *this);
 }
 std::string Position::GetBoardString() {
     std::string boardString(64, '-');
