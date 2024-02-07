@@ -1,5 +1,5 @@
 # BitChess (in development)
-Version 0.1.1
+Version 0.2.0
 - See [Changelog](#changelog)
 - See [Chess Programming Resources](https://github.com/chopndolphy/BitChess/blob/refactor/doc/Resources.md "Essential information for understand the BitChess source code")
 ## Getting Started
@@ -28,14 +28,17 @@ to delete the entire build directory (it will be remade upon recompilation).
 - Mouse controls
 - Escape to exit the program
 ## <a name="changelog"></a> Changelog
+### 0.2.0
+- Piece movement implemented (except castling, pawn promotion, and en passant)
+- Illegal move filtering for pseudo-legal move generation (i.e. checking for checks)
 ### 0.1.0
 - Major refactor is in process. See [application architecture diagram](#apparch) and [state machine flowchart](#stateflo) for a tentative intended outcome
 - Basic GUI is implemented
 - Only simple pawn movement is implemented
 - Custom pixel art for the board, pieces, chessboard UI elements, and cursor. More to come later
 ## Bugs
+- Legal move generation for the king when in check is inaccurate (when simply checked by bishop or queen, the only available move generated in the direction of the attacking piece)
 - Cannot resize (unresizable on purpose: need to implement custom window decorations and custom resizing, because wsl is broken)
-- Stack smashing on exit
 ## To-Do
 - Finish architectural refactor
     - Bitboard
@@ -44,6 +47,15 @@ to delete the entire build directory (it will be remade upon recompilation).
     - UserInterface
     - Make ResourceManager not static (owned by Renderer2D)
 - Implement the rest of the game logic
+    - Checkmate
+    - Castling
+    - En passant
+    - Pawn promotion
+    - Draws
+        - Stalemate
+        - Threefold repetition
+        - 50 consecutive moves without a capture or pawn push
+        - Dead position
 - Second framebuffer for more robust mouse-picking
 - Custom window decorations
 - Start state
@@ -65,6 +77,7 @@ to delete the entire build directory (it will be remade upon recompilation).
     - Quit
 - Windows version???
 - Better package installation process
+- Testing tools
 ## Documentation
 ### <a name="apparch"></a> Application Architecture
 ![image](doc/application_architecture.png)
