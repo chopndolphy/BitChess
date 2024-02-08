@@ -41,7 +41,6 @@ to delete the entire build directory (it will be remade upon recompilation).
 - Custom pixel art for the board, pieces, chessboard UI elements, and cursor. More to come later
 ## Bugs
 - Cannot resize (unresizable on purpose: need to implement custom window decorations and custom resizing, because wsl is broken)
-- Pawn double move doesn't check for pieces blocking
 ## To-Do
 - Finish architectural refactor
     - Bitboard
