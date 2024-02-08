@@ -1,5 +1,5 @@
 # BitChess (in development)
-Version 0.2.0
+Version 0.2.1
 - See [Changelog](#changelog)
 - See [Chess Programming Resources](https://github.com/chopndolphy/BitChess/blob/refactor/doc/Resources.md "Essential information for understand the BitChess source code")
 ## Getting Started
