@@ -1,7 +1,8 @@
 #pragma once
 #include <stdint.h>
 #include <string>
-#include <Bitboard.h>
+#include "Bitboard.h"
+#include "Enums.h"
 
 class Position {
     public:
@@ -19,4 +20,6 @@ class Position {
         uint64_t GetCaptures(uint64_t piece, bool whitesTurn);
         std::string GetBoardString();
         void MakeMove(uint64_t from, uint64_t to, bool whitesTurn);
+        uint64_t IsInCheck(bool whitesTurn);
+        GameOver IsGameOver(bool whitesTurn);
 };

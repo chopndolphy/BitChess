@@ -17,6 +17,7 @@
 #include "MyGLWindow.h"
 #include "Texture2D.h"
 #include "Util.h"
+#include "Enums.h"
 class Renderer2D {
     public:
         Renderer2D();
@@ -29,6 +30,8 @@ class Renderer2D {
         void UpdateBoardState(std::string boardState);
         void ShowAvailableMoves(std::string availableMoves);
         void ShowPreviousMove(std::string previousMove);
+        void ShowCheckedKing(std::string checkedKingPos);
+        void ShowMenu(EndDisplay endDisplay);
         bool GetLastSquareClicked(uint64_t &bitSquareClicked);
         float deltaTime = 0.0f;
         float lastFrame = 0.0f;
@@ -41,6 +44,8 @@ class Renderer2D {
         std::unordered_set<std::unique_ptr<Sprite>> availableMovesSprites;
         std::unordered_set<std::unique_ptr<Sprite>> previousMoveSprites;
         std::unique_ptr<Sprite> chosenPieceSprite;
+        std::unique_ptr<Sprite> checkedKingSprite;
+        std::unique_ptr<Sprite> menu;
         std::weak_ptr<Texture2D> textureMap;
         void initWindow();
         void initOpenGL();

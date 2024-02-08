@@ -313,3 +313,176 @@ void Position::MakeMove(uint64_t from, uint64_t to, bool whitesTurn){
     if (king_bb & from) king_bb ^= fromTo;
     pieces_bb = (white_bb | black_bb);
 }
+
+uint64_t Position::IsInCheck(bool whitesTurn) {
+    uint64_t myKing;
+    if (whitesTurn) {
+        myKing = king_bb & white_bb;
+    } else {
+        myKing = king_bb & black_bb;
+    }
+    if (whitesTurn) {
+        uint64_t pawnAttacks = (((myKing << 7) & Bitboard::notAfile_bb) |
+                    ((myKing << 9) & Bitboard::notHfile_bb));
+        if (pawnAttacks & black_bb & pawn_bb) {
+            return myKing;
+        };
+    } else if (!whitesTurn) {
+        uint64_t pawnAttacks = (((myKing >> 7) & Bitboard::notHfile_bb) |
+                    ((myKing >> 9) & Bitboard::notAfile_bb));
+        if (pawnAttacks & white_bb & pawn_bb) {
+            return myKing;
+        };
+    }
+    uint64_t knightAttacks = (((myKing <<  6) & Bitboard::notABfile_bb) |
+        ((myKing << 10) & Bitboard::notGHfile_bb) | 
+        ((myKing << 15) & Bitboard::notAfile_bb ) | 
+        ((myKing << 17) & Bitboard::notHfile_bb ) | 
+        ((myKing >>  6) & Bitboard::notGHfile_bb) |
+        ((myKing >> 10) & Bitboard::notABfile_bb) |
+        ((myKing >> 15) & Bitboard::notHfile_bb ) |
+        ((myKing >> 17) & Bitboard::notAfile_bb ));
+    if (knightAttacks & (whitesTurn? black_bb : white_bb) & knight_bb) {
+        return myKing;
+    }
+
+    uint64_t kingAttacks = (((myKing << 1) & Bitboard::notHfile_bb) |
+                ((myKing << 7) & Bitboard::notAfile_bb) |
+                ((myKing << 8)                        ) |
+                ((myKing << 9) & Bitboard::notHfile_bb) |
+                ((myKing >> 1) & Bitboard::notAfile_bb) |
+                ((myKing >> 7) & Bitboard::notHfile_bb) |
+                ((myKing >> 8)                        ) |
+                ((myKing >> 9) & Bitboard::notAfile_bb));
+    if (kingAttacks & (whitesTurn? black_bb : white_bb) & king_bb) {
+        return myKing;
+    }
+
+
+    uint64_t empty = ~pieces_bb;
+    uint64_t scan = myKing;
+    uint64_t flood = myKing;
+    
+    scan = myKing;
+    flood = myKing;
+    empty = ~pieces_bb & Bitboard::notHfile_bb;
+    flood |= scan = (scan << 9) & empty; // northwest
+    flood |= scan = (scan << 9) & empty;
+    flood |= scan = (scan << 9) & empty;
+    flood |= scan = (scan << 9) & empty;
+    flood |= scan = (scan << 9) & empty;
+    flood |=        (scan << 9) & empty; 
+    uint64_t diagAttacks = (flood << 9) & Bitboard::notHfile_bb; // might later change to not include captures
+    
+    scan = myKing;
+    flood = myKing;
+    empty = ~pieces_bb & Bitboard::notAfile_bb;
+    flood |= scan = (scan >> 9) & empty; // southeast
+    flood |= scan = (scan >> 9) & empty;
+    flood |= scan = (scan >> 9) & empty;
+    flood |= scan = (scan >> 9) & empty;
+    flood |= scan = (scan >> 9) & empty;
+    flood |=        (scan >> 9) & empty; 
+    diagAttacks |= (flood >> 9) & Bitboard::notAfile_bb; // might later change to not include captures
+
+
+    scan = myKing;
+    flood = myKing;
+    empty = ~pieces_bb & Bitboard::notAfile_bb;
+    flood |= scan = (scan << 7) & empty; // northeast
+    flood |= scan = (scan << 7) & empty;
+    flood |= scan = (scan << 7) & empty;
+    flood |= scan = (scan << 7) & empty;
+    flood |= scan = (scan << 7) & empty;
+    flood |=        (scan << 7) & empty; 
+    diagAttacks |= (flood << 7) & Bitboard::notAfile_bb; // might later change to not include captures
+    
+    scan = myKing;
+    flood = myKing;
+    empty = ~pieces_bb & Bitboard::notHfile_bb;
+    flood |= scan = (scan >> 7) & empty; // southwest
+    flood |= scan = (scan >> 7) & empty;
+    flood |= scan = (scan >> 7) & empty;
+    flood |= scan = (scan >> 7) & empty;
+    flood |= scan = (scan >> 7) & empty;
+    flood |=        (scan >> 7) & empty; 
+    diagAttacks |= (flood >> 7) & Bitboard::notHfile_bb; // might later change to not include captures
+
+    if (diagAttacks & (whitesTurn? black_bb : white_bb) & (queen_bb | bishop_bb)) {
+        return myKing;
+    }
+
+    empty = ~pieces_bb;
+    scan = myKing;
+    flood = myKing;
+
+    flood |= scan = (scan << 8) & empty; // north
+    flood |= scan = (scan << 8) & empty;
+    flood |= scan = (scan << 8) & empty;
+    flood |= scan = (scan << 8) & empty;
+    flood |= scan = (scan << 8) & empty;
+    flood |=        (scan << 8) & empty; 
+    uint64_t rookAttacks = flood << 8; // might later change to not include captures
+
+    scan = myKing;
+    flood = myKing;
+    flood |= scan = (scan >> 8) & empty; // south
+    flood |= scan = (scan >> 8) & empty;
+    flood |= scan = (scan >> 8) & empty;
+    flood |= scan = (scan >> 8) & empty;
+    flood |= scan = (scan >> 8) & empty;
+    flood |=        (scan >> 8) & empty; 
+    rookAttacks |= flood >> 8; // might later change to not include captures
+
+    scan = myKing;
+    flood = myKing;
+    empty = ~pieces_bb & Bitboard::notHfile_bb;
+    flood |= scan = (scan << 1) & empty; // west
+    flood |= scan = (scan << 1) & empty;
+    flood |= scan = (scan << 1) & empty;
+    flood |= scan = (scan << 1) & empty;
+    flood |= scan = (scan << 1) & empty;
+    flood |=        (scan << 1) & empty; 
+    rookAttacks |= (flood << 1) & Bitboard::notHfile_bb; // might later change to not include captures
+    
+    scan = myKing;
+    flood = myKing;
+    empty = ~pieces_bb & Bitboard::notAfile_bb;
+    flood |= scan = (scan >> 1) & empty; // east
+    flood |= scan = (scan >> 1) & empty;
+    flood |= scan = (scan >> 1) & empty;
+    flood |= scan = (scan >> 1) & empty;
+    flood |= scan = (scan >> 1) & empty;
+    flood |=        (scan >> 1) & empty; 
+    rookAttacks |= (flood >> 1) & Bitboard::notAfile_bb; // might later change to not include captures
+
+    if (rookAttacks & (whitesTurn? black_bb : white_bb) & (queen_bb | rook_bb)) {
+        return myKing;
+    }
+    return 0;
+}
+
+GameOver Position::IsGameOver(bool whitesTurn) {
+    uint64_t myPieces = 0;
+    if (whitesTurn) {
+        myPieces = white_bb;
+    } else {
+        myPieces = black_bb;
+    }
+    uint64_t biterator = 0x8000000000000000;
+    std::vector<uint64_t> moves;
+    for (size_t i = 0; i < 64; i++) {
+        if (biterator & myPieces) {
+            moves.push_back(biterator);
+        }
+        biterator >>= 1;
+    }
+    for (auto move : moves) {
+        if (GetQuietMoves(move, whitesTurn)) {
+            return GameOver::None;
+        } else if (GetCaptures(move, whitesTurn)) {
+            return GameOver::None;
+        }
+    }
+    return GameOver::Checkmate;
+}

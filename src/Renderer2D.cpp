@@ -72,6 +72,12 @@ void Renderer2D::RenderFrame() {
 
         }
     }
+    if (checkedKingSprite != nullptr) {
+        checkedKingSprite->Draw(myWindow->Projection, Util::IndexToPosition(checkedKingSprite->BoardLocation, myWindow->SquareSize, myWindow->BoardOffset), myWindow->SquareSize);
+    }
+    if (menu != nullptr) {
+        menu->Draw(myWindow->Projection, Util::IndexToPosition(menu->BoardLocation, myWindow->SquareSize, myWindow->BoardOffset), glm::vec2(myWindow->SquareSize.x * 4, myWindow->SquareSize.y * 6));
+    }
 }
 void Renderer2D::EndFrame() {
     glfwSwapBuffers(window);
@@ -154,6 +160,7 @@ void Renderer2D::ShowAvailableMoves(std::string availableMoves) {
             case 'c':
                 chosenPieceSprite = std::make_unique<Sprite>(ResourceManager::GetShader("sprite"), 
                     glm::vec4(0.0f, 0.0f, 0.0625f, 0.0625f), i);
+                break;
             default:
                 break;
         }
@@ -168,7 +175,40 @@ void Renderer2D::ShowPreviousMove(std::string previousMove) {
         }
     }
 }
-bool Renderer2D::GetLastSquareClicked(uint64_t &bitSquareClicked) {
+void Renderer2D::ShowCheckedKing(std::string checkedKingPos) {
+    checkedKingSprite.reset();
+    for (size_t i = 0; i < checkedKingPos.length(); i++) {
+        switch (checkedKingPos[i]) {
+            case 'x':
+                checkedKingSprite = std::make_unique<Sprite>(ResourceManager::GetShader("sprite"),
+                    glm::vec4(0.0f, 0.125f, 0.0625f, 0.1875f), i);
+                break;
+        }
+    }
+}
+void Renderer2D::ShowMenu(EndDisplay endDisplay) {
+    menu.reset();
+    switch (endDisplay) {
+        case EndDisplay::None:
+            break;
+        case EndDisplay::Draw:
+            menu = std::make_unique<Sprite>(ResourceManager::GetShader("sprite"),
+                glm::vec4(0.25f, 0.5f, 0.5f, 0.875f), 10);
+            break;
+        case EndDisplay::Black:
+            menu = std::make_unique<Sprite>(ResourceManager::GetShader("sprite"),
+                glm::vec4(0.5f, 0.5f, 0.75f, 0.875f), 10);
+            break;
+        case EndDisplay::White:
+            menu = std::make_unique<Sprite>(ResourceManager::GetShader("sprite"),
+                glm::vec4(0.75f, 0.5f, 1.0f, 0.875f), 10);
+            break;
+        default:
+            break;
+    }
+}
+bool Renderer2D::GetLastSquareClicked(uint64_t &bitSquareClicked)
+{
     if (!lastSquareClicked) {
         return false;
     } else {

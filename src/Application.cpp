@@ -21,6 +21,7 @@ Application::Application() {
         blackSelectingMoveState = std::make_shared<BlackSelectingMoveState>(Me());
         endState = std::make_shared<EndState>(Me());
         currentState = whiteSelectingPieceState;
+        AppEndDisplay = EndDisplay::None;
     } catch (std::exception &e) {
         std::cerr << "Game Initialization Error: " << e.what() << std::endl;
     }

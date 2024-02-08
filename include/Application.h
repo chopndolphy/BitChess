@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include "Renderer2D.h"
+#include "Enums.h"
 class Position;
 class AppState;
 class StartState;
@@ -55,6 +56,7 @@ class Application {
         const std::weak_ptr<EndState> End() {
             return endState;
         }
+        EndDisplay AppEndDisplay;
     private:
         std::weak_ptr<AppState> currentState;
         std::shared_ptr<StartState> startState;

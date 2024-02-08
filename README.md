@@ -1,5 +1,5 @@
 # BitChess (in development)
-Version 0.2.1
+Version 0.3.0
 - See [Changelog](#changelog)
 - See [Chess Programming Resources](https://github.com/chopndolphy/BitChess/blob/refactor/doc/Resources.md "Essential information for understand the BitChess source code")
 ## Getting Started
@@ -28,6 +28,9 @@ to delete the entire build directory (it will be remade upon recompilation).
 - Mouse controls
 - Escape to exit the program
 ## <a name="changelog"></a> Changelog
+### 0.3.0
+- King in check visualization!
+- Checkmate pop-up menu with winner display. Win message displayed in console
 ### 0.2.1
 - Fixed king move generation bug
 - Pawn double moves now check for blocking pieces
@@ -49,7 +52,6 @@ to delete the entire build directory (it will be remade upon recompilation).
     - UserInterface
     - Make ResourceManager not static (owned by Renderer2D)
 - Implement the rest of the game logic
-    - Checkmate
     - Castling
     - En passant
     - Pawn promotion
@@ -67,6 +69,7 @@ to delete the entire build directory (it will be remade upon recompilation).
     - Change color scheme
     - Quit
 - End state
+    - Game Over screen
     - Return to start menu
     - Quit
 - Audio system
