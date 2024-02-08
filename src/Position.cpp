@@ -43,13 +43,13 @@ uint64_t Position::GetQuietMoves(uint64_t piece, bool whitesTurn) {
 
     if (whitesTurn && (pawn_bb & piece)) {
         moves |= piece << 8;
-        if (piece & (Bitboard::horiLine_bb << 8)) { // pawn is at start square and can move two
+        if ((piece & (Bitboard::horiLine_bb << 8)) && ((piece << 8) & ~pieces_bb)) { // pawn is at start square and can move two
             moves |= piece << 16;
         }
         moves &= ~pieces_bb;
     } else if (!whitesTurn && (pawn_bb & piece)) {
         moves |= piece >> 8;
-        if (piece & (Bitboard::horiLine_bb << 48)) { // pawn is at start square and can move two
+        if ((piece & (Bitboard::horiLine_bb << 48)) && ((piece >> 8) & ~pieces_bb)) { // pawn is at start square and can move two
             moves |= piece >> 16;
         }
         moves &= ~pieces_bb;

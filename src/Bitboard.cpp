@@ -57,9 +57,9 @@ uint64_t Bitboard::RemoveIllegalMoves(uint64_t startSquare, uint64_t pseudoLegal
 
         uint64_t myKing;
         if (whitesTurn) {
-            myKing = position.white_bb & position.king_bb;
+            myKing = white & kings;
         } else {
-            myKing = position.black_bb & position.king_bb;
+            myKing = black & kings;
         }
         //checks if king is in check
 

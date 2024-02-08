@@ -28,6 +28,9 @@ to delete the entire build directory (it will be remade upon recompilation).
 - Mouse controls
 - Escape to exit the program
 ## <a name="changelog"></a> Changelog
+### 0.2.1
+- Fixed king move generation bug
+- Pawn double moves now check for blocking pieces
 ### 0.2.0
 - Piece movement implemented (except castling, pawn promotion, and en passant)
 - Illegal move filtering for pseudo-legal move generation (i.e. checking for checks)
@@ -37,7 +40,6 @@ to delete the entire build directory (it will be remade upon recompilation).
 - Only simple pawn movement is implemented
 - Custom pixel art for the board, pieces, chessboard UI elements, and cursor. More to come later
 ## Bugs
-- Legal move generation for the king when in check is inaccurate (when simply checked by bishop or queen, the only available move generated in the direction of the attacking piece)
 - Cannot resize (unresizable on purpose: need to implement custom window decorations and custom resizing, because wsl is broken)
 - Pawn double move doesn't check for pieces blocking
 ## To-Do
