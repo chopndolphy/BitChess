@@ -11,6 +11,8 @@ Position::Position() {
     white_bb  = 0x000000000000FFFF;
     black_bb  = 0xFFFF000000000000;
     pieces_bb = 0xFFFF00000000FFFF;
+    enPassantable_bb  = 0;
+    castlingRights_bb = 0x0F;
 }
 uint64_t Position::GetCaptures(uint64_t piece, bool whitesTurn) {
     if ((!whitesTurn && (white_bb & piece)) || (whitesTurn && (black_bb & piece))) {
@@ -21,17 +23,31 @@ uint64_t Position::GetCaptures(uint64_t piece, bool whitesTurn) {
     if (whitesTurn && (pawn_bb & piece)) {
         pseudoCaps = (((piece << 7) & Bitboard::notAfile_bb) |
                       ((piece << 9) & Bitboard::notHfile_bb));
+        pseudoCaps &= black_bb;
+        if (((piece << 1) & Bitboard::notHfile_bb) & (enPassantable_bb & black_bb)) {
+            pseudoCaps |= piece << 9;
+        }
+        if (((piece >> 1) & Bitboard::notAfile_bb) & (enPassantable_bb & black_bb)) {
+            pseudoCaps |= piece << 7;
+        }
     } else if (!whitesTurn && (pawn_bb & piece)) {
         pseudoCaps = (((piece >> 7) & Bitboard::notHfile_bb) |
                       ((piece >> 9) & Bitboard::notAfile_bb));
+        pseudoCaps &= white_bb;
+        if (((piece << 1) & Bitboard::notHfile_bb) & (enPassantable_bb & white_bb)) {
+            pseudoCaps |= piece >> 7;
+        }
+        if (((piece >> 1) & Bitboard::notAfile_bb) & (enPassantable_bb & white_bb)) {
+            pseudoCaps |= piece >> 9;
+        }
     } else if ((knight_bb & piece) || (king_bb & piece) || (bishop_bb & piece) || (rook_bb & piece) || (queen_bb & piece)) {
         pseudoCaps = GetQuietMoves(piece, whitesTurn); //this function isnt totally true to it's name for the purpose
                                                        //of not reusing code here. might change.
-    }
-    if (whitesTurn) {
-        pseudoCaps &= black_bb;
-    } else {
-        pseudoCaps &= white_bb;
+        if (whitesTurn) {
+            pseudoCaps &= black_bb;
+        } else {
+            pseudoCaps &= white_bb;
+        }
     }
     return Bitboard::RemoveIllegalMoves(piece, pseudoCaps, *this);
 }
@@ -73,6 +89,7 @@ uint64_t Position::GetQuietMoves(uint64_t piece, bool whitesTurn) {
                  ((piece >> 8)                        ) |
                  ((piece >> 9) & Bitboard::notAfile_bb));
         moves &= (whitesTurn) ? ~white_bb : ~black_bb; // might later change to not include captures
+        moves |= Bitboard::GenerateCastleMoves(whitesTurn, *this);
     } else if (bishop_bb & piece) {
         uint64_t empty = ~pieces_bb;
         uint64_t scan = piece;
@@ -281,8 +298,69 @@ std::string Position::GetBoardString() {
     Util::PopulateStringBoard(boardString, (king_bb & black_bb), 'k');
     return boardString;
 }
-void Position::MakeMove(uint64_t from, uint64_t to, bool whitesTurn){
+void Position::MakeMove(uint64_t from, uint64_t to, bool whitesTurn) {
     uint64_t fromTo = from | to;
+    if (to & 2) { // White Kingside Castle
+        castlingRights_bb &= 0x0C; // Set both whites castle rights to 0, without affecting blacks
+        uint64_t rookFromTo = 0x0000000000000005;
+        white_bb ^= rookFromTo | fromTo;
+        pieces_bb ^= rookFromTo | fromTo;
+        king_bb ^= fromTo; 
+        rook_bb ^= rookFromTo;
+        return;
+    } else if (to & 32) { // White Queenside Castle
+        castlingRights_bb &= 0x0C; // Set both whites castle rights to 0, without affecting blacks
+        uint64_t rookFromTo = 0x0000000000000090;
+        white_bb ^= rookFromTo | fromTo;
+        pieces_bb ^= rookFromTo | fromTo;
+        king_bb ^= fromTo; 
+        rook_bb ^= rookFromTo;
+        return;
+    } else if (to & (uint64_t(2) << 56)) { // Black Kingside Castle 
+        castlingRights_bb &= 0x03; // Set both blacks castle rights to 0, without affecting whites
+        uint64_t rookFromTo = 0x0500000000000000;
+        black_bb ^= rookFromTo | fromTo;
+        pieces_bb ^= rookFromTo | fromTo;
+        king_bb ^= fromTo; 
+        rook_bb ^= rookFromTo;
+        return;
+    } else if (to & (uint64_t(32) << 56)) { // Black Queenside Castle
+        castlingRights_bb &= 0x03; // Set both blacks castle rights to 0, without affecting whites
+        uint64_t rookFromTo = 0x9000000000000000;
+        black_bb ^= rookFromTo | fromTo;
+        pieces_bb ^= rookFromTo | fromTo;
+        king_bb ^= fromTo; 
+        rook_bb ^= rookFromTo;
+        return;
+    }
+    if (whitesTurn && (from & 1 & rook_bb)) {
+        castlingRights_bb &= 0x0E;
+    } else if (whitesTurn && (from & 128 & rook_bb)) {
+        castlingRights_bb &= 0x0D;
+    } else if (!whitesTurn && (from & (uint64_t(1) << 56) & rook_bb)) {
+        castlingRights_bb &= 0x0B;
+    } else if (!whitesTurn && (from & (uint64_t(128) << 56) & rook_bb)) {
+        castlingRights_bb &= 0x07;
+    } else if (whitesTurn && (from & white_bb & king_bb)) {
+        castlingRights_bb &= 0x0C;
+    } else if (!whitesTurn && (from & black_bb & king_bb)) {
+        castlingRights_bb &= 0x03;
+    }
+    if (whitesTurn && (pawn_bb & from) && ((to >> 8) & (enPassantable_bb & black_bb))) {
+        enPassantable_bb ^= to >> 8;
+        pawn_bb ^= (fromTo | (to >> 8));
+        black_bb ^= to >> 8;
+        white_bb ^= fromTo;
+        pieces_bb = (white_bb | black_bb);
+        return;
+    } else if (!whitesTurn && (pawn_bb & from) && ((to << 8) & (enPassantable_bb & white_bb))) {
+        enPassantable_bb ^= to << 8;
+        pawn_bb ^= (fromTo | (to << 8));
+        white_bb ^= to << 8;
+        black_bb ^= fromTo;
+        pieces_bb = (white_bb | black_bb);
+        return;
+    }
     if (whitesTurn && (to & black_bb)) { // white capturing
         black_bb ^= to;
         if (pawn_bb & to) pawn_bb ^= to;
@@ -305,7 +383,15 @@ void Position::MakeMove(uint64_t from, uint64_t to, bool whitesTurn){
     } else {
         black_bb ^= fromTo;
     }
-    if (pawn_bb & from) pawn_bb ^= fromTo;
+    if (pawn_bb & from) {
+        pawn_bb ^= fromTo;
+        if (((from & (Bitboard::horiLine_bb << 8)) && (to & (from << 16))) ||
+        ((from & (Bitboard::horiLine_bb << 48) && (to & (from >> 16))))) {
+            enPassantable_bb ^= to;
+        } else if (from & enPassantable_bb) {
+            enPassantable_bb ^= from;
+        }
+    }
     if (knight_bb & from) knight_bb ^= fromTo;
     if (bishop_bb & from) bishop_bb ^= fromTo;
     if (rook_bb & from) rook_bb ^= fromTo;

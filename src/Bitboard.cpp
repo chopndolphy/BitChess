@@ -210,3 +210,341 @@ uint64_t Bitboard::RemoveIllegalMoves(uint64_t startSquare, uint64_t pseudoLegal
     }
     return legalMoves;
 }
+
+uint64_t Bitboard::GenerateCastleMoves(bool whitesTurn, const Position &position) {
+    uint64_t castleMoves = 0;
+
+    if ((whitesTurn && (position.castlingRights_bb & 0x01)) && // White Kingside castle
+    ((~position.pieces_bb & 0x0000000000000006) == 0x0000000000000006)) {
+        bool castleFailed = false;
+        std::vector<uint64_t> moves = {2, 4, 8};
+        for (auto move : moves) {
+            uint64_t pawnAttacks = (((move << 7) & Bitboard::notAfile_bb) |
+                                    ((move << 9) & Bitboard::notHfile_bb));
+            if (pawnAttacks & position.black_bb & position.pawn_bb) {
+                castleFailed = true;
+                break;
+            }
+            uint64_t knightAttacks = (((move <<  6) & Bitboard::notABfile_bb) |
+                                      ((move << 10) & Bitboard::notGHfile_bb) | 
+                                      ((move << 15) & Bitboard::notAfile_bb ) | 
+                                      ((move << 17) & Bitboard::notHfile_bb ));  
+            if (knightAttacks & position.black_bb & position.knight_bb) {
+                castleFailed = true;
+                break;
+            }
+
+            uint64_t kingAttacks = (((move << 1) & Bitboard::notHfile_bb) |
+                                    ((move << 7) & Bitboard::notAfile_bb) |
+                                    ((move << 8)                        ) |
+                                    ((move << 9) & Bitboard::notHfile_bb) |
+                                    ((move >> 1) & Bitboard::notAfile_bb)); 
+            if (kingAttacks & position.black_bb & position.king_bb) {
+                castleFailed = true;
+                break;
+            }
+
+
+            uint64_t empty = ~position.pieces_bb;
+            uint64_t scan = move;
+            uint64_t flood = move;
+            
+            scan = move;
+            flood = move;
+            empty = ~position.pieces_bb & Bitboard::notHfile_bb;
+            flood |= scan = (scan << 9) & empty; // northwest
+            flood |= scan = (scan << 9) & empty;
+            flood |= scan = (scan << 9) & empty;
+            flood |= scan = (scan << 9) & empty;
+            flood |= scan = (scan << 9) & empty;
+            flood |=        (scan << 9) & empty; 
+            uint64_t diagAttacks = (flood << 9) & Bitboard::notHfile_bb; // might later change to not include captures
+            
+            scan = move;
+            flood = move;
+            empty = ~position.pieces_bb & Bitboard::notAfile_bb;
+            flood |= scan = (scan << 7) & empty; // northeast
+            flood |= scan = (scan << 7) & empty;
+            flood |= scan = (scan << 7) & empty;
+            flood |= scan = (scan << 7) & empty;
+            flood |= scan = (scan << 7) & empty;
+            flood |=        (scan << 7) & empty; 
+            diagAttacks |= (flood << 7) & Bitboard::notAfile_bb; // might later change to not include captures
+            
+            if (diagAttacks & position.black_bb & (position.queen_bb | position.bishop_bb)) {
+                castleFailed = true;
+                break;
+            }
+
+            empty = ~position.pieces_bb;
+            scan = move;
+            flood = move;
+
+            flood |= scan = (scan << 8) & empty; // north
+            flood |= scan = (scan << 8) & empty;
+            flood |= scan = (scan << 8) & empty;
+            flood |= scan = (scan << 8) & empty;
+            flood |= scan = (scan << 8) & empty;
+            flood |=        (scan << 8) & empty; 
+            uint64_t rookAttacks = flood << 8; // might later change to not include captures
+
+            if (rookAttacks & position.black_bb & (position.queen_bb | position.rook_bb)) {
+                castleFailed = true;
+                break;
+            }
+        }
+        if (!castleFailed) {
+            castleMoves |= 2;
+        }
+    }
+    if ((whitesTurn && (position.castlingRights_bb & 0x02)) && //White Queenside castle
+    ((~position.pieces_bb & 0x0000000000000070) == 0x0000000000000070)) {
+        bool castleFailed = false;
+        std::vector<uint64_t> moves = {8, 16, 32};
+        for (auto move : moves) {
+            uint64_t pawnAttacks = (((move << 7) & Bitboard::notAfile_bb) |
+                                    ((move << 9) & Bitboard::notHfile_bb));
+            if (pawnAttacks & position.black_bb & position.pawn_bb) {
+                castleFailed = true;
+                break;
+            }
+            uint64_t knightAttacks = (((move <<  6) & Bitboard::notABfile_bb) |
+                                      ((move << 10) & Bitboard::notGHfile_bb) | 
+                                      ((move << 15) & Bitboard::notAfile_bb ) | 
+                                      ((move << 17) & Bitboard::notHfile_bb ));  
+            if (knightAttacks & position.black_bb & position.knight_bb) {
+                castleFailed = true;
+                break;
+            }
+
+            uint64_t kingAttacks = (((move << 1) & Bitboard::notHfile_bb) |
+                                    ((move << 7) & Bitboard::notAfile_bb) |
+                                    ((move << 8)                        ) |
+                                    ((move << 9) & Bitboard::notHfile_bb) |
+                                    ((move >> 1) & Bitboard::notAfile_bb)); 
+            if (kingAttacks & position.black_bb & position.king_bb) {
+                castleFailed = true;
+                break;
+            }
+
+
+            uint64_t empty = ~position.pieces_bb;
+            uint64_t scan = move;
+            uint64_t flood = move;
+            
+            scan = move;
+            flood = move;
+            empty = ~position.pieces_bb & Bitboard::notHfile_bb;
+            flood |= scan = (scan << 9) & empty; // northwest
+            flood |= scan = (scan << 9) & empty;
+            flood |= scan = (scan << 9) & empty;
+            flood |= scan = (scan << 9) & empty;
+            flood |= scan = (scan << 9) & empty;
+            flood |=        (scan << 9) & empty; 
+            uint64_t diagAttacks = (flood << 9) & Bitboard::notHfile_bb; // might later change to not include captures
+            
+            scan = move;
+            flood = move;
+            empty = ~position.pieces_bb & Bitboard::notAfile_bb;
+            flood |= scan = (scan << 7) & empty; // northeast
+            flood |= scan = (scan << 7) & empty;
+            flood |= scan = (scan << 7) & empty;
+            flood |= scan = (scan << 7) & empty;
+            flood |= scan = (scan << 7) & empty;
+            flood |=        (scan << 7) & empty; 
+            diagAttacks |= (flood << 7) & Bitboard::notAfile_bb; // might later change to not include captures
+            
+            if (diagAttacks & position.black_bb & (position.queen_bb | position.bishop_bb)) {
+                castleFailed = true;
+                break;
+            }
+
+            empty = ~position.pieces_bb;
+            scan = move;
+            flood = move;
+
+            flood |= scan = (scan << 8) & empty; // north
+            flood |= scan = (scan << 8) & empty;
+            flood |= scan = (scan << 8) & empty;
+            flood |= scan = (scan << 8) & empty;
+            flood |= scan = (scan << 8) & empty;
+            flood |=        (scan << 8) & empty; 
+            uint64_t rookAttacks = flood << 8; // might later change to not include captures
+
+            if (rookAttacks & position.black_bb & (position.queen_bb | position.rook_bb)) {
+                castleFailed = true;
+                break;
+            }
+        }
+        if (!castleFailed) {
+            castleMoves |= 32;
+        }
+    }
+    if ((!whitesTurn && (position.castlingRights_bb & 0x04)) && // Black Kingside castle
+    ((~position.pieces_bb & 0x0600000000000000) == 0x0600000000000000)) {
+        bool castleFailed = false;
+        std::vector<uint64_t> moves = {(uint64_t(2) << 56), (uint64_t(4) << 56), (uint64_t(8) << 56)};
+        for (auto move : moves) {
+            uint64_t pawnAttacks = (((move >> 7) & Bitboard::notHfile_bb) |
+                                    ((move >> 9) & Bitboard::notAfile_bb));
+            if (pawnAttacks & position.white_bb & position.pawn_bb) {
+                castleFailed = true;
+                break;
+            }
+            uint64_t knightAttacks = (((move >>  6) & Bitboard::notGHfile_bb) |
+                                      ((move >> 10) & Bitboard::notABfile_bb) | 
+                                      ((move >> 15) & Bitboard::notHfile_bb ) | 
+                                      ((move >> 17) & Bitboard::notAfile_bb ));  
+            if (knightAttacks & position.white_bb & position.knight_bb) {
+                castleFailed = true;
+                break;
+            }
+
+            uint64_t kingAttacks = (((move >> 1) & Bitboard::notAfile_bb) |
+                                    ((move >> 7) & Bitboard::notHfile_bb) |
+                                    ((move >> 8)                        ) |
+                                    ((move >> 9) & Bitboard::notAfile_bb) |
+                                    ((move << 1) & Bitboard::notHfile_bb)); 
+            if (kingAttacks & position.white_bb & position.king_bb) {
+                castleFailed = true;
+                break;
+            }
+
+
+            uint64_t empty = ~position.pieces_bb;
+            uint64_t scan = move;
+            uint64_t flood = move;
+            
+            scan = move;
+            flood = move;
+            empty = ~position.pieces_bb & Bitboard::notAfile_bb;
+            flood |= scan = (scan >> 9) & empty; // southeast
+            flood |= scan = (scan >> 9) & empty;
+            flood |= scan = (scan >> 9) & empty;
+            flood |= scan = (scan >> 9) & empty;
+            flood |= scan = (scan >> 9) & empty;
+            flood |=        (scan >> 9) & empty; 
+            uint64_t diagAttacks = (flood >> 9) & Bitboard::notAfile_bb; // might later change to not include captures
+            
+            scan = move;
+            flood = move;
+            empty = ~position.pieces_bb & Bitboard::notHfile_bb;
+            flood |= scan = (scan >> 7) & empty; // southwest
+            flood |= scan = (scan >> 7) & empty;
+            flood |= scan = (scan >> 7) & empty;
+            flood |= scan = (scan >> 7) & empty;
+            flood |= scan = (scan >> 7) & empty;
+            flood |=        (scan >> 7) & empty; 
+            diagAttacks |= (flood >> 7) & Bitboard::notHfile_bb; // might later change to not include captures
+            
+            if (diagAttacks & position.white_bb & (position.queen_bb | position.bishop_bb)) {
+                castleFailed = true;
+                break;
+            }
+
+            empty = ~position.pieces_bb;
+            scan = move;
+            flood = move;
+
+            flood |= scan = (scan >> 8) & empty; // south
+            flood |= scan = (scan >> 8) & empty;
+            flood |= scan = (scan >> 8) & empty;
+            flood |= scan = (scan >> 8) & empty;
+            flood |= scan = (scan >> 8) & empty;
+            flood |=        (scan >> 8) & empty; 
+            uint64_t rookAttacks = flood >> 8; // might later change to not include captures
+
+            if (rookAttacks & position.white_bb & (position.queen_bb | position.rook_bb)) {
+                castleFailed = true;
+                break;
+            }
+        }
+        if (!castleFailed) {
+            castleMoves |= (uint64_t(2) << 56);
+        }
+    }
+    if ((!whitesTurn && (position.castlingRights_bb & 0x08)) && // Black Queenside castle
+    ((~position.pieces_bb & 0x7000000000000000) == 0x7000000000000000)) {
+        bool castleFailed = false;
+        std::vector<uint64_t> moves = {(uint64_t(8) << 56), (uint64_t(16) << 56), (uint64_t(32) << 56)};
+        for (auto move : moves) {
+            uint64_t pawnAttacks = (((move >> 7) & Bitboard::notHfile_bb) |
+                                    ((move >> 9) & Bitboard::notAfile_bb));
+            if (pawnAttacks & position.white_bb & position.pawn_bb) {
+                castleFailed = true;
+                break;
+            }
+            uint64_t knightAttacks = (((move >>  6) & Bitboard::notGHfile_bb) |
+                                      ((move >> 10) & Bitboard::notABfile_bb) | 
+                                      ((move >> 15) & Bitboard::notHfile_bb ) | 
+                                      ((move >> 17) & Bitboard::notAfile_bb ));  
+            if (knightAttacks & position.white_bb & position.knight_bb) {
+                castleFailed = true;
+                break;
+            }
+
+            uint64_t kingAttacks = (((move >> 1) & Bitboard::notAfile_bb) |
+                                    ((move >> 7) & Bitboard::notHfile_bb) |
+                                    ((move >> 8)                        ) |
+                                    ((move >> 9) & Bitboard::notAfile_bb) |
+                                    ((move << 1) & Bitboard::notHfile_bb)); 
+            if (kingAttacks & position.white_bb & position.king_bb) {
+                castleFailed = true;
+                break;
+            }
+
+
+            uint64_t empty = ~position.pieces_bb;
+            uint64_t scan = move;
+            uint64_t flood = move;
+            
+            scan = move;
+            flood = move;
+            empty = ~position.pieces_bb & Bitboard::notAfile_bb;
+            flood |= scan = (scan >> 9) & empty; // southeast
+            flood |= scan = (scan >> 9) & empty;
+            flood |= scan = (scan >> 9) & empty;
+            flood |= scan = (scan >> 9) & empty;
+            flood |= scan = (scan >> 9) & empty;
+            flood |=        (scan >> 9) & empty; 
+            uint64_t diagAttacks = (flood >> 9) & Bitboard::notAfile_bb; // might later change to not include captures
+            
+            scan = move;
+            flood = move;
+            empty = ~position.pieces_bb & Bitboard::notHfile_bb;
+            flood |= scan = (scan >> 7) & empty; // southwest
+            flood |= scan = (scan >> 7) & empty;
+            flood |= scan = (scan >> 7) & empty;
+            flood |= scan = (scan >> 7) & empty;
+            flood |= scan = (scan >> 7) & empty;
+            flood |=        (scan >> 7) & empty; 
+            diagAttacks |= (flood >> 7) & Bitboard::notHfile_bb; // might later change to not include captures
+            
+            if (diagAttacks & position.white_bb & (position.queen_bb | position.bishop_bb)) {
+                castleFailed = true;
+                break;
+            }
+
+            empty = ~position.pieces_bb;
+            scan = move;
+            flood = move;
+
+            flood |= scan = (scan >> 8) & empty; // south
+            flood |= scan = (scan >> 8) & empty;
+            flood |= scan = (scan >> 8) & empty;
+            flood |= scan = (scan >> 8) & empty;
+            flood |= scan = (scan >> 8) & empty;
+            flood |=        (scan >> 8) & empty; 
+            uint64_t rookAttacks = flood >> 8; // might later change to not include captures
+
+            if (rookAttacks & position.white_bb & (position.queen_bb | position.rook_bb)) {
+                castleFailed = true;
+                break;
+            }
+        }
+        if (!castleFailed) {
+            castleMoves |= (uint64_t(32) << 56);
+        }
+    }
+    return castleMoves;
+}

@@ -10,4 +10,5 @@ class Bitboard {
         static const uint64_t notHfile_bb  = 0xFEFEFEFEFEFEFEFE; 
         static const uint64_t notGHfile_bb = 0xFCFCFCFCFCFCFCFC; 
         static uint64_t RemoveIllegalMoves(uint64_t startSquare, uint64_t pseudoLegalMoves, const Position &position);
+        static uint64_t GenerateCastleMoves(bool whitesTurn, const Position &position);
 };

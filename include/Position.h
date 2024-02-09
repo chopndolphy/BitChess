@@ -16,6 +16,8 @@ class Position {
         uint64_t white_bb;
         uint64_t black_bb;
         uint64_t pieces_bb;
+        uint64_t enPassantable_bb;
+        uint8_t castlingRights_bb;
         uint64_t GetQuietMoves(uint64_t piece, bool whitesTurn);
         uint64_t GetCaptures(uint64_t piece, bool whitesTurn);
         std::string GetBoardString();
