@@ -1,6 +1,6 @@
 # BitChess (in development)
 ![gif](doc/BitChess.gif)
-Version 0.4.0
+Version 0.4.1
 - See [Changelog](#changelog)
 - See [Chess Programming Resources](https://github.com/chopndolphy/BitChess/blob/refactor/doc/Resources.md "Essential information for understand the BitChess source code")
 ## Getting Started
@@ -29,6 +29,8 @@ to delete the entire build directory (it will be remade upon recompilation).
 - Mouse controls
 - Escape to exit the program
 ## <a name="changelog"></a> Changelog
+### 0.4.1
+- Fixed bug where pseudo-legal en passant moves weren't being checked for legality
 ### 0.4.0
 - Castling is fully implemented!
 - En passant is fully implemented!

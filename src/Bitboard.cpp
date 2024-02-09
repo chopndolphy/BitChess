@@ -23,8 +23,26 @@ uint64_t Bitboard::RemoveIllegalMoves(uint64_t startSquare, uint64_t pseudoLegal
         uint64_t white = position.white_bb;
         uint64_t black = position.black_bb;
         uint64_t pieces = position.pieces_bb;
+        uint64_t enPassantables = position.enPassantable_bb;
         // makes move 
         uint64_t fromTo = startSquare | move;
+
+        if (whitesTurn && (pawns & startSquare) && ((move >> 8) & (enPassantables & black))) {
+            enPassantables ^= move >> 8;
+            pawns ^= (fromTo | (move >> 8));
+            black ^= move >> 8;
+            white ^= fromTo;
+            pieces = (white | black);
+            return;
+        } else if (!whitesTurn && (pawns & startSquare) && ((move << 8) & (enPassantables & white))) {
+            enPassantables ^= move << 8;
+            pawns ^= (fromTo | (move << 8));
+            white ^= move << 8;
+            black ^= fromTo;
+            pieces = (white | black);
+            return;
+        }
+
         if (whitesTurn && (move & black)) { // white capturing
             black ^= move;
             if (pawns & move) pawns ^= move;
