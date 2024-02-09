@@ -1,4 +1,5 @@
 # BitChess (in development)
+![gif](doc/BitChess.gif)
 Version 0.3.0
 - See [Changelog](#changelog)
 - See [Chess Programming Resources](https://github.com/chopndolphy/BitChess/blob/refactor/doc/Resources.md "Essential information for understand the BitChess source code")
