@@ -33,45 +33,43 @@ uint64_t Bitboard::RemoveIllegalMoves(uint64_t startSquare, uint64_t pseudoLegal
             black ^= move >> 8;
             white ^= fromTo;
             pieces = (white | black);
-            return;
         } else if (!whitesTurn && (pawns & startSquare) && ((move << 8) & (enPassantables & white))) {
             enPassantables ^= move << 8;
             pawns ^= (fromTo | (move << 8));
             white ^= move << 8;
             black ^= fromTo;
             pieces = (white | black);
-            return;
+        } else {  
+            if (whitesTurn && (move & black)) { // white capturing
+                black ^= move;
+                if (pawns & move) pawns ^= move;
+                if (knights & move) knights ^= move;
+                if (bishops & move) bishops ^= move;
+                if (rooks & move) rooks ^= move;
+                if (queens & move) queens ^= move;
+                if (kings & move) kings ^= move;
+            } else if (!whitesTurn && (move & white)) { // black capturing
+                white ^= move;
+                if (pawns & move) pawns ^= move;
+                if (knights & move) knights ^= move;
+                if (bishops & move) bishops ^= move;
+                if (rooks & move) rooks ^= move;
+                if (queens & move) queens ^= move;
+                if (kings & move) kings ^= move;
+            }
+            if (whitesTurn) {
+                white ^= fromTo;
+            } else {
+                black ^= fromTo;
+            }
+            if (pawns & startSquare) pawns ^= fromTo;
+            if (knights & startSquare) knights ^= fromTo;
+            if (bishops & startSquare) bishops ^= fromTo;
+            if (rooks & startSquare) rooks ^= fromTo;
+            if (queens & startSquare) queens ^= fromTo;
+            if (kings & startSquare) kings ^= fromTo;
+            pieces = (white | black);
         }
-
-        if (whitesTurn && (move & black)) { // white capturing
-            black ^= move;
-            if (pawns & move) pawns ^= move;
-            if (knights & move) knights ^= move;
-            if (bishops & move) bishops ^= move;
-            if (rooks & move) rooks ^= move;
-            if (queens & move) queens ^= move;
-            if (kings & move) kings ^= move;
-        } else if (!whitesTurn && (move & white)) { // black capturing
-            white ^= move;
-            if (pawns & move) pawns ^= move;
-            if (knights & move) knights ^= move;
-            if (bishops & move) bishops ^= move;
-            if (rooks & move) rooks ^= move;
-            if (queens & move) queens ^= move;
-            if (kings & move) kings ^= move;
-        }
-        if (whitesTurn) {
-            white ^= fromTo;
-        } else {
-            black ^= fromTo;
-        }
-        if (pawns & startSquare) pawns ^= fromTo;
-        if (knights & startSquare) knights ^= fromTo;
-        if (bishops & startSquare) bishops ^= fromTo;
-        if (rooks & startSquare) rooks ^= fromTo;
-        if (queens & startSquare) queens ^= fromTo;
-        if (kings & startSquare) kings ^= fromTo;
-        pieces = (white | black);
 
         uint64_t myKing;
         if (whitesTurn) {
