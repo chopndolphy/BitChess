@@ -38,25 +38,38 @@ void WhiteSelectingMoveState::ProcessClicks() {
         if (checkedKing) {
             Util::PopulateStringBoard(checkedKingBoard, checkedKing, 'x');
             app.Renderer().lock()->ShowCheckedKing(checkedKingBoard);
-            switch (app.Board().lock()->IsGameOver(false)) {
-                case GameOver::None:
-                    break;
-                case GameOver::Checkmate:
-                    std::cout << "White wins by checkmate!" << std::endl;
-                    app.AppEndDisplay = EndDisplay::White;
-                    app.CurrentState(app.End());
-                    return;
-                    break;
-                default:
-                    std::cout << "default triggered in black selecting move state" << std::endl;
-                    break;
+            if (app.Board().lock()->CheckForNoMoves(false)) {
+                std::cout << "White wins by checkmate!" << std::endl;
+                app.AppEndDisplay = EndDisplay::White;
+                app.CurrentState(app.End());
+                return;
             }
         } else {
             app.Renderer().lock()->ShowCheckedKing(checkedKingBoard);
         }
 
         // maybe flip board?
-        app.CurrentState(app.BlackSelectingPiece());
+        switch (app.Board().lock()->IsDraw(true)) {
+            case GameOver::FiftyNothingMoves:
+                app.AppEndDisplay = EndDisplay::Draw;
+                app.CurrentState(app.End());
+                break;
+            case GameOver::Stalemate:
+                app.AppEndDisplay = EndDisplay::Draw;
+                app.CurrentState(app.End());
+                break;
+            case GameOver::ThreeRepetition:
+                app.AppEndDisplay = EndDisplay::Draw;
+                app.CurrentState(app.End());
+                break;
+            case GameOver::DeadPosition:
+                app.AppEndDisplay = EndDisplay::Draw;
+                app.CurrentState(app.End());
+                break;
+            case GameOver::None:
+                app.CurrentState(app.BlackSelectingPiece());
+                break;
+        }
     } else {
         if (bitSquareClicked & app.Board().lock()->white_bb) {
             std::string stringBoard(64, '-');

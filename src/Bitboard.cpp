@@ -230,7 +230,7 @@ uint64_t Bitboard::RemoveIllegalMoves(uint64_t startSquare, uint64_t pseudoLegal
 uint64_t Bitboard::GenerateCastleMoves(bool whitesTurn, const Position &position) {
     uint64_t castleMoves = 0;
 
-    if ((whitesTurn && (position.castlingRights_bb & 0x01)) && // White Kingside castle
+    if ((whitesTurn && (position.castlingRights & 0x01)) && // White Kingside castle
     ((~position.pieces_bb & 0x0000000000000006) == 0x0000000000000006)) {
         bool castleFailed = false;
         std::vector<uint64_t> moves = {2, 4, 8};
@@ -313,7 +313,7 @@ uint64_t Bitboard::GenerateCastleMoves(bool whitesTurn, const Position &position
             castleMoves |= 2;
         }
     }
-    if ((whitesTurn && (position.castlingRights_bb & 0x02)) && //White Queenside castle
+    if ((whitesTurn && (position.castlingRights & 0x02)) && //White Queenside castle
     ((~position.pieces_bb & 0x0000000000000070) == 0x0000000000000070)) {
         bool castleFailed = false;
         std::vector<uint64_t> moves = {8, 16, 32};
@@ -396,7 +396,7 @@ uint64_t Bitboard::GenerateCastleMoves(bool whitesTurn, const Position &position
             castleMoves |= 32;
         }
     }
-    if ((!whitesTurn && (position.castlingRights_bb & 0x04)) && // Black Kingside castle
+    if ((!whitesTurn && (position.castlingRights & 0x04)) && // Black Kingside castle
     ((~position.pieces_bb & 0x0600000000000000) == 0x0600000000000000)) {
         bool castleFailed = false;
         std::vector<uint64_t> moves = {(uint64_t(2) << 56), (uint64_t(4) << 56), (uint64_t(8) << 56)};
@@ -479,7 +479,7 @@ uint64_t Bitboard::GenerateCastleMoves(bool whitesTurn, const Position &position
             castleMoves |= (uint64_t(2) << 56);
         }
     }
-    if ((!whitesTurn && (position.castlingRights_bb & 0x08)) && // Black Queenside castle
+    if ((!whitesTurn && (position.castlingRights & 0x08)) && // Black Queenside castle
     ((~position.pieces_bb & 0x7000000000000000) == 0x7000000000000000)) {
         bool castleFailed = false;
         std::vector<uint64_t> moves = {(uint64_t(8) << 56), (uint64_t(16) << 56), (uint64_t(32) << 56)};

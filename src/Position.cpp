@@ -12,7 +12,9 @@ Position::Position() {
     black_bb  = 0xFFFF000000000000;
     pieces_bb = 0xFFFF00000000FFFF;
     enPassantable_bb  = 0;
-    castlingRights_bb = 0x0F;
+    castlingRights = 0x0F;
+    fiftyMoveCounter = 0;
+    initZobristHashing();
 }
 uint64_t Position::GetCaptures(uint64_t piece, bool whitesTurn) {
     if ((!whitesTurn && (white_bb & piece)) || (whitesTurn && (black_bb & piece))) {
@@ -328,14 +330,202 @@ std::string Position::GetBoardString() {
     Util::PopulateStringBoard(boardString, (king_bb & black_bb), 'k');
     return boardString;
 }
+bool Position::CheckForNoMoves(bool whitesTurn) {
+    uint64_t myPieces = 0;
+    if (whitesTurn) {
+        myPieces = white_bb;
+    } else {
+        myPieces = black_bb;
+    }
+    uint64_t biterator = 0x8000000000000000;
+    std::vector<uint64_t> moves;
+    for (size_t i = 0; i < 64; i++) {
+        if (biterator & myPieces) {
+            moves.push_back(biterator);
+        }
+        biterator >>= 1;
+    }
+    for (auto move : moves) {
+        if (GetQuietMoves(move, whitesTurn)) {
+            return false;
+        } else if (GetCaptures(move, whitesTurn)) {
+            return false;
+        }
+    }
+    return true;
+}
+bool Position::CheckForRepetition(bool whitesTurn)
+{
+    uint64_t currentHash = HashPosition(whitesTurn);
+    if (whitesTurn) {
+        auto const& result = whiteRepetitionLookup.insert({currentHash, false});
+        if (result.second == false) {
+            if (!result.first->second) {
+                whiteRepetitionLookup.at(currentHash) = true;
+                return false; // Position was repeated twice
+            } else {
+                return true; // Threefold repetition
+            }
+        } else {
+            return false; // Position was not repeated
+        }
+    } else {
+        auto const& result = blackRepetitionLookup.insert({currentHash, false});
+        if (result.second == false) {
+            if (!result.first->second) {
+                blackRepetitionLookup.at(currentHash) = true;
+                return false; // Position was repeated twice
+            } else {
+                return true; // Threefold repetition
+            }
+        } else {
+            return false; // Position was not repeated
+        }
+    }
+}
+bool Position::CheckForDeadPosition() {
+    if (pawn_bb != 0) return false;
+    if (rook_bb != 0) return false;
+    if (queen_bb != 0) return false;
+    if ((knight_bb & white_bb) && (knight_bb & black_bb)) return false;
+    if ((knight_bb & white_bb) && (knight_bb & black_bb) == 0 && (bishop_bb & black_bb) == 0) {
+        uint64_t biterator = 0x8000000000000000;
+        int count = 0;
+        for (size_t i = 0; i < 64; i++) {
+            if (biterator & (knight_bb & white_bb)) {
+                count++;
+                if (count >= 2) return false;
+            }
+            biterator >>= 1;
+        }
+    }
+    if ((knight_bb & black_bb) && (knight_bb & white_bb) == 0 && (bishop_bb & white_bb) == 0) {
+        uint64_t biterator = 0x8000000000000000;
+        int count = 0;
+        for (size_t i = 0; i < 64; i++) {
+            if (biterator & (knight_bb & black_bb)) {
+                count++;
+                if (count >= 2) return false;
+            }
+        }
+    }
+    if ((bishop_bb & white_bb) && (knight_bb & black_bb) == 0 && (bishop_bb & black_bb) == 0) {
+        uint64_t biterator = 0x8000000000000000;
+        int count = 0;
+        for (size_t i = 0; i < 64; i++) {
+            if (biterator & (bishop_bb & white_bb)) {
+                count++;
+                if (count >= 2) return false;
+            }
+            biterator >>= 1;
+        }
+    }
+    if ((bishop_bb & black_bb) && (knight_bb & white_bb) == 0 && (bishop_bb & white_bb) == 0) {
+        uint64_t biterator = 0x8000000000000000;
+        int count = 0;
+        for (size_t i = 0; i < 64; i++) {
+            if (biterator & (bishop_bb & black_bb)) {
+                count++;
+                if (count >= 2) return false;
+            }
+            biterator >>= 1;
+        }
+    }
+    if ((bishop_bb & black_bb) && (knight_bb & black_bb) == 0 && (bishop_bb & white_bb) && (knight_bb & white_bb) == 0) {
+        uint64_t biterator = 0x8000000000000000;
+        int count = 0;
+        bool whiteIsWhite;
+        for (size_t i = 0; i < 64; i++) {
+            if (biterator & (bishop_bb & white_bb)) {
+                count++;
+                if (count >= 2) return false;
+                size_t square = i % 8;
+                if (square % 2 == 0) {
+                    whiteIsWhite = true;
+                } else {
+                    whiteIsWhite = false;
+                }
+            }
+            biterator >>= 1;
+        }
+        biterator = 0x8000000000000000;
+        count = 0;
+        bool blackIsWhite;
+        for (size_t i = 0; i < 64; i++) {
+            if (biterator & (bishop_bb & black_bb)) {
+                count++;
+                if (count >= 2) return false;
+                size_t square = i % 8;
+                if (square % 2 == 0) {
+                    blackIsWhite = true;
+                } else {
+                    blackIsWhite = false;
+                }
+            }
+            biterator >>= 1;
+        }
+        if (whiteIsWhite != blackIsWhite) {
+            return false;
+        }
+    }
+    return true;
+}
+uint64_t Position::HashPosition(bool whitesTurn)
+{
+    uint64_t biterator = 0x8000000000000000;
+    uint64_t hash = 0;
+    if (whitesTurn) hash ^= hashKey.WhitesTurn;
+    if (8 & castlingRights) hash ^= hashKey.CastleBQ;
+    if (4 & castlingRights) hash ^= hashKey.CastleBK;
+    if (2 & castlingRights) hash ^= hashKey.CastleWQ;
+    if (1 & castlingRights) hash ^= hashKey.CastleWK;
+    for (size_t i = 0; i < 64; i++) {
+        if (biterator & (pawn_bb & white_bb)) hash ^= hashKey.SquaresPieces[i][Pawn_w];
+        if (biterator & (pawn_bb & black_bb)) hash ^= hashKey.SquaresPieces[i][Pawn_b];
+        if (biterator & (knight_bb & white_bb)) hash ^= hashKey.SquaresPieces[i][Knight_w];
+        if (biterator & (knight_bb & black_bb)) hash ^= hashKey.SquaresPieces[i][Knight_b];
+        if (biterator & (bishop_bb & white_bb)) hash ^= hashKey.SquaresPieces[i][Bishop_w];
+        if (biterator & (bishop_bb & black_bb)) hash ^= hashKey.SquaresPieces[i][Bishop_b];
+        if (biterator & (rook_bb & white_bb)) hash ^= hashKey.SquaresPieces[i][Rook_w];
+        if (biterator & (rook_bb & black_bb)) hash ^= hashKey.SquaresPieces[i][Rook_b];
+        if (biterator & (queen_bb & white_bb)) hash ^= hashKey.SquaresPieces[i][Queen_w];
+        if (biterator & (queen_bb & black_bb)) hash ^= hashKey.SquaresPieces[i][Queen_b];
+        if (biterator & (king_bb & white_bb)) hash ^= hashKey.SquaresPieces[i][King_w];
+        if (biterator & (king_bb & black_bb)) hash ^= hashKey.SquaresPieces[i][King_b];
+        if (biterator & (enPassantable_bb & white_bb)) hash ^= hashKey.SquaresPieces[i][EnPassant_w];
+        if (biterator & (enPassantable_bb & black_bb)) hash ^= hashKey.SquaresPieces[i][EnPassant_b];
+        biterator >>= 1;
+    }
+    return hash;
+}
+void Position::initZobristHashing() {
+    std::random_device rd;
+    std::mt19937_64 e2(rd());
+    std::uniform_int_distribution<long long int> dist(std::llround(std::pow(2, 61)), std::llround(std::pow(2, 62)));
+
+    for (size_t i = 0; i < 64; i++) {
+        for (size_t j = 0; j < 14; j++) {
+            hashKey.SquaresPieces[i][j] = dist(e2);
+        }
+    }
+    hashKey.WhitesTurn = dist(e2);
+    hashKey.CastleBQ = dist(e2);
+    hashKey.CastleBK = dist(e2);
+    hashKey.CastleWQ = dist(e2);
+    hashKey.CastleWK = dist(e2);
+}
 void Position::MakeMove(uint64_t from, uint64_t to, bool whitesTurn) {
     uint64_t fromTo = from | to;
-    if (whitesTurn && (pawn_bb & from) && ((to >> 8) & (enPassantable_bb & black_bb))) {
+
+    if (whitesTurn && (pawn_bb & from) && ((to >> 8) & (enPassantable_bb & black_bb))) { // en passant taken
         enPassantable_bb ^= to >> 8;
         pawn_bb ^= (fromTo | (to >> 8));
         black_bb ^= to >> 8;
         white_bb ^= fromTo;
         pieces_bb = (white_bb | black_bb);
+        whiteRepetitionLookup.clear();
+        blackRepetitionLookup.clear();
+        fiftyMoveCounter = 0;
         return;
     } else if (!whitesTurn && (pawn_bb & from) && ((to << 8) & (enPassantable_bb & white_bb))) {
         enPassantable_bb ^= to << 8;
@@ -343,58 +533,87 @@ void Position::MakeMove(uint64_t from, uint64_t to, bool whitesTurn) {
         white_bb ^= to << 8;
         black_bb ^= fromTo;
         pieces_bb = (white_bb | black_bb);
+        whiteRepetitionLookup.clear();
+        blackRepetitionLookup.clear();
+        fiftyMoveCounter = 0;
         return;
+    }
+
+    if (enPassantable_bb) { // En Passant not taken
+        whiteRepetitionLookup.clear();
+        blackRepetitionLookup.clear();
     }
     if (whitesTurn) {
         enPassantable_bb ^= (black_bb & enPassantable_bb);
     } else {
         enPassantable_bb ^= (white_bb & enPassantable_bb);
     }
-    if (to & uint64_t(2) && (castlingRights_bb & 0x01)) { // White Kingside Castle
-        castlingRights_bb = (castlingRights_bb & 0x0C); // Set both whites castle rights to 0, without affecting blacks
+
+    if (to & uint64_t(2) && (castlingRights & 0x01) && (from & king_bb & white_bb)) { // White Kingside Castle
+        castlingRights = (castlingRights & 0x0C); // Set both whites castle rights to 0, without affecting blacks
         uint64_t rookFromTo = 0x0000000000000005;
         white_bb ^= rookFromTo | fromTo;
         pieces_bb ^= rookFromTo | fromTo;
         king_bb ^= fromTo; 
         rook_bb ^= rookFromTo;
+        whiteRepetitionLookup.clear();
+        blackRepetitionLookup.clear();
         return;
-    } else if (to & uint64_t(32) && (castlingRights_bb & 0x02)) { // White Queenside Castle
-        castlingRights_bb = (castlingRights_bb & 0x0C); // Set both whites castle rights to 0, without affecting blacks
+    } else if (to & uint64_t(32) && (castlingRights & 0x02) && (from & king_bb & white_bb)) { // White Queenside Castle
+        castlingRights = (castlingRights & 0x0C); // Set both whites castle rights to 0, without affecting blacks
         uint64_t rookFromTo = 0x0000000000000090;
         white_bb ^= rookFromTo | fromTo;
         pieces_bb ^= rookFromTo | fromTo;
         king_bb ^= fromTo; 
         rook_bb ^= rookFromTo;
+        whiteRepetitionLookup.clear();
+        blackRepetitionLookup.clear();
         return;
-    } else if (to & (uint64_t(2) << 56) && (castlingRights_bb & 0x04)) { // Black Kingside Castle 
-        castlingRights_bb = (castlingRights_bb & 0x03); // Set both blacks castle rights to 0, without affecting whites
+    } else if (to & (uint64_t(2) << 56) && (castlingRights & 0x04) && (from & king_bb & black_bb)) { // Black Kingside Castle 
+        castlingRights = (castlingRights & 0x03); // Set both blacks castle rights to 0, without affecting whites
         uint64_t rookFromTo = 0x0500000000000000;
         black_bb ^= rookFromTo | fromTo;
         pieces_bb ^= rookFromTo | fromTo;
         king_bb ^= fromTo; 
         rook_bb ^= rookFromTo;
+        whiteRepetitionLookup.clear();
+        blackRepetitionLookup.clear();
         return;
-    } else if (to & (uint64_t(32) << 56) && (castlingRights_bb & 0x08)) { // Black Queenside Castle
-        castlingRights_bb = (castlingRights_bb & 0x03); // Set both blacks castle rights to 0, without affecting whites
+    } else if (to & (uint64_t(32) << 56) && (castlingRights & 0x08) && (from & king_bb & black_bb)) { // Black Queenside Castle
+        castlingRights = (castlingRights & 0x03); // Set both blacks castle rights to 0, without affecting whites
         uint64_t rookFromTo = 0x9000000000000000;
         black_bb ^= rookFromTo | fromTo;
         pieces_bb ^= rookFromTo | fromTo;
         king_bb ^= fromTo; 
         rook_bb ^= rookFromTo;
+        whiteRepetitionLookup.clear();
+        blackRepetitionLookup.clear();
         return;
     }
     if (whitesTurn && (from & uint64_t(1) & rook_bb)) {
-        castlingRights_bb &= 0x0E;
+        castlingRights &= 0x0E;
+        whiteRepetitionLookup.clear();
+        blackRepetitionLookup.clear();
     } else if (whitesTurn && (from & 128 & rook_bb)) {
-        castlingRights_bb &= 0x0D;
+        castlingRights &= 0x0D;
+        whiteRepetitionLookup.clear();
+        blackRepetitionLookup.clear();
     } else if (!whitesTurn && (from & (uint64_t(1) << 56) & rook_bb)) {
-        castlingRights_bb &= 0x0B;
+        castlingRights &= 0x0B;
+        whiteRepetitionLookup.clear();
+        blackRepetitionLookup.clear();
     } else if (!whitesTurn && (from & (uint64_t(128) << 56) & rook_bb)) {
-        castlingRights_bb &= 0x07;
+        castlingRights &= 0x07;
+        whiteRepetitionLookup.clear();
+        blackRepetitionLookup.clear();
     } else if (whitesTurn && (from & white_bb & king_bb)) {
-        castlingRights_bb &= 0x0C;
+        castlingRights &= 0x0C;
+        whiteRepetitionLookup.clear();
+        blackRepetitionLookup.clear();
     } else if (!whitesTurn && (from & black_bb & king_bb)) {
-        castlingRights_bb &= 0x03;
+        castlingRights &= 0x03;
+        whiteRepetitionLookup.clear();
+        blackRepetitionLookup.clear();
     }
     if (whitesTurn && (to & black_bb)) { // white capturing
         black_bb ^= to;
@@ -404,6 +623,9 @@ void Position::MakeMove(uint64_t from, uint64_t to, bool whitesTurn) {
         if (rook_bb & to) rook_bb ^= to;
         if (queen_bb & to) queen_bb ^= to;
         if (king_bb & to) king_bb ^= to;
+        whiteRepetitionLookup.clear();
+        blackRepetitionLookup.clear();
+        fiftyMoveCounter = 0;
     } else if (!whitesTurn && (to & white_bb)) { // black capturing
         white_bb ^= to;
         if (pawn_bb & to) pawn_bb ^= to;
@@ -412,6 +634,11 @@ void Position::MakeMove(uint64_t from, uint64_t to, bool whitesTurn) {
         if (rook_bb & to) rook_bb ^= to;
         if (queen_bb & to) queen_bb ^= to;
         if (king_bb & to) king_bb ^= to;
+        whiteRepetitionLookup.clear();
+        blackRepetitionLookup.clear();
+        fiftyMoveCounter = 0;
+    } else {
+        fiftyMoveCounter++;
     }
     if (whitesTurn) {
         white_bb ^= fromTo;
@@ -423,8 +650,9 @@ void Position::MakeMove(uint64_t from, uint64_t to, bool whitesTurn) {
         if (((from & (Bitboard::horiLine_bb << 8)) && (to & (from << 16))) ||
         ((from & (Bitboard::horiLine_bb << 48) && (to & (from >> 16))))) {
             enPassantable_bb ^= to;
-        } else if (from & enPassantable_bb) {
-            enPassantable_bb ^= from;
+            whiteRepetitionLookup.clear();
+            blackRepetitionLookup.clear();
+            fiftyMoveCounter = 0;
         }
     }
     if (knight_bb & from) knight_bb ^= fromTo;
@@ -480,6 +708,9 @@ void Position::PromotePawn(uint64_t from, uint64_t to, uint64_t selectionSquare,
     }
     pawn_bb ^= from;
     pieces_bb = (white_bb | black_bb);
+    whiteRepetitionLookup.clear();
+    blackRepetitionLookup.clear();
+    fiftyMoveCounter = 0;
 }
 
 uint64_t Position::IsInCheck(bool whitesTurn) {
@@ -630,27 +861,20 @@ uint64_t Position::IsInCheck(bool whitesTurn) {
     return 0;
 }
 
-GameOver Position::IsGameOver(bool whitesTurn) {
-    uint64_t myPieces = 0;
-    if (whitesTurn) {
-        myPieces = white_bb;
+GameOver Position::IsDraw(bool whitesTurn) {
+    if (CheckForRepetition(whitesTurn)) {
+        std::cout << "Draw by threefold repetition!" << std::endl;
+        return GameOver::ThreeRepetition;
+    } else if (CheckForNoMoves(!whitesTurn)) {
+        std::cout << "Draw by stalemate!" << std::endl;
+        return GameOver::Stalemate;
+    } else if (fiftyMoveCounter >= 50) {
+        std::cout << "Draw by fifty moves without a capture or pawn push!" << std::endl;
+        return GameOver::FiftyNothingMoves;
+    } else if (CheckForDeadPosition()) {
+        std::cout << "Draw by insufficient mating material!" << std::endl;
+        return GameOver::DeadPosition;
     } else {
-        myPieces = black_bb;
+        return GameOver::None;
     }
-    uint64_t biterator = 0x8000000000000000;
-    std::vector<uint64_t> moves;
-    for (size_t i = 0; i < 64; i++) {
-        if (biterator & myPieces) {
-            moves.push_back(biterator);
-        }
-        biterator >>= 1;
-    }
-    for (auto move : moves) {
-        if (GetQuietMoves(move, whitesTurn)) {
-            return GameOver::None;
-        } else if (GetCaptures(move, whitesTurn)) {
-            return GameOver::None;
-        }
-    }
-    return GameOver::Checkmate;
 }

@@ -1,6 +1,6 @@
 # BitChess (in development)
 ![gif](doc/BitChess.gif)
-Version 0.5.0
+Version 0.6.0
 - See [Changelog](#changelog)
 - See [Chess Programming Resources](https://github.com/chopndolphy/BitChess/blob/refactor/doc/Resources.md "Essential information for understand the BitChess source code")
 ## Getting Started
@@ -29,6 +29,8 @@ to delete the entire build directory (it will be remade upon recompilation).
 - Mouse controls
 - Escape to exit the program
 ## <a name="changelog"></a> Changelog
+### 0.6.0
+- All draw types implemented! That means every single rule is done!
 ### 0.5.0
 - Pawn promotion!
 - Fixed a castling bug where the move making function wasn't checking castling rights
@@ -62,12 +64,6 @@ to delete the entire build directory (it will be remade upon recompilation).
     - Game
     - UserInterface
     - Make ResourceManager not static (owned by Renderer2D)
-- Implement the rest of the game logic
-    - Draws
-        - Stalemate
-        - Threefold repetition
-        - 50 consecutive moves without a capture or pawn push
-        - Dead position
 - Second framebuffer for more robust mouse-picking
 - Custom window decorations
 - Start state
@@ -91,6 +87,7 @@ to delete the entire build directory (it will be remade upon recompilation).
 - Windows version???
 - Better package installation process
 - Testing tools
+- Export PGN / FEN
 ## Documentation
 ### <a name="apparch"></a> Application Architecture
 ![image](doc/application_architecture.png)
