@@ -51,6 +51,36 @@ uint64_t Position::GetCaptures(uint64_t piece, bool whitesTurn) {
     }
     return Bitboard::RemoveIllegalMoves(piece, pseudoCaps, *this);
 }
+uint64_t Position::GetPromotionSquare(uint64_t piece, bool whitesTurn) {
+    uint64_t moves = 0;
+    if (whitesTurn && (pawn_bb & piece & (Bitboard::horiLine_bb << 48))) {
+        moves = (((piece << 7) & Bitboard::notAfile_bb) |
+                 ((piece << 9) & Bitboard::notHfile_bb));
+        moves &= black_bb;
+        moves |= ((piece << 8) & ~pieces_bb);
+    } else if (!whitesTurn && (pawn_bb & piece & (Bitboard::horiLine_bb << 8) )) {
+        moves = (((piece >> 7) & Bitboard::notHfile_bb) |
+                 ((piece >> 9) & Bitboard::notAfile_bb));
+        moves &= white_bb;
+        moves |= ((piece >> 8) & ~pieces_bb);
+    }
+    return Bitboard::RemoveIllegalMoves(piece, moves, *this);
+}
+uint64_t Position::GetPromotionOptions(uint64_t promotionSquare, bool whitesTurn) {
+    uint64_t options = 0;
+    if (whitesTurn) {
+        options = ((promotionSquare      ) |
+                   (promotionSquare >>  8) |
+                   (promotionSquare >> 16) |
+                   (promotionSquare >> 24)); 
+    } else {
+        options = ((promotionSquare      ) |
+                   (promotionSquare <<  8) |
+                   (promotionSquare <<  8) |
+                   (promotionSquare << 16));
+    }
+    return options;
+}
 uint64_t Position::GetQuietMoves(uint64_t piece, bool whitesTurn) {
     if ((!whitesTurn && (white_bb & piece)) || (whitesTurn && (black_bb & piece))) {
         return 0;
@@ -300,52 +330,6 @@ std::string Position::GetBoardString() {
 }
 void Position::MakeMove(uint64_t from, uint64_t to, bool whitesTurn) {
     uint64_t fromTo = from | to;
-    if (to & 2) { // White Kingside Castle
-        castlingRights_bb &= 0x0C; // Set both whites castle rights to 0, without affecting blacks
-        uint64_t rookFromTo = 0x0000000000000005;
-        white_bb ^= rookFromTo | fromTo;
-        pieces_bb ^= rookFromTo | fromTo;
-        king_bb ^= fromTo; 
-        rook_bb ^= rookFromTo;
-        return;
-    } else if (to & 32) { // White Queenside Castle
-        castlingRights_bb &= 0x0C; // Set both whites castle rights to 0, without affecting blacks
-        uint64_t rookFromTo = 0x0000000000000090;
-        white_bb ^= rookFromTo | fromTo;
-        pieces_bb ^= rookFromTo | fromTo;
-        king_bb ^= fromTo; 
-        rook_bb ^= rookFromTo;
-        return;
-    } else if (to & (uint64_t(2) << 56)) { // Black Kingside Castle 
-        castlingRights_bb &= 0x03; // Set both blacks castle rights to 0, without affecting whites
-        uint64_t rookFromTo = 0x0500000000000000;
-        black_bb ^= rookFromTo | fromTo;
-        pieces_bb ^= rookFromTo | fromTo;
-        king_bb ^= fromTo; 
-        rook_bb ^= rookFromTo;
-        return;
-    } else if (to & (uint64_t(32) << 56)) { // Black Queenside Castle
-        castlingRights_bb &= 0x03; // Set both blacks castle rights to 0, without affecting whites
-        uint64_t rookFromTo = 0x9000000000000000;
-        black_bb ^= rookFromTo | fromTo;
-        pieces_bb ^= rookFromTo | fromTo;
-        king_bb ^= fromTo; 
-        rook_bb ^= rookFromTo;
-        return;
-    }
-    if (whitesTurn && (from & 1 & rook_bb)) {
-        castlingRights_bb &= 0x0E;
-    } else if (whitesTurn && (from & 128 & rook_bb)) {
-        castlingRights_bb &= 0x0D;
-    } else if (!whitesTurn && (from & (uint64_t(1) << 56) & rook_bb)) {
-        castlingRights_bb &= 0x0B;
-    } else if (!whitesTurn && (from & (uint64_t(128) << 56) & rook_bb)) {
-        castlingRights_bb &= 0x07;
-    } else if (whitesTurn && (from & white_bb & king_bb)) {
-        castlingRights_bb &= 0x0C;
-    } else if (!whitesTurn && (from & black_bb & king_bb)) {
-        castlingRights_bb &= 0x03;
-    }
     if (whitesTurn && (pawn_bb & from) && ((to >> 8) & (enPassantable_bb & black_bb))) {
         enPassantable_bb ^= to >> 8;
         pawn_bb ^= (fromTo | (to >> 8));
@@ -360,6 +344,57 @@ void Position::MakeMove(uint64_t from, uint64_t to, bool whitesTurn) {
         black_bb ^= fromTo;
         pieces_bb = (white_bb | black_bb);
         return;
+    }
+    if (whitesTurn) {
+        enPassantable_bb ^= (black_bb & enPassantable_bb);
+    } else {
+        enPassantable_bb ^= (white_bb & enPassantable_bb);
+    }
+    if (to & uint64_t(2) && (castlingRights_bb & 0x01)) { // White Kingside Castle
+        castlingRights_bb = (castlingRights_bb & 0x0C); // Set both whites castle rights to 0, without affecting blacks
+        uint64_t rookFromTo = 0x0000000000000005;
+        white_bb ^= rookFromTo | fromTo;
+        pieces_bb ^= rookFromTo | fromTo;
+        king_bb ^= fromTo; 
+        rook_bb ^= rookFromTo;
+        return;
+    } else if (to & uint64_t(32) && (castlingRights_bb & 0x02)) { // White Queenside Castle
+        castlingRights_bb = (castlingRights_bb & 0x0C); // Set both whites castle rights to 0, without affecting blacks
+        uint64_t rookFromTo = 0x0000000000000090;
+        white_bb ^= rookFromTo | fromTo;
+        pieces_bb ^= rookFromTo | fromTo;
+        king_bb ^= fromTo; 
+        rook_bb ^= rookFromTo;
+        return;
+    } else if (to & (uint64_t(2) << 56) && (castlingRights_bb & 0x04)) { // Black Kingside Castle 
+        castlingRights_bb = (castlingRights_bb & 0x03); // Set both blacks castle rights to 0, without affecting whites
+        uint64_t rookFromTo = 0x0500000000000000;
+        black_bb ^= rookFromTo | fromTo;
+        pieces_bb ^= rookFromTo | fromTo;
+        king_bb ^= fromTo; 
+        rook_bb ^= rookFromTo;
+        return;
+    } else if (to & (uint64_t(32) << 56) && (castlingRights_bb & 0x08)) { // Black Queenside Castle
+        castlingRights_bb = (castlingRights_bb & 0x03); // Set both blacks castle rights to 0, without affecting whites
+        uint64_t rookFromTo = 0x9000000000000000;
+        black_bb ^= rookFromTo | fromTo;
+        pieces_bb ^= rookFromTo | fromTo;
+        king_bb ^= fromTo; 
+        rook_bb ^= rookFromTo;
+        return;
+    }
+    if (whitesTurn && (from & uint64_t(1) & rook_bb)) {
+        castlingRights_bb &= 0x0E;
+    } else if (whitesTurn && (from & 128 & rook_bb)) {
+        castlingRights_bb &= 0x0D;
+    } else if (!whitesTurn && (from & (uint64_t(1) << 56) & rook_bb)) {
+        castlingRights_bb &= 0x0B;
+    } else if (!whitesTurn && (from & (uint64_t(128) << 56) & rook_bb)) {
+        castlingRights_bb &= 0x07;
+    } else if (whitesTurn && (from & white_bb & king_bb)) {
+        castlingRights_bb &= 0x0C;
+    } else if (!whitesTurn && (from & black_bb & king_bb)) {
+        castlingRights_bb &= 0x03;
     }
     if (whitesTurn && (to & black_bb)) { // white capturing
         black_bb ^= to;
@@ -397,6 +432,53 @@ void Position::MakeMove(uint64_t from, uint64_t to, bool whitesTurn) {
     if (rook_bb & from) rook_bb ^= fromTo;
     if (queen_bb & from) queen_bb ^= fromTo;
     if (king_bb & from) king_bb ^= fromTo;
+    pieces_bb = (white_bb | black_bb);
+}
+
+void Position::PromotePawn(uint64_t from, uint64_t to, uint64_t selectionSquare, bool whitesTurn) {
+    uint64_t fromTo = from | to;
+    if (whitesTurn) {
+        if (to & black_bb) {
+            black_bb ^= to;
+            if (pawn_bb & to) pawn_bb ^= to;
+            if (knight_bb & to) knight_bb ^= to;
+            if (bishop_bb & to) bishop_bb ^= to;
+            if (rook_bb & to) rook_bb ^= to;
+            if (queen_bb & to) queen_bb ^= to;
+            if (king_bb & to) king_bb ^= to;
+        }
+        if (selectionSquare & to) {
+            queen_bb ^= to;    
+        } else if (selectionSquare & (to >>  8)) {
+            rook_bb ^= to;
+        } else if (selectionSquare & (to >> 16)) {
+            bishop_bb ^= to;
+        } else if (selectionSquare & (to >> 24)) {
+            knight_bb ^= to;
+        }
+        white_bb ^= fromTo;
+    } else {
+        if (to & white_bb) {
+            white_bb ^= to;
+            if (pawn_bb & to) pawn_bb ^= to;
+            if (knight_bb & to) knight_bb ^= to;
+            if (bishop_bb & to) bishop_bb ^= to;
+            if (rook_bb & to) rook_bb ^= to;
+            if (queen_bb & to) queen_bb ^= to;
+            if (king_bb & to) king_bb ^= to;
+        }
+        if (selectionSquare & to) {
+            queen_bb ^= to;
+        } else if (selectionSquare & (to <<  8)) {
+            rook_bb ^= to;
+        } else if (selectionSquare & (to << 16)) {
+            bishop_bb ^= to;
+        } else if (selectionSquare & (to << 24)) {
+            knight_bb ^= to;
+        }
+        black_bb ^= fromTo;
+    }
+    pawn_bb ^= from;
     pieces_bb = (white_bb | black_bb);
 }
 

@@ -9,8 +9,8 @@ class MyGLWindow {
     public:
         MyGLWindow();
         ~MyGLWindow();
-        unsigned int SCR_WIDTH = 800;
-        unsigned int SCR_HEIGHT = 600;
+        unsigned int SCR_WIDTH = 1600;
+        unsigned int SCR_HEIGHT = 1200;
         void MoveMouse(GLFWwindow* window, double xposIn, double yposIn);
         void ClickMouse(GLFWwindow* window, int button, int action, int mods);
         void ResizeWindow(GLFWwindow* window, int width, int height);

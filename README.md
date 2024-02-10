@@ -1,6 +1,6 @@
 # BitChess (in development)
 ![gif](doc/BitChess.gif)
-Version 0.4.1
+Version 0.5.0
 - See [Changelog](#changelog)
 - See [Chess Programming Resources](https://github.com/chopndolphy/BitChess/blob/refactor/doc/Resources.md "Essential information for understand the BitChess source code")
 ## Getting Started
@@ -29,6 +29,11 @@ to delete the entire build directory (it will be remade upon recompilation).
 - Mouse controls
 - Escape to exit the program
 ## <a name="changelog"></a> Changelog
+### 0.5.0
+- Pawn promotion!
+- Fixed a castling bug where the move making function wasn't checking castling rights
+- Fixed an en passant bug where the passant table wasn't resetting each move
+- Fixed an en passant bug where en passant moves were being generation in incorrect scenarios
 ### 0.4.1
 - Fixed bug where pseudo-legal en passant moves weren't being checked for legality
 ### 0.4.0
@@ -58,7 +63,6 @@ to delete the entire build directory (it will be remade upon recompilation).
     - UserInterface
     - Make ResourceManager not static (owned by Renderer2D)
 - Implement the rest of the game logic
-    - Pawn promotion
     - Draws
         - Stalemate
         - Threefold repetition

@@ -20,8 +20,11 @@ class Position {
         uint8_t castlingRights_bb;
         uint64_t GetQuietMoves(uint64_t piece, bool whitesTurn);
         uint64_t GetCaptures(uint64_t piece, bool whitesTurn);
+        uint64_t GetPromotionSquare(uint64_t piece, bool whitesTurn);
+        uint64_t GetPromotionOptions(uint64_t promotionSquare, bool whitesTurn);
         std::string GetBoardString();
         void MakeMove(uint64_t from, uint64_t to, bool whitesTurn);
+        void PromotePawn(uint64_t from, uint64_t to, uint64_t selectionSquare, bool whitesTurn);
         uint64_t IsInCheck(bool whitesTurn);
         GameOver IsGameOver(bool whitesTurn);
 };

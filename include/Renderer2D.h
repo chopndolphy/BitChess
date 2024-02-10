@@ -32,6 +32,7 @@ class Renderer2D {
         void ShowPreviousMove(std::string previousMove);
         void ShowCheckedKing(std::string checkedKingPos);
         void ShowMenu(EndDisplay endDisplay);
+        void ShowPromotionMenu(std::string promotionSquare);
         bool GetLastSquareClicked(uint64_t &bitSquareClicked);
         float deltaTime = 0.0f;
         float lastFrame = 0.0f;
@@ -43,9 +44,12 @@ class Renderer2D {
         std::unordered_set<std::unique_ptr<Sprite>> pieceSprites; //instead of having sprite saving board position, save it in 
         std::unordered_set<std::unique_ptr<Sprite>> availableMovesSprites;
         std::unordered_set<std::unique_ptr<Sprite>> previousMoveSprites;
+        std::unordered_set<std::unique_ptr<Sprite>> promotionOptionsSprites;
+        std::unordered_set<std::unique_ptr<Sprite>> promotionSelectionSprites;
         std::unique_ptr<Sprite> chosenPieceSprite;
         std::unique_ptr<Sprite> checkedKingSprite;
         std::unique_ptr<Sprite> menu;
+        std::unique_ptr<Sprite> promotionMenu;
         std::weak_ptr<Texture2D> textureMap;
         void initWindow();
         void initOpenGL();

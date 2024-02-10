@@ -1,5 +1,5 @@
-#include "BlackSelectingMoveState.h"
 #include "BlackPromotingPawnState.h"
+#include "BlackSelectingMoveState.h"
 #include "BlackSelectingPieceState.h"
 #include "WhiteSelectingPieceState.h"
 #include "EndState.h"
@@ -7,30 +7,21 @@
 #include "Renderer2D.h"
 #include "Position.h"
 
-void BlackSelectingMoveState::Enter() {
-    // std::cout << "Entering B select M" << std::endl;
+void BlackPromotingPawnState::Enter() {
+    // std::cout << "Entering Black promoting pawn" << std::endl;
 }
-void BlackSelectingMoveState::ProcessClicks() {
+void BlackPromotingPawnState::ProcessClicks() {
     uint64_t bitSquareClicked;
     if (!app.Renderer().lock()->GetLastSquareClicked(bitSquareClicked)) {
         return;
     }
-    if (bitSquareClicked & (app.Board().lock()->GetQuietMoves(app.SelectedPiece(), false) | 
-    app.Board().lock()->GetCaptures(app.SelectedPiece(), false))) {
-        if (bitSquareClicked & (app.Board().lock()->GetPromotionSquare(app.SelectedPiece(), false))) {
-            // std::cout << "triggered promotion square" << std::endl;
-            std::string promotionSquareString(64, '-');
-            Util::PopulateStringBoard(promotionSquareString, bitSquareClicked, 'p');
-            app.Renderer().lock()->ShowPromotionMenu(promotionSquareString);
-            app.PromotionSquare(bitSquareClicked);
-            app.CurrentState(app.BlackPromotingPawn());
-            return;
-        }
-        app.Board().lock()->MakeMove(app.SelectedPiece(), bitSquareClicked, false);
+    if (bitSquareClicked & (app.Board().lock()->GetPromotionOptions(app.PromotionSquare(), false))) {
+        app.Board().lock()->PromotePawn(app.SelectedPiece(), app.PromotionSquare(), bitSquareClicked, false);
         app.Renderer().lock()->UpdateBoardState(app.Board().lock()->GetBoardString());
         app.Renderer().lock()->ShowAvailableMoves(std::string(64, '-'));
+        app.Renderer().lock()->ShowPromotionMenu(std::string(64, '-'));
         std::string previousMoveString(64, '-');
-        Util::PopulateStringBoard(previousMoveString, (app.SelectedPiece() | bitSquareClicked), 'm');
+        Util::PopulateStringBoard(previousMoveString, (app.SelectedPiece() | app.PromotionSquare()), 'm');
         app.Renderer().lock()->ShowPreviousMove(previousMoveString);
 
         uint64_t checkedKing = app.Board().lock()->IsInCheck(true);
@@ -73,6 +64,6 @@ void BlackSelectingMoveState::ProcessClicks() {
         }
     }
 }
-void BlackSelectingMoveState::Exit() {
+void BlackPromotingPawnState::Exit() {
 
 }

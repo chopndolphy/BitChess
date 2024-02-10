@@ -69,11 +69,26 @@ void Renderer2D::RenderFrame() {
     if (!pieceSprites.empty()) {
         for (auto &piece : pieceSprites) {
             piece->Draw(myWindow->Projection, Util::IndexToPosition(piece->BoardLocation, myWindow->SquareSize, myWindow->BoardOffset), myWindow->SquareSize);
-
         }
     }
     if (checkedKingSprite != nullptr) {
         checkedKingSprite->Draw(myWindow->Projection, Util::IndexToPosition(checkedKingSprite->BoardLocation, myWindow->SquareSize, myWindow->BoardOffset), myWindow->SquareSize);
+    }
+    if (promotionMenu != nullptr) {
+        glm::vec2 menuPosition = Util::IndexToPosition(promotionMenu->BoardLocation, myWindow->SquareSize, myWindow->BoardOffset);
+        promotionMenu->Draw(myWindow->Projection, glm::vec2(menuPosition.x - (0.1875f * myWindow->SquareSize.x), menuPosition.y - (0.1875f * myWindow->SquareSize.y)), glm::vec2(myWindow->SquareSize.x * 1.375f, myWindow->SquareSize.y * 4.375f));
+        for (auto &highlight : promotionSelectionSprites) {
+            if (lastSquareHovered & Util::IndexToBitBoard(highlight->BoardLocation)) { // cursor over square
+            
+                highlight->setHovering(true);
+            } else {
+                highlight->setHovering(false);     
+            }
+            highlight->Draw(myWindow->Projection, Util::IndexToPosition(highlight->BoardLocation, myWindow->SquareSize, myWindow->BoardOffset), myWindow->SquareSize);
+        }
+        for (auto &piece : promotionOptionsSprites) {
+            piece->Draw(myWindow->Projection, Util::IndexToPosition(piece->BoardLocation, myWindow->SquareSize, myWindow->BoardOffset), myWindow->SquareSize);
+        }
     }
     if (menu != nullptr) {
         menu->Draw(myWindow->Projection, Util::IndexToPosition(menu->BoardLocation, myWindow->SquareSize, myWindow->BoardOffset), glm::vec2(myWindow->SquareSize.x * 4, myWindow->SquareSize.y * 6));
@@ -205,6 +220,63 @@ void Renderer2D::ShowMenu(EndDisplay endDisplay) {
             break;
         default:
             break;
+    }
+}
+void Renderer2D::ShowPromotionMenu(std::string promotionSquare) {
+    // std::cout << "show promotion menu triggered" << std::endl;
+    promotionMenu.reset();
+    promotionSelectionSprites.clear();
+    promotionOptionsSprites.clear();
+    bool menuTriggered = false;
+    size_t promotionMenuIndex;
+    for (size_t i = 0; i < promotionSquare.length(); i++) {
+        switch (promotionSquare[i]) {
+            case 'p':
+                if (i < 32) {
+                    promotionSelectionSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("hoverable"),
+                        glm::vec4(0.0625f, 0.125f, 0.125f, 0.1875f), i));
+                    promotionOptionsSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"),
+                        glm::vec4(0.25f, 0.0f, 0.3125f, 0.0625f), i));
+                    promotionSelectionSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("hoverable"),
+                        glm::vec4(0.0625f, 0.125f, 0.125f, 0.1875f), i + 8));
+                    promotionOptionsSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"),
+                        glm::vec4(0.4375f, 0.0f, 0.5f, 0.0625f), i + 8));
+                    promotionSelectionSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("hoverable"),
+                        glm::vec4(0.0625f, 0.125f, 0.125f, 0.1875f), i + 16));
+                    promotionOptionsSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"),
+                        glm::vec4(0.3125f, 0.0f, 0.375f, 0.0625f), i + 16));
+                    promotionSelectionSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("hoverable"),
+                        glm::vec4(0.0625f, 0.125f, 0.125f, 0.1875f), i + 24));
+                    promotionOptionsSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"),
+                        glm::vec4(0.375f, 0.0f, 0.4375f, 0.0625f), i + 24));
+                    promotionMenuIndex = i;
+                } else {
+                    promotionSelectionSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("hoverable"),
+                        glm::vec4(0.0625f, 0.125f, 0.125f, 0.1875f), i));
+                    promotionOptionsSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"),
+                        glm::vec4(0.25f, 0.0625f, 0.3125f, 0.125f), i));
+                    promotionSelectionSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("hoverable"),
+                        glm::vec4(0.0625f, 0.125f, 0.125f, 0.1875f), i - 8));
+                    promotionOptionsSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"),
+                        glm::vec4(0.4375f, 0.0625f, 0.5f, 0.125f), i - 8));
+                    promotionSelectionSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("hoverable"),
+                        glm::vec4(0.0625f, 0.125f, 0.125f, 0.1875f), i - 16));
+                    promotionOptionsSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"),
+                        glm::vec4(0.3125f, 0.0625f, 0.375f, 0.125f), i - 16));
+                    promotionSelectionSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("hoverable"),
+                        glm::vec4(0.0625f, 0.125f, 0.125f, 0.1875f), i - 24));
+                    promotionOptionsSprites.emplace(std::make_unique<Sprite>(ResourceManager::GetShader("sprite"),
+                        glm::vec4(0.375f, 0.0625f, 0.4375f, 0.125f), i - 24));
+                    promotionMenuIndex = i - 24;
+                }
+                menuTriggered = true;
+                break;
+        }
+        
+    }
+    if (menuTriggered) {
+        promotionMenu = std::make_unique<Sprite>(ResourceManager::GetShader("sprite"),
+            glm::vec4(0.375f, 0.125f, 0.4609375f, 0.3984375f), promotionMenuIndex);
     }
 }
 bool Renderer2D::GetLastSquareClicked(uint64_t &bitSquareClicked)

@@ -22,7 +22,7 @@ LDFLAGS = -lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl
 # SHARED OBJECTS AND TARGETS  (Targets are executables)
 
 # Shared objects by multiple executables
-CPP_FILES := Shader.cpp Renderer2D.cpp Sprite.cpp Game.cpp MyGLWindow.cpp Texture2D.cpp ResourceManager.cpp Position.cpp Util.cpp BlackSelectingMoveState.cpp BlackSelectingPieceState.cpp WhiteSelectingMoveState.cpp WhiteSelectingPieceState.cpp UserInterface.cpp Bitboard.cpp Application.cpp StartState.cpp EndState.cpp
+CPP_FILES := Shader.cpp Renderer2D.cpp Sprite.cpp Game.cpp MyGLWindow.cpp Texture2D.cpp ResourceManager.cpp Position.cpp Util.cpp BlackSelectingMoveState.cpp BlackSelectingPieceState.cpp BlackPromotingPawnState.cpp WhiteSelectingMoveState.cpp WhiteSelectingPieceState.cpp WhitePromotingPawnState.cpp UserInterface.cpp Bitboard.cpp Application.cpp StartState.cpp EndState.cpp
 OBJECTS := $(CPP_FILES:.cpp=.o) glad.o stb_image.o
 OBJECTS := $(addprefix $(BUILD)/, $(OBJECTS))
 
