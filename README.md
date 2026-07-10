@@ -1,95 +1,120 @@
-# BitChess (in development)
-![gif](doc/BitChess.gif)
-Version 0.6.0
-- See [Changelog](#changelog)
-- See [Chess Programming Resources](https://github.com/chopndolphy/BitChess/blob/refactor/doc/Resources.md "Essential information for understand the BitChess source code")
+# BitChess
+
+![BitChess gameplay](doc/BitChess.gif)
+
+A 16-bit-style, local two-player chess game written in modern C++ and rendered
+with OpenGL. Every rule of chess is implemented — from castling and en passant
+to all five ways a game can draw. The project is a portfolio piece exploring
+**game-engine architecture** and **2D graphics programming** from the ground up:
+a hand-written sprite renderer, a bitboard move generator, and a state-machine
+driven application loop, with no game framework underneath.
+
+## Features
+
+- **Complete chess rules** — legal move generation, check/checkmate/stalemate,
+  castling, en passant, and pawn promotion.
+- **Every draw type** — stalemate, threefold repetition, the fifty-move rule,
+  and dead positions (insufficient material).
+- **Bitboard engine** — positions and move generation are represented with
+  64-bit bitboards.
+- **Custom 2D renderer** — a small sprite/shader/texture layer built directly on
+  OpenGL and GLFW, plus a resource manager and a finite-state-machine game loop.
+- **Original pixel art** for the board, pieces, UI, and cursor.
+
 ## Getting Started
-BitChess is a 16-bit-style local-two-player chess-game, made with OpenGL. The project is intended as a portfolio piece and a educational tool for learning game development, specifically game engine architecture and 2D graphics programming.
-### Building and Running
-BitChess is currently only available for linux and requires GLFW 3.4 or later to be installed
-<https://github.com/glfw/glfw>
 
-<https://www.glfw.org/docs/latest/compile.html>
+BitChess builds on **macOS** and **Linux** with CMake.
 
-After GLFW is installed, from the terminal, navigate to the BitChess project directory and enter:
+### Prerequisites
+
+- A C++17 compiler (Clang or GCC)
+- [CMake](https://cmake.org/) 3.16 or newer
+- `git` (used only to auto-download GLFW when it isn't already installed)
+
+GLFW is used from your system if it's installed; otherwise CMake fetches and
+builds it automatically. To install it yourself (optional, for a faster first
+build):
+
+- **macOS:** `brew install glfw`
+- **Debian/Ubuntu:** `sudo apt install libglfw3-dev`
+- **Fedora:** `sudo dnf install glfw-devel`
+
+> `glad`, `glm`, and `stb_image` are vendored in `lib/`, so there is nothing
+> else to install.
+
+### Build and run
+
+Clone the repo, then either run the helper script:
+
+```sh
+./build.sh          # configure + build
+./build.sh run      # configure + build, then launch
 ```
-make
+
+or use CMake directly:
+
+```sh
+cmake -B build
+cmake --build build -j
+./build/bit_chess
 ```
-to compile the application.
-Alternatively, to compile (if it needs to be compiled) and run the program, enter:
-```
-make run
-```
-Finally, if you wish to recompile from scratch, you can enter:
-```
-make clean
-```
-to delete the entire build directory (it will be remade upon recompilation).
-### Controls
-- Mouse controls
-- Escape to exit the program
-## <a name="changelog"></a> Changelog
-### 0.6.0
-- All draw types implemented! That means every single rule is done!
-### 0.5.0
-- Pawn promotion!
-- Fixed a castling bug where the move making function wasn't checking castling rights
-- Fixed an en passant bug where the passant table wasn't resetting each move
-- Fixed an en passant bug where en passant moves were being generation in incorrect scenarios
-### 0.4.1
-- Fixed bug where pseudo-legal en passant moves weren't being checked for legality
-### 0.4.0
-- Castling is fully implemented!
-- En passant is fully implemented!
-### 0.3.0
-- King in check visualization!
-- Checkmate pop-up menu with winner display. Win message displayed in console
-### 0.2.1
-- Fixed king move generation bug
-- Pawn double moves now check for blocking pieces
-### 0.2.0
-- Piece movement implemented (except castling, pawn promotion, and en passant)
-- Illegal move filtering for pseudo-legal move generation (i.e. checking for checks)
-### 0.1.0
-- Major refactor is in process. See [application architecture diagram](#apparch) and [state machine flowchart](#stateflo) for a tentative intended outcome
-- Basic GUI is implemented
-- Only simple pawn movement is implemented
-- Custom pixel art for the board, pieces, chessboard UI elements, and cursor. More to come later
-## Bugs
-- Cannot resize (unresizable on purpose: need to implement custom window decorations and custom resizing, because wsl is broken)
-## To-Do
-- Finish architectural refactor
-    - Bitboard
-    - Position
-    - Game
-    - UserInterface
-    - Make ResourceManager not static (owned by Renderer2D)
-- Second framebuffer for more robust mouse-picking
-- Custom window decorations
-- Start state
-    - New game
-    - Load game
-    - Adjust audio
-    - Change color scheme
-    - Quit
-- End state
-    - Game Over screen
-    - Return to start menu
-    - Quit
-- Audio system
-- Make UI and background art
-- Monitor handling
-- Pause menu
-    - Save game
-    - Adjust audio
-    - Return to start menu
-    - Quit
-- Windows version???
-- Better package installation process
-- Testing tools
-- Export PGN / FEN
+
+The game locates its assets relative to the executable, so `bit_chess` can be
+launched from any working directory. To rebuild from scratch, delete the
+`build/` directory.
+
+## Controls
+
+- **Mouse** — click a piece to select it, click a highlighted square to move.
+- **Esc** — quit.
+
 ## Documentation
-### <a name="apparch"></a> Application Architecture
-![image](doc/application_architecture.png)
-### <a name="stateflow"></a> State Machine Flowchart
-![image](doc/state_machine_flowchart.png)
+
+### Application Architecture
+![Application architecture diagram](doc/application_architecture.png)
+
+### State Machine Flowchart
+![State machine flowchart](doc/state_machine_flowchart.png)
+
+See [Chess Programming Resources](doc/Resources.md) for background on the
+bitboard techniques the engine is built on.
+
+## Roadmap
+
+Gameplay is feature-complete; these are polish and infrastructure items:
+
+- Start menu (new game, load game, options, quit) and game-over screen
+- Save / load games and PGN / FEN export
+- Audio system and configurable color schemes
+- Custom window decorations and resizing
+- Native Windows build
+
+## Changelog
+
+### 0.6.0
+- All draw types implemented — every rule of chess is now complete.
+
+### 0.5.0
+- Pawn promotion.
+- Fixed a castling bug where the move-making function skipped castling rights.
+- Fixed en passant bugs (passant table not resetting each move; moves generated
+  in incorrect scenarios).
+
+### 0.4.x
+- Castling and en passant fully implemented.
+- Legality checks for pseudo-legal en passant moves.
+
+### 0.3.0
+- King-in-check visualization.
+- Checkmate pop-up with winner display.
+
+### 0.2.x
+- Piece movement and illegal-move filtering (check detection).
+- Pawn double-move blocking and a king move-generation fix.
+
+### 0.1.0
+- Basic GUI, custom pixel art, and the start of the engine architecture.
+
+## License
+
+See [LICENSE](LICENSE).

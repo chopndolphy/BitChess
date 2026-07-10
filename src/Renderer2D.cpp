@@ -25,16 +25,18 @@ void Renderer2D::ProcessInput() {
         glfwSetWindowShouldClose(window, true);
     glm::vec2 lastClickPos;
     if (myWindow->GetLastClickPos(lastClickPos)) {
-        if (lastClickPos.x > myWindow->BoardOffset.x && lastClickPos.x < (myWindow->BoardOffset.x + myWindow->BoardSize.x) && 
-            lastClickPos.y > myWindow->BoardOffset.y && lastClickPos.y < (myWindow->BoardOffset.y + myWindow->BoardSize.y)) { // lastClickPos on board
-
-            lastSquareClicked = std::make_unique<uint64_t>(Util::IndexToBitBoard(Util::PositionToIndex(lastClickPos, myWindow->SquareSize, myWindow->BoardOffset)));
+        if (Util::IsPointOnBoard(lastClickPos, myWindow->WindowToBoard)) {
+            size_t index = Util::PositionToIndex(lastClickPos, myWindow->WindowToBoard);
+            if (index < 64u)
+                lastSquareClicked = std::make_unique<uint64_t>(Util::IndexToBitBoard(index));
         }
-
-    } 
+    }
 }
 void Renderer2D::RenderFrame() {
     glClear(GL_COLOR_BUFFER_BIT);
+    const glm::mat4& boardToWindow = myWindow->BoardToWindow;
+    const glm::mat4& windowToBoard = myWindow->WindowToBoard;
+
     if (!staticSprites.empty()) {
         for (auto sprite = staticSprites.begin(); sprite != staticSprites.end(); sprite++) {
             sprite->second->Draw(myWindow->Projection, myWindow->BoardOffset, myWindow->BoardSize);
@@ -42,56 +44,54 @@ void Renderer2D::RenderFrame() {
     }
     if (!previousMoveSprites.empty()) {
         for (auto &highlight : previousMoveSprites) {
-            highlight->Draw(myWindow->Projection, Util::IndexToPosition(highlight->BoardLocation, myWindow->SquareSize, myWindow->BoardOffset), myWindow->SquareSize);
+            highlight->Draw(myWindow->Projection, Util::IndexToPosition(highlight->BoardLocation, boardToWindow), myWindow->SquareSize);
         }
     }
     if (chosenPieceSprite != nullptr) {
-        chosenPieceSprite->Draw(myWindow->Projection, Util::IndexToPosition(chosenPieceSprite->BoardLocation, myWindow->SquareSize, myWindow->BoardOffset), myWindow->SquareSize);
+        chosenPieceSprite->Draw(myWindow->Projection, Util::IndexToPosition(chosenPieceSprite->BoardLocation, boardToWindow), myWindow->SquareSize);
     }
     glm::vec2 cursorPos = myWindow->LastCursorPos;
     uint64_t lastSquareHovered = 0;
-    if (cursorPos.x > myWindow->BoardOffset.x && cursorPos.x < (myWindow->BoardOffset.x + myWindow->BoardSize.x) && 
-        cursorPos.y > myWindow->BoardOffset.y && cursorPos.y < (myWindow->BoardOffset.y + myWindow->BoardSize.y)) { // lastClickPos on board
-
-            lastSquareHovered = Util::IndexToBitBoard(Util::PositionToIndex(cursorPos, myWindow->SquareSize, myWindow->BoardOffset));
-        }
+    if (Util::IsPointOnBoard(cursorPos, windowToBoard)) {
+        size_t hoverIndex = Util::PositionToIndex(cursorPos, windowToBoard);
+        if (hoverIndex < 64u)
+            lastSquareHovered = Util::IndexToBitBoard(hoverIndex);
+    }
     if (!availableMovesSprites.empty()) {
         for (auto &highlight : availableMovesSprites) {
-            if (lastSquareHovered & Util::IndexToBitBoard(highlight->BoardLocation)) { // cursor over square
-            
+            if (lastSquareHovered & Util::IndexToBitBoard(highlight->BoardLocation)) {
                 highlight->setHovering(true);
             } else {
-                highlight->setHovering(false);     
+                highlight->setHovering(false);
             }
-            highlight->Draw(myWindow->Projection, Util::IndexToPosition(highlight->BoardLocation, myWindow->SquareSize, myWindow->BoardOffset), myWindow->SquareSize);
+            highlight->Draw(myWindow->Projection, Util::IndexToPosition(highlight->BoardLocation, boardToWindow), myWindow->SquareSize);
         }
     }
     if (!pieceSprites.empty()) {
         for (auto &piece : pieceSprites) {
-            piece->Draw(myWindow->Projection, Util::IndexToPosition(piece->BoardLocation, myWindow->SquareSize, myWindow->BoardOffset), myWindow->SquareSize);
+            piece->Draw(myWindow->Projection, Util::IndexToPosition(piece->BoardLocation, boardToWindow), myWindow->SquareSize);
         }
     }
     if (checkedKingSprite != nullptr) {
-        checkedKingSprite->Draw(myWindow->Projection, Util::IndexToPosition(checkedKingSprite->BoardLocation, myWindow->SquareSize, myWindow->BoardOffset), myWindow->SquareSize);
+        checkedKingSprite->Draw(myWindow->Projection, Util::IndexToPosition(checkedKingSprite->BoardLocation, boardToWindow), myWindow->SquareSize);
     }
     if (promotionMenu != nullptr) {
-        glm::vec2 menuPosition = Util::IndexToPosition(promotionMenu->BoardLocation, myWindow->SquareSize, myWindow->BoardOffset);
+        glm::vec2 menuPosition = Util::IndexToPosition(promotionMenu->BoardLocation, boardToWindow);
         promotionMenu->Draw(myWindow->Projection, glm::vec2(menuPosition.x - (0.1875f * myWindow->SquareSize.x), menuPosition.y - (0.1875f * myWindow->SquareSize.y)), glm::vec2(myWindow->SquareSize.x * 1.375f, myWindow->SquareSize.y * 4.375f));
         for (auto &highlight : promotionSelectionSprites) {
-            if (lastSquareHovered & Util::IndexToBitBoard(highlight->BoardLocation)) { // cursor over square
-            
+            if (lastSquareHovered & Util::IndexToBitBoard(highlight->BoardLocation)) {
                 highlight->setHovering(true);
             } else {
-                highlight->setHovering(false);     
+                highlight->setHovering(false);
             }
-            highlight->Draw(myWindow->Projection, Util::IndexToPosition(highlight->BoardLocation, myWindow->SquareSize, myWindow->BoardOffset), myWindow->SquareSize);
+            highlight->Draw(myWindow->Projection, Util::IndexToPosition(highlight->BoardLocation, boardToWindow), myWindow->SquareSize);
         }
         for (auto &piece : promotionOptionsSprites) {
-            piece->Draw(myWindow->Projection, Util::IndexToPosition(piece->BoardLocation, myWindow->SquareSize, myWindow->BoardOffset), myWindow->SquareSize);
+            piece->Draw(myWindow->Projection, Util::IndexToPosition(piece->BoardLocation, boardToWindow), myWindow->SquareSize);
         }
     }
     if (menu != nullptr) {
-        menu->Draw(myWindow->Projection, Util::IndexToPosition(menu->BoardLocation, myWindow->SquareSize, myWindow->BoardOffset), glm::vec2(myWindow->SquareSize.x * 4, myWindow->SquareSize.y * 6));
+        menu->Draw(myWindow->Projection, Util::IndexToPosition(menu->BoardLocation, boardToWindow), glm::vec2(myWindow->SquareSize.x * 4, myWindow->SquareSize.y * 6));
     }
 }
 void Renderer2D::EndFrame() {
@@ -296,7 +296,8 @@ void Renderer2D::initWindow() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+    // glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 
     window = glfwCreateWindow(myWindow->SCR_WIDTH, myWindow->SCR_HEIGHT, "Chess", NULL, NULL);
     if (!window) {
@@ -305,7 +306,13 @@ void Renderer2D::initWindow() {
     }
     glfwMakeContextCurrent(window);
     glfwSetWindowUserPointer(window, myWindow.get());
-    
+
+    int fbWidth = 0, fbHeight = 0;
+    glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
+    if (fbWidth > 0 && fbHeight > 0) {
+        myWindow->ResizeWindow(window, fbWidth, fbHeight);
+    }
+
     auto mouseMoveFunc = [](GLFWwindow* w, double xposIn, double yposIn) {
         static_cast<MyGLWindow*>(glfwGetWindowUserPointer(w))->MoveMouse(w, xposIn, yposIn);
     };

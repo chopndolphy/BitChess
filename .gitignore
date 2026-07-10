@@ -1,5 +1,19 @@
+# Build output
+build/
 *.o
 *.out
+bit_chess
+
+# CMake in-source artifacts (should never appear, but ignore just in case)
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+
+# Editor / OS
 .vscode/
-build/
+.DS_Store
+*:Zone.Identifier
+
+# Scratch
 notes.txt

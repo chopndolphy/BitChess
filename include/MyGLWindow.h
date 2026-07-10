@@ -20,7 +20,12 @@ class MyGLWindow {
         glm::vec2 BoardOffset;
         glm::vec2 BoardSize;
         glm::vec2 SquareSize;
+        /** Maps board space (0,0)-(8,8) to window pixel space. */
+        glm::mat4 BoardToWindow;
+        /** Maps window pixel space to board space. Inverse of BoardToWindow. */
+        glm::mat4 WindowToBoard;
     private:
+        void updateBoardMatrices();
         std::unique_ptr<glm::vec2> lastClickPos;
         bool firstMouse = true;
         float lastX = (float)SCR_WIDTH / 2.0f;
